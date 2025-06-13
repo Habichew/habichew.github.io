@@ -9,5 +9,6 @@
 - **Graphics**: Wendi, Yang, Mannat
 
 ## Useful links
-**Pinterest board**: https://pin.it/5Z7hleOpk 
+**Pinterest board**: https://pin.it/5Z7hleOpk
+
 **Google drive**: https://drive.google.com/drive/folders/16M3MNzOnTeue93LoP2yzKf-zVeiwsakF?usp=sharing
