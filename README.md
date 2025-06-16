@@ -2,11 +2,11 @@
 ## Project Description: 
 
 ## Project Roles:
-- **Frontend Developers**: Yixi, Martin
-- **Backend Developers**: Yang, Martin, Yixi
 - **UI Design and UX Research**: Mannat & Wendi
 - **Game Design**: Yang, Wendi, Mannat, Martin
 - **Graphics**: Wendi, Yang, Mannat
+- **Frontend Developers**: Yixi, Martin
+- **Backend Developers**: Yang, Martin, Yixi
 
 ## Useful links
 **Pinterest board**: https://pin.it/5Z7hleOpk
