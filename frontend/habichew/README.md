@@ -25,6 +25,17 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Test on Mobiles via Expo go
+
+1. Install Expo Go on your mobile
+2. Run the project through Expo module
+3. Switch to Expo Go mode
+   ```bash
+   Press 's' to enter Expo Go
+   ```
+4. Enter EAS account (the account for Expo.dev) in the IDE. This step might take a while.
+5. Open your mobile and scan the QR code to see the preview.
+
 ## Get a fresh project
 
 When you're ready, run:
