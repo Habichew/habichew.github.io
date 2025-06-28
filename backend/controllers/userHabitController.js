@@ -1,4 +1,4 @@
-import * as itineraryTypeService from "../services/itineraryTypeService.js";
+import * as itineraryTypeService from "../services/taskService.js";
 
 export function getAllItineraryTypes(conn, req, res) {
   try {

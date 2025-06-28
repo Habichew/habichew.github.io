@@ -8,11 +8,11 @@ const app = express();
 import path from "path";
 
 // Routers
-import { collaboratorRouter } from "./routes/collaboratorRoute.js";
-import { eventRouter } from "./routes/eventRoute.js";
-import { itineraryRouter } from "./routes/itineraryRoute.js";
-import { itineraryTypeRouter } from "./routes/itineraryTypeRoute.js";
-import { locationRouter } from "./routes/locationRoute.js";
+import { collaboratorRouter } from "./routes/habitRoute.js";
+import { eventRouter } from "./routes/petRoute.js";
+import { itineraryRouter } from "./routes/planetRoute.js";
+import { itineraryTypeRouter } from "./routes/taskRoute.js";
+import { locationRouter } from "./routes/userHabitRoute.js";
 import { postImageRouter } from "./routes/postImagesRoute.js";
 import { postRouter } from "./routes/postRoute.js";
 import { userRouter } from "./routes/userRoute.js";

@@ -1,6 +1,6 @@
 import Itinerary from "../models/itinerary.js";
-import * as itineraryService from "../services/itineraryService.js";
-import * as eventService from "../services/eventService.js";
+import * as itineraryService from "../services/planetService.js";
+import * as eventService from "../services/petService.js";
 
 export function getAllItineraries(conn, req, res) {
   try {

@@ -70,9 +70,9 @@ export async function findUserById(conn, req, res) {
   }
 }
 
-export async function findUserByProfileName(conn, req, res) {
+export async function findUserByUsername(conn, req, res) {
   try {
-    await userService.findUserByProfileName(
+    await userService.findUserByUsername(
       conn,
       req.params.profileName,
       (result) => {

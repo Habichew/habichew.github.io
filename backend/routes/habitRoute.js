@@ -1,5 +1,5 @@
 import express from "express";
-import * as collaboratorController from "../controllers/collaboratorController.js";
+import * as collaboratorController from "../controllers/petController.js";
 
 import { connect } from "../index.js";
 

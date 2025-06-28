@@ -1,4 +1,4 @@
-import * as postImageService from "../services/postImageService.js";
+import * as postImageService from "../services/userHabitService.js";
 
 export function getAllPostImages(conn, req, res) {
   try {
@@ -58,7 +58,7 @@ export function findPostImagesByUserId(conn, req, res) {
 
 export function createPostImage(conn, req, res) {
   try {
-    let postImage = new PostImage(req.body.postId, req.body.userId, req.body.imagePath);
+    let postImage = new TaskRecommendation(req.body.postId, req.body.userId, req.body.imagePath);
     postImageService.createPostImage(conn, postImage,(result) => {
       if (result.length === 1) {
         res.status(200);

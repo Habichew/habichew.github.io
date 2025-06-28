@@ -1,5 +1,5 @@
-// import Event from "../models/event.js";
-import * as collaboratorService from "../services/collaboratorService.js";
+// import Event from "../models/userHabit.js";
+import * as collaboratorService from "../services/habitService.js";
 
 export function getAllCollaborators(conn, req, res) {
   try {

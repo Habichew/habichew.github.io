@@ -1,5 +1,5 @@
 import express from "express";
-import * as itineraryController from "../controllers/itineraryController.js";
+import * as itineraryController from "../controllers/taskController.js";
 
 import { connect } from "../index.js";
 

@@ -10,7 +10,7 @@ userRouter.get("/", (req, res) => {
 });
 
 userRouter.get("/profileName/:profileName", (req, res) => {
-  connect((conn) => userController.findUserByProfileName(conn, req, res));
+  connect((conn) => userController.findUserByUsername(conn, req, res));
 });
 
 userRouter.get("/:userId", (req, res) => {

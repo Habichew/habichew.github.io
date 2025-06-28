@@ -1,5 +1,5 @@
-import Event from "../models/event.js";
-import * as eventService from "../services/eventService.js";
+import Event from "../models/userHabit.js";
+import * as eventService from "../services/petService.js";
 
 export async function getAllEvents(conn, req, res) {
   try {

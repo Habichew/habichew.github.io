@@ -1,5 +1,5 @@
 import express from "express";
-import * as eventController from "../controllers/eventController.js";
+import * as eventController from "../controllers/planetController.js";
 
 import { connect } from "../index.js";
 

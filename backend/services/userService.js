@@ -35,10 +35,10 @@ export async function findUserById(conn, id, callback) {
   callback(result);
 }
 
-export async function findUserByProfileName(conn, profileName, callback) {
+export async function findUserByUsername(conn, profileName, callback) {
   console.log(conn);
   const result = await conn.query(
-    `SELECT * FROM users WHERE profileName LIKE ?`,
+    `SELECT * FROM users WHERE username LIKE ?`,
     ["%" + profileName + "%"]
   );
   callback(result);
@@ -51,7 +51,7 @@ export async function createUser(conn, user, callback) {
     bcrypt.hash(user.password, salt, async function (err, hash) {
       console.log("hash", hash);
       result = await conn.query(
-        "INSERT INTO users (email, password, profileName, profileImage) VALUES (?,?,?,?)",
+        "INSERT INTO users (email, password, profileName) VALUES (?,?,?,?)",
         [user.email, hash, user.profileName, user.profileImage]
       );
       callback(result);
