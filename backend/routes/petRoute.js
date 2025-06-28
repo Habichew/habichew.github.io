@@ -3,13 +3,13 @@ import * as eventController from "../controllers/planetController.js";
 
 import { connect } from "../index.js";
 
-export const eventRouter = express.Router();
+export const petRouter = express.Router();
 
-eventRouter.get("/", (req, res) => {
+petRouter.get("/", (req, res) => {
   connect((conn) => eventController.getAllEvents(conn, req, res));
 });
 
-eventRouter.get("/itinerary/:itineraryId", (req, res) => {
+petRouter.get("/itinerary/:itineraryId", (req, res) => {
   connect((conn) => eventController.findEventsByItineraryId(conn, req, res));
 });
 
@@ -17,14 +17,14 @@ eventRouter.get("/itinerary/:itineraryId", (req, res) => {
 //   connect((conn) => eventController.findEventsByid(conn, req, res));
 // });
 
-eventRouter.put("/:id", (req, res) => {
+petRouter.put("/:id", (req, res) => {
   connect((conn) => eventController.updateEvent(conn, req, res));
 });
 
-eventRouter.post("/", (req, res) => {
+petRouter.post("/", (req, res) => {
   connect((conn) => eventController.createEvent(conn, req, res));
 });
 
-eventRouter.delete("/:id", (req, res) => {
+petRouter.delete("/:id", (req, res) => {
   connect((conn) => eventController.deleteEvent(conn, req, res));
 });

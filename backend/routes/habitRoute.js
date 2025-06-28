@@ -1,12 +1,12 @@
 import express from "express";
-import * as collaboratorController from "../controllers/petController.js";
+import * as habitController from "../controllers/habitController.js";
 
 import { connect } from "../index.js";
 
-export const collaboratorRouter = express.Router();
+export const habitRouter = express.Router();
 
-collaboratorRouter.get("/", (req, res) => {
-  connect((conn) => collaboratorController.getAllCollaborators(conn, req, res));
+habitRouter.get("/", (req, res) => {
+  connect((conn) => habitController.getAllHabits(conn, req, res));
 });
 
 collaboratorRouter.get("/:itineraryId", (req, res) => {

@@ -1,10 +1,10 @@
-import * as postImageService from "../services/userHabitService.js";
+import * as habitService from "../services/habitService.js";
 
-export function getAllPostImages(conn, req, res) {
+export function getAllHabits(conn, req, res) {
   try {
     console.log("response:", res);
-    console.log("getting all post images");
-    postImageService.getAllPostImages(conn, (result) => {
+    console.log("getting all habits");
+    habitService.getAllHabits(conn, (result) => {
       if (result) {
         res.status(200);
       }
@@ -18,7 +18,7 @@ export function getAllPostImages(conn, req, res) {
 
 export function findPostImagesByPostId(conn, req, res) {
   try {
-    postImageService.findPostImagesByPostId(
+    habitService.findPostImagesByPostId(
       conn,
       req.params.postId,
       (result) => {
@@ -38,7 +38,7 @@ export function findPostImagesByPostId(conn, req, res) {
 
 export function findPostImagesByUserId(conn, req, res) {
   try {
-    postImageService.findPostImagesByUserId(
+    habitService.findPostImagesByUserId(
         conn,
         req.params.userId,
         (result) => {
@@ -59,7 +59,7 @@ export function findPostImagesByUserId(conn, req, res) {
 export function createPostImage(conn, req, res) {
   try {
     let postImage = new TaskRecommendation(req.body.postId, req.body.userId, req.body.imagePath);
-    postImageService.createPostImage(conn, postImage,(result) => {
+    habitService.createPostImage(conn, postImage,(result) => {
       if (result.length === 1) {
         res.status(200);
       } else if (result.length === 0) {

@@ -8,17 +8,14 @@ const app = express();
 import path from "path";
 
 // Routers
-import { collaboratorRouter } from "./routes/habitRoute.js";
-import { eventRouter } from "./routes/petRoute.js";
-import { itineraryRouter } from "./routes/planetRoute.js";
-import { itineraryTypeRouter } from "./routes/taskRoute.js";
-import { locationRouter } from "./routes/userHabitRoute.js";
-import { postImageRouter } from "./routes/postImagesRoute.js";
-import { postRouter } from "./routes/postRoute.js";
+import { habitRouter } from "./routes/habitRoute.js";
+import { petRouter } from "./routes/petRoute.js";
+import { planetRouter } from "./routes/planetRoute.js";
+import { taskRouter } from "./routes/taskRoute.js";
+import { userHabitRouter } from "./routes/userHabitRoute.js";
 import { userRouter } from "./routes/userRoute.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import * as postController from "./controllers/postController.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,6 +35,7 @@ const storage = multer.diskStorage({
     cb(null, filename);
   },
 });
+
 export const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
@@ -101,26 +99,20 @@ app.post("/upload", upload.single("img"), (req, res) => {
   }
 });
 
-// Collaborators
-app.use("/collaborators", collaboratorRouter);
+// Habits
+app.use("/habits", habitRouter);
 
-// Events
-app.use("/events", eventRouter);
+// Pets
+app.use("/pets", petRouter);
 
-// Itineraries
-app.use("/itineraries", itineraryRouter);
+// Planets
+app.use("/planets", planetRouter);
 
-// Itinerary Types
-app.use("/itineraryTypes", itineraryTypeRouter);
+// Tasks
+app.use("/tasks", taskRouter);
 
-// Locations
-app.use("/locations", locationRouter);
-
-// Post Images
-app.use("/postImages", postImageRouter);
-
-// Posts
-app.use("/posts", postRouter);
+// User Habits
+app.use("/userHabits", userHabitRouter);
 
 // Users
 app.use("/users", userRouter);
@@ -130,6 +122,7 @@ app.get("/uploads/:image", function (req, res) {
   res.sendFile(path.join(__dirname, "/uploads/", req.params.image)); // find out the filePath based on given fileName
 });
 
+/*
 app.post("/create-post", upload.array("postImages", 5), (req, res) => {
   console.log("req.body", req.body);
   console.log("req.files", req.files);
@@ -144,6 +137,7 @@ app.post("/create-post", upload.array("postImages", 5), (req, res) => {
         .send({ error: "no file was uploaded", "request-body": req.body });
   }
 });
+ */
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
