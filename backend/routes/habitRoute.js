@@ -1,7 +1,8 @@
+/*
 import express from "express";
 import * as habitController from "../controllers/habitController.js";
 
-import { connect } from "../index.js";
+import { connect } from "../app.js";
 
 export const habitRouter = express.Router();
 
@@ -20,3 +21,4 @@ collaboratorRouter.get("/:itineraryId", (req, res) => {
 //     collaboratorController.findItinerariesByCollaboratorUserId(conn, req, res)
 //   );
 // });
+*/

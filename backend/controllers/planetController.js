@@ -1,3 +1,4 @@
+/*
 import Event from "../models/userHabit.js";
 import * as eventService from "../services/petService.js";
 
@@ -114,3 +115,4 @@ export async function deleteEvent(conn, req, res) {
     res.send();
   }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 export async function getAllCollaborators(conn, callback) {
   console.log("get all collaborators");
   const result = await conn.query("SELECT * FROM collaborators");
@@ -29,3 +30,4 @@ export async function findItinerariesByCollaboratorUserId(
   );
   callback(result);
 }
+*/

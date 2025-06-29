@@ -1,7 +1,8 @@
+/*
 import express from "express";
 import * as userController from "../controllers/userController.js";
 
-import { connect } from "../index.js";
+import { connect } from "../app.js";
 
 export const userRouter = express.Router();
 
@@ -36,3 +37,4 @@ userRouter.put("/:userId", (req, res) => {
 userRouter.delete("/:userId", (req, res) => {
   connect((conn) => userController.deleteUser(conn, req, res));
 });
+*/

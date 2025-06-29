@@ -1,3 +1,4 @@
+/*
 // import db from "../config/db.js";
 import bcrypt from "bcrypt";
 
@@ -124,3 +125,4 @@ export async function deleteUser(conn, userId, callback) {
   );
   callback(result);
 }
+*/

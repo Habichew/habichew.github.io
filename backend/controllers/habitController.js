@@ -1,3 +1,4 @@
+/*
 import * as habitService from "../services/habitService.js";
 
 export function getAllHabits(conn, req, res) {
@@ -77,3 +78,4 @@ export async function uploadImage(req, res) {
   res.status(200);
   return res.send("Uploaded file");
 }
+*/

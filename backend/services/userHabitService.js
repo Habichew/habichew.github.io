@@ -1,3 +1,4 @@
+/*
 export async function getAllPostImages(conn, callback) {
   console.log("get all postImages");
   const result = await conn.query("SELECT * FROM postImages");
@@ -31,7 +32,7 @@ export async function createPostImage(conn, postId, postImagePath, userId, callb
   callback(result);
 }
 
-/*
+/!*
   export async function updateEvent(conn, overpassId, event, callback) {
     console.log("updating event", overpassId);
     const result = await conn.query(
@@ -58,4 +59,5 @@ export async function createPostImage(conn, postId, postImagePath, userId, callb
     );
     callback(result);
   }
-  */
+  *!/
+*/

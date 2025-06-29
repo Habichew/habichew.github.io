@@ -1,7 +1,8 @@
+/*
 import express from "express";
 import * as locationController from "../controllers/locationController.js";
 
-import { connect } from "../index.js";
+import { connect } from "../app.js";
 
 export const userHabitRouter = express.Router();
 
@@ -14,3 +15,4 @@ userHabitRouter.get("/:overpassId", (req, res) => {
     locationController.findLocationByOverpassId(conn, req, res)
   );
 });
+*/

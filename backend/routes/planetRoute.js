@@ -1,7 +1,8 @@
+/*
 import express from "express";
 import * as planetController from "../controllers/planetController.js";
 
-import { connect } from "../index.js";
+import { connect } from "../app.js";
 
 export const planetRouter = express.Router();
 
@@ -34,3 +35,4 @@ planetRouter.post("/:userId", (req, res) => {
 planetRouter.delete("/:itineraryId", (req, res) => {
   connect((conn) => planetController.deleteItinerary(conn, req, res));
 });
+*/

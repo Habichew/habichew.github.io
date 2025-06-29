@@ -1,7 +1,8 @@
+/*
 import express from "express";
 import * as itineraryTypeController from "../controllers/userHabitController.js";
 
-import { connect } from "../index.js";
+import { connect } from "../app.js";
 
 export const taskRouter = express.Router();
 
@@ -16,3 +17,4 @@ taskRouter.get("/:id", (req, res) => {
     itineraryTypeController.findItineraryTypeById(conn, req, res)
   );
 });
+*/

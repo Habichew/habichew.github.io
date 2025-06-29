@@ -1,3 +1,4 @@
+/*
 export async function getAllEvents(conn, callback) {
   console.log("get all events");
   const result = await conn.query("SELECT * FROM events");
@@ -73,3 +74,4 @@ export async function deleteEvents(conn, itineraryId, callback) {
   );
   callback(result);
 }
+*/

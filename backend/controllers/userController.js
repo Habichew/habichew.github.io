@@ -1,3 +1,4 @@
+/*
 import User from "../models/user.js";
 import * as userService from "../services/userService.js";
 import bcrypt from "bcrypt";
@@ -227,3 +228,4 @@ export async function deleteUser(conn, req, res) {
     res.send();
   }
 }
+*/

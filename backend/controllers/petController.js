@@ -1,3 +1,4 @@
+/*
 // import Event from "../models/userHabit.js";
 import * as collaboratorService from "../services/habitService.js";
 
@@ -56,3 +57,4 @@ export function findItinerariesByCollaboratorUserId(conn, req, res) {
     res.send();
   }
 }
+*/

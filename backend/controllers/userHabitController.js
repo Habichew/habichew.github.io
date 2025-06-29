@@ -1,3 +1,4 @@
+/*
 import * as itineraryTypeService from "../services/taskService.js";
 
 export function getAllItineraryTypes(conn, req, res) {
@@ -35,3 +36,4 @@ export function findItineraryTypeById(conn, req, res) {
     res.send();
   }
 }
+*/
