@@ -4,3 +4,6 @@
 
 # database
 Database Consoles/
+
+# dotenv
+.env
