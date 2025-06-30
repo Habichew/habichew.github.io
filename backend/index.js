@@ -59,6 +59,7 @@ const port = 3000;
 const project_name = "en route";
 
 // Create a connection pool
+/*
 export const pool = mariadb.createPool({
   host: "mariadb_2425-cs7025-group1",
   user: "2425-cs7025-group1",
@@ -66,6 +67,7 @@ export const pool = mariadb.createPool({
   database: "2425-cs7025-group1_db",
   connectionLimit: 5,
 });
+*/
 
 // Use Morgan for logging HTTP requests
 app.use(morgan("dev"));
