@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --save-dev
 
 # Copy source code
 COPY . .
@@ -25,4 +25,5 @@ USER nodejs
 EXPOSE 3000
 
 # Command to run the application
-CMD ["npm","run"]
+#CMD ["npm","run"]
+CMD ["npx", "nodemon", "app.js"]

@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const dbConfig = {
-  host: process.env.HOST || 'db', // Docker service name
+  host: process.env.DB_HOST || 'db', // Docker service name
   port: parseInt(process.env.DB_PORT) || 3307,
   user: process.env.DB_USER || 'appuser',
   password: process.env.DB_PASSWORD || 'password',

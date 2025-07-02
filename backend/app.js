@@ -67,7 +67,6 @@ export const upload = multer({
 // Configuration
 const PORT = process.env.BACKEND_PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0'; // Important for Docker
-
 // Database connection test
 const testDbConnection = async () => {
   try {
@@ -101,11 +100,7 @@ app.use(cors());
 
 app.set("view engine", "ejs");
 
-app.all("/", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
+
 
 app.get("/", (req, res) => {
   res.send("Hello");

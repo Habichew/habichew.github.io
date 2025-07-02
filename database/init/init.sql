@@ -4,10 +4,10 @@ USE habichew_db;
 
 -- Create any other tables your app needs
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `email` varchar(255),
   `username` varchar(255),
-  `password` varchar(255),
+  `password_hash` varchar(255),
   `mood` varchar(255),
   `pet_id` integer,
   `score` integer,
@@ -26,13 +26,13 @@ INSERT INTO users (username, email, password_hash) VALUES
 ('jane_smith', 'jane@example.com', 'hashed_password_456');
 
 CREATE TABLE IF NOT EXISTS `userHabits` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `user_id` integer,
   `habit_id` integer
 );
 
 CREATE TABLE IF NOT EXISTS `pets` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `mood` varchar(255),
   `personality` varchar(255),
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `pets` (
 );
 
 CREATE TABLE IF NOT EXISTS `planets` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `encounter_id` integer,
   `postcard_id` integer,
@@ -50,13 +50,13 @@ CREATE TABLE IF NOT EXISTS `planets` (
 );
 
 CREATE TABLE IF NOT EXISTS `habits` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `task_id` integer
 );
 
 CREATE TABLE IF NOT EXISTS `tasks` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `description` varchar(255),
   `score` integer,
   `level` integer,
