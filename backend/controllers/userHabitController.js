@@ -1,5 +1,25 @@
 import * as itineraryTypeService from "../services/taskService.js";
 
+export function getAllUserHabits(conn, req, res) {
+  try {
+    console.log("not implemented", res);
+
+  } catch (code) {
+    res.status(code);
+    res.send();
+  }
+}
+
+export function findUserHabitByUserId(conn, req, res) {
+  try {
+    console.log("not implemented", res);
+
+  } catch (code) {
+    res.status(code);
+    res.send();
+  }
+}
+
 export function getAllItineraryTypes(conn, req, res) {
   try {
     console.log("response:", res);
