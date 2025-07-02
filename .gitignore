@@ -2,9 +2,12 @@
 # IDE
 .idea/
 
-#backend
+# backend
 .backend/node_modules
 .backend/slm
 
-#frontend
+# frontend
 .frontend/node_modules
+
+# dotenv
+.env
