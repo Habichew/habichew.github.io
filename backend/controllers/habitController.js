@@ -16,6 +16,26 @@ export function getAllHabits(conn, req, res) {
   }
 }
 
+export function getTaskRecommendations(conn, req, res) {
+  try {
+    habitService.getTaskRecommendations(
+        conn,
+        req.body.habit,
+        (result) => {
+          if (result.length === 1) {
+            res.status(200);
+          } else if (result.length === 0) {
+            res.status(403);
+          }
+          res.send(result);
+        }
+    );
+  } catch (code) {
+    res.status(code);
+    res.send();
+  }
+}
+
 export function findPostImagesByPostId(conn, req, res) {
   try {
     habitService.findPostImagesByPostId(

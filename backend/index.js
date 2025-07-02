@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import mariadb from "mariadb";
 import multer from "multer";
+import mysql from "mysql";
 
 const app = express();
 import path from "path";
@@ -54,9 +55,26 @@ export const upload = multer({
   },
   limits: { fileSize: 5 * 1000 * 1000 },
 });
+
+const hostname = "localhost";
+const user = "testUser";
+const password = "test";
+const database = "db_1";
+
+const conn = mysql.createConnection({
+  host: hostname,
+  user: user,
+  password: password,
+  database: database,
+});
+
+const port = 3000;
+
+/*
 const hostname = "nodejs_2425-cs7025-group1";
 const port = 3000;
 const project_name = "en route";
+*/
 
 // Create a connection pool
 /*
@@ -146,6 +164,20 @@ app.listen(port, hostname, () => {
 });
 
 export async function connect(controllerMethod) {
+  try {
+    controllerMethod(conn);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    if (conn) {
+      //conn.release();
+    }
+  }
+}
+
+/*
+Maria DB connect
+export async function connect(controllerMethod) {
   let conn;
   try {
     conn = await pool.getConnection();
@@ -158,3 +190,4 @@ export async function connect(controllerMethod) {
     }
   }
 }
+*/
