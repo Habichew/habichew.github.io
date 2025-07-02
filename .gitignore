@@ -8,6 +8,8 @@ backend/slm
 
 # frontend
 frontend/node_modules/
+frontend/.vscode/
+frontedn/.expo/
 
 # dotenv
 .env

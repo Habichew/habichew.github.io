@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-// import pool from "./config/db.js";
+// import pool from "./config/db_old.js";
 import mariadb from "mariaDb";
 
 const app = express();
