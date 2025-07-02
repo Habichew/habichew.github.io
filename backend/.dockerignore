@@ -13,6 +13,6 @@ coverage
 
 # Git
 .git
-.gitignore
+../.gitignore
 README.md
 
