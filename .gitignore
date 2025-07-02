@@ -1,3 +1,10 @@
 
 # IDE
 .idea/
+
+#backend
+.backend/node_modules
+.backend/slm
+
+#frontend
+.frontend/node_modules
