@@ -9,8 +9,10 @@ userHabitRouter.get("/", function (req, res, next) {
   connect((conn) => locationController.getAllLocations(conn, req, res));
 });
 
+/*
 userHabitRouter.get("/:overpassId", (req, res) => {
   connect((conn) =>
     locationController.findLocationByOverpassId(conn, req, res)
   );
 });
+*/
