@@ -2,9 +2,14 @@
 # IDE
 .idea/
 
-#backend
-.backend/node_modules
-.backend/slm
+# backend
+backend/node_modules/
+backend/slm
 
-#frontend
-.frontend/node_modules
+# frontend
+frontend/node_modules/
+frontend/.vscode/
+frontedn/.expo/
+
+# dotenv
+.env

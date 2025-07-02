@@ -1,4 +1,4 @@
-// import db from "../config/db.js";
+// import db from "../config/db_old.js";
 import bcrypt from "bcrypt";
 
 export async function getAllUsers(conn, callback) {
