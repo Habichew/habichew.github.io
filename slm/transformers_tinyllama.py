@@ -3,6 +3,12 @@ from transformers import pipeline
 from flask import Flask, jsonify, request
 from torch import cuda
 from flask_cors import CORS, cross_origin
+import logging
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
 
 app = Flask(__name__)
 cors = CORS(app) # allow CORS for all domains on all routes.
@@ -11,6 +17,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route("/", methods = ['POST'])
 @cross_origin()
 def createTaskRecommendations():
+    logging.info("creating task recommendations")
     req_data = request.get_json()
     device = 'cuda' if cuda.is_available() else 'cpu'
     cuda.empty_cache()
@@ -22,19 +29,20 @@ def createTaskRecommendations():
 
     if len(missing_params)==0:
         #access slm response HuggingFaceTB/SmolLM-360M-Instruct
-        pipe = pipeline("text-generation", model="TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+        pipe = pipeline("text-generation", model="HuggingFaceTB/SmolLM-360M-Instruct")
         messages = [
-            {"role": "user", "content": "Break down habit into a list of 5 tasks that can be directly and chronologically executed: %s. No examples." %(req_data['habit'])},
+            {"role": "user", "content": "Break down this habit into a list of 5 tasks that can be directly and chronologically executed: %s. No examples." %(req_data['habit'])},
         ]
         response = jsonify(pipe(messages, max_length=256)).json
         res_content = response[0]["generated_text"][1]["content"].splitlines()
         print(res_content)
 
-        res_content = [subtask[3:] if subtask and subtask[0].isdigit() and subtask[1] == "." and subtask[2] == " " else None for subtask in res_content]
-        while None in res_content: res_content.remove(None)
-        while '' in res_content: res_content.remove('')
+        # res_content = [subtask[3:] if subtask and len(subtask) > 3 and subtask[0].isdigit() and subtask[1] == "." and subtask[2] == " " else None for subtask in res_content]
+        # while None in res_content: res_content.remove(None)
+        # while '' in res_content: res_content.remove('')
         print(res_content)
-        return res_content
+        logging.info("finished creating recommendations")
+        return jsonify(res_content)
     else:
          resp = {
                  "status":"failure",
