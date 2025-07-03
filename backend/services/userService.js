@@ -1,10 +1,10 @@
 // import db from "../config/db_old.js";
 import bcrypt from "bcrypt";
+import { pool } from "../config/db.js";
 
-export async function getAllUsers(conn, callback) {
-  console.log(conn);
-  const result = await conn.query("SELECT * FROM users");
-  callback(result);
+export async function getAllUsers() {
+  const [rows] = await pool.query('SELECT * FROM users');
+  return rows;
 }
 
 export async function findEmailPassword(conn, email, password, callback) {

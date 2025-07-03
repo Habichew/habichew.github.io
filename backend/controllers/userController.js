@@ -3,21 +3,18 @@ import * as userService from "../services/userService.js";
 import bcrypt from "bcrypt";
 
 
-export async function getAllUsers(conn, req, res) {
+export async function getAllUsers(req, res) {
   try {
     console.log("response:", res);
     console.log("getting all users");
-    await userService.getAllUsers(conn, (result) => {
-      if (result && result.length > 0) {
-        res.status(200);
-      } else {
-        res.status(404);
-      }
-      res.send(result);
-    });
-  } catch (code) {
-    res.status(code);
-    res.send();
+    const users = await userService.getAllUsers();
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No users found.' });
+    }
+    res.status(200).json(users);
+  } catch (err) {
+    console.error('getAllUsers failed:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 }
 
