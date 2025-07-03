@@ -5,8 +5,7 @@ import bcrypt from "bcrypt";
 
 export async function getAllUsers(req, res) {
   try {
-    console.log("response:", res);
-    console.log("getting all users");
+    console.log("###### /users: Getting all users ######");
     const users = await userService.getAllUsers();
     if (!users || users.length === 0) {
       return res.status(404).json({ message: 'No users found.' });
