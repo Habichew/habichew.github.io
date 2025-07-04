@@ -19,6 +19,7 @@
 
 ### System Architecture
 - **User flow graph**: https://miro.com/app/board/uXjVIk0LBKg=/
+- **Database diagram**: https://dbdiagram.io/d/Habichew-database-685b4294f413ba3508b63fe8
 
 ### UI design
 - **HiFi UI design**: https://www.figma.com/design/IT4kT4oDIjay5pDB1rGpM8/Habichew?node-id=1-2&p=f&m=draw
