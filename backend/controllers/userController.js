@@ -17,13 +17,36 @@ export async function getAllUsers(req, res) {
   }
 }
 
-export async function findUser(conn, req, res) {
+
+export async function signUp(req, res) {
   try {
-    await userService.findUserByEmail(conn, req.body.email, (result) => {
-      console.log("find user by email result:", result);
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const user = await userService.createUser(username, email, password);
+
+    if (user) {
+      res.status(201).json({ message: 'User created successfully', user });
+    } else {
+      res.status(409).json({ error: 'Email already exists' });
+    }
+  } catch (err) {
+    console.error('Signup failed:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+export async function findUser(req, res) {
+  try {
+    const {email, password} = req.body;
+    await userService.findUserByEmail(email, (result) => {
+      console.log("###### /users/login: find user by email result ######", result);
       if (result.length > 0) {
         bcrypt.compare(
-          req.body.password,
+          password,
           result[0].password,
           function (err, compResult) {
             if (compResult) {
@@ -32,7 +55,7 @@ export async function findUser(conn, req, res) {
               res.send(result);
             } else {
               console.log("Password does not match");
-              console.log("pw", req.body.password);
+              console.log("password", password);
               console.log("hash", result[0].password);
               res.status(400);
               res.send({ error: "incorrect password" });
@@ -86,7 +109,7 @@ export async function findUserByUsername(conn, req, res) {
   }
 }
 
-export async function createUser(conn, req, res) {
+/*export async function createUser(conn, req, res) {
   try {
     const user = new User(
       req.body.email,
@@ -114,7 +137,7 @@ export async function createUser(conn, req, res) {
     res.status(500);
     res.send(err);
   }
-}
+}*/
 
 export async function updateUser(conn, req, res) {
   try {

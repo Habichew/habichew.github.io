@@ -24,7 +24,9 @@ source database/init/init.sql
 ```mysql
 SHOW TABLES;
 ```
-![You should see following output in CLI.](https://ibb.co/bj1mggy8)
+
+<img src="https://i.ibb.co/qz0SSmq/2025-07-03-135744.png" alt="2025-07-03-135744" width=200>
+
 Once you see this result, it means you've set the database and ready to start backend.
 
 ## Start the backend
