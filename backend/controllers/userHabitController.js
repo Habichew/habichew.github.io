@@ -10,7 +10,7 @@ export function getAllUserHabits(conn, req, res) {
   }
 }
 
-export function findUserHabitByUserId(conn, req, res) {
+export function updateUserHabit(conn, req, res) {
   try {
     console.log("not implemented", res);
 
@@ -20,7 +20,7 @@ export function findUserHabitByUserId(conn, req, res) {
   }
 }
 
-export function getAllItineraryTypes(conn, req, res) {
+export function deleteUserHabit(conn, req, res) {
   try {
     console.log("response:", res);
     console.log("getting all itineraryTypes");
@@ -36,7 +36,7 @@ export function getAllItineraryTypes(conn, req, res) {
   }
 }
 
-export function findItineraryTypeById(conn, req, res) {
+export function createUserHabit(conn, req, res) {
   try {
     itineraryTypeService.findItineraryTypeById(
       conn,

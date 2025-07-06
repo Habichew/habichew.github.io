@@ -2,7 +2,7 @@ import Itinerary from "../models/itinerary.js";
 import * as itineraryService from "../services/planetService.js";
 import * as eventService from "../services/petService.js";
 
-export function getAllItineraries(conn, req, res) {
+export function getAllTasks(conn, req, res) {
   try {
     console.log("response:", res);
     console.log("getting all itineraries");
@@ -38,7 +38,7 @@ export function findItinerariesByName(conn, req, res) {
   }
 }
 
-export function findItinerariesById(conn, req, res) {
+export function findTaskById(conn, req, res) {
   console.log("find itinerary by id", req.params.itineraryId);
   try {
     itineraryService.findItinerariesById(
@@ -81,7 +81,7 @@ export function findItinerariesByUserId(conn, req, res) {
   }
 }
 
-export function createItinerary(conn, req, res) {
+export function createTask(conn, req, res) {
   try {
     const userId = req.params.userId;
     const itinerary = new Itinerary(
@@ -123,7 +123,7 @@ export function createItinerary(conn, req, res) {
   }
 }
 
-export function updateItinerary(conn, req, res) {
+export function updateTask(conn, req, res) {
   try {
     const itineraryId = req.params.itineraryId;
     console.log("updating itinerary", req.body);
@@ -169,7 +169,7 @@ export function updateItinerary(conn, req, res) {
   }
 }
 
-export function deleteItinerary(conn, req, res) {
+export function deleteTask(conn, req, res) {
   try {
     const itineraryId = req.params.itineraryId;
     console.log("itineraryId", itineraryId);

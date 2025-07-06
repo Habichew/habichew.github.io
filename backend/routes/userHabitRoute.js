@@ -8,9 +8,3 @@ export const userHabitRouter = express.Router();
 userHabitRouter.get("/", function (req, res, next) {
   connect((conn) => userHabitController.getAllUserHabits(conn, req, res));
 });
-
-userHabitRouter.get("/:userId", (req, res) => {
-  connect((conn) =>
-      userHabitController.findUserHabitByUserId(conn, req, res)
-  );
-});

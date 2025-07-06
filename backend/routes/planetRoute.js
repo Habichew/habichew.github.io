@@ -5,32 +5,19 @@ import { connect } from "../index.js";
 
 export const planetRouter = express.Router();
 
+// Get all Planets
 planetRouter.get("/", (req, res) => {
   connect((conn) => planetController.getAllPlanets(conn, req, res));
 });
 
-planetRouter.get("/name/:name", (req, res) => {
+// Find Planet by ID
+planetRouter.get("/:planetId", (req, res) => {
   connect((conn) => planetController.findItinerariesByName(conn, req, res));
 });
 
-planetRouter.get("/user/:userId", (req, res) => {
+// Update Planet
+planetRouter.put("/:planetId", (req, res) => {
   connect((conn) =>
     planetController.findItinerariesByUserId(conn, req, res)
   );
-});
-
-planetRouter.get("/:itineraryId", (req, res) => {
-  connect((conn) => planetController.findItinerariesById(conn, req, res));
-});
-
-planetRouter.put("/:itineraryId", (req, res) => {
-  connect((conn) => planetController.updateItinerary(conn, req, res));
-});
-
-planetRouter.post("/:userId", (req, res) => {
-  connect((conn) => planetController.createItinerary(conn, req, res));
-});
-
-planetRouter.delete("/:itineraryId", (req, res) => {
-  connect((conn) => planetController.deleteItinerary(conn, req, res));
 });

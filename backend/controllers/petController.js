@@ -1,11 +1,9 @@
 // import Event from "../models/userHabit.js";
-import * as collaboratorService from "../services/habitService.js";
+import * as petService from "../services/petService.js";
 
 export function getAllCollaborators(conn, req, res) {
   try {
-    console.log("response:", res);
-    console.log("getting all collaborators");
-    collaboratorService.getAllCollaborators(conn, (result) => {
+    petService.getAllCollaborators(conn, (result) => {
       if (result) {
         res.status(200);
       }
@@ -19,7 +17,7 @@ export function getAllCollaborators(conn, req, res) {
 
 export function findCollaboratorsByItineraryId(conn, req, res) {
   try {
-    collaboratorService.findCollaboratorsByItineraryId(
+    petService.findCollaboratorsByItineraryId(
       conn,
       req.params.itineraryId,
       (result) => {
@@ -39,7 +37,7 @@ export function findCollaboratorsByItineraryId(conn, req, res) {
 
 export function findItinerariesByCollaboratorUserId(conn, req, res) {
   try {
-    collaboratorService.findItinerariesByCollaboratorUserId(
+    petService.findItinerariesByCollaboratorUserId(
       conn,
       req.params.userId,
       (result) => {

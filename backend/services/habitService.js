@@ -1,4 +1,4 @@
-import { pipeline, env } from '@huggingface/transformers';
+/* import { pipeline, env } from '@huggingface/transformers';
 
 class MyClassificationPipeline {
   static task = 'text-generation';
@@ -18,7 +18,8 @@ class MyClassificationPipeline {
   }
 }
 
-// const pipe = await pipeline("text-generation", "TinyLlama/TinyLlama-1.1B-Chat-v1.0");
+const pipe = await pipeline("text-generation", "TinyLlama/TinyLlama-1.1B-Chat-v1.0");
+*/
 
 export async function getAllCollaborators(conn, callback) {
   console.log("get all collaborators");

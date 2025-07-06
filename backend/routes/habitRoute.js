@@ -5,22 +5,15 @@ import { connect } from "../index.js";
 
 export const habitRouter = express.Router();
 
+// Get all habits
 habitRouter.get("/", (req, res) => {
-  connect((conn) => habitController.getAllHabits(conn, req, res));
+    connect((conn) => habitController.getAllHabits(conn, req, res));
 });
 
-habitRouter.get("/recommend", (req, res) => {
-  connect((conn) => habitController.getTaskRecommendations(conn, req, res));
-})
+// Get all habit categories
+habitRouter.get("/habits/categories", (req, res) => {
+    connect((conn) =>
+        habitController.findItinerariesByUserId(conn, req, res)
+    );
+});
 
-/*habitRouter.get("/:itineraryId", (req, res) => {
-  connect((conn) =>
-      habitController.findCollaboratorsByItineraryId(conn, req, res)
-  );
-});*/
-
-// collaboratorRouter.get("/:userId", (req, res, next) => {
-//   connect((conn) =>
-//     collaboratorController.findItinerariesByCollaboratorUserId(conn, req, res)
-//   );
-// });
