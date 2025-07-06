@@ -8,9 +8,15 @@ export default function InfoScreen1() {
   const router = useRouter();
   const [pronoun, setPronoun] = useState('');
   const [petName, setPetName] = useState('');
+  const handleBack = () => {
+  router.push('/onboarding/story?index=4'); 
+  };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.backArrow}>←</Text>
+      </TouchableOpacity>
       <Image
         source={require('@/assets/images/placeholder.png')}
         style={styles.image}
@@ -44,6 +50,16 @@ export default function InfoScreen1() {
 }
 
 const styles = StyleSheet.create({
+    backButton: {
+    position: 'absolute',
+    top: 48,
+    left: 24,
+    zIndex: 1,
+  },
+  backArrow: {
+    fontSize: 24,
+    color: '#000',
+  },
   container: { flex: 1, padding: 24, backgroundColor: 'white' },
   image: { height: 160, marginVertical: 20, alignSelf: 'center' },
   form: { marginTop: 20 },
