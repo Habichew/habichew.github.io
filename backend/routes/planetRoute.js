@@ -12,12 +12,12 @@ planetRouter.get("/", (req, res) => {
 
 // Find Planet by ID
 planetRouter.get("/:planetId", (req, res) => {
-  connect((conn) => planetController.findItinerariesByName(conn, req, res));
+  connect((conn) => planetController.findPlanetById(conn, req, res));
 });
 
 // Update Planet
 planetRouter.put("/:planetId", (req, res) => {
   connect((conn) =>
-    planetController.findItinerariesByUserId(conn, req, res)
+    planetController.updatePlanet(conn, req, res)
   );
 });

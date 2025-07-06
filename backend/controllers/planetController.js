@@ -1,8 +1,10 @@
 import Event from "../models/userHabit.js";
 import * as eventService from "../services/petService.js";
+import {sendNotImplementedError} from "../app.js";
 
-export async function getAllEvents(conn, req, res) {
-  try {
+export async function getAllPlanets(conn, req, res) {
+  sendNotImplementedError(res);
+  /*try {
     console.log("response:", res);
     console.log("getting all events");
     eventService.getAllEvents(conn, (result) => {
@@ -16,7 +18,7 @@ export async function getAllEvents(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export async function findEventsByItineraryId(conn, req, res) {
@@ -39,8 +41,9 @@ export async function findEventsByItineraryId(conn, req, res) {
   }
 }
 
-export async function findEventsById(conn, req, res) {
-  try {
+export async function findPlanetById(conn, req, res) {
+  sendNotImplementedError(res);
+  /*try {
     eventService.findEventsById(conn, req.params.id, (result) => {
       if (result.length === 1) {
         res.status(200);
@@ -52,7 +55,7 @@ export async function findEventsById(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export async function createEvent(conn, req, res) {
@@ -83,8 +86,9 @@ export async function createEvent(conn, req, res) {
   }
 }
 
-export async function updateEvent(conn, req, res) {
-  try {
+export async function updatePlanet(conn, req, res) {
+  sendNotImplementedError();
+  /*try {
     const itineraryId = req.body.itineraryId;
     const id = req.body.id;
     const startTime = req.body.startTime;
@@ -97,7 +101,7 @@ export async function updateEvent(conn, req, res) {
     res.status(code);
   } finally {
     res.send();
-  }
+  }*/
 }
 
 export async function deleteEvent(conn, req, res) {

@@ -1,9 +1,16 @@
 import Itinerary from "../models/itinerary.js";
 import * as itineraryService from "../services/planetService.js";
 import * as eventService from "../services/petService.js";
+import {sendNotImplementedError} from "../app.js";
+
+export function findTaskByUserId(conn, req, res) {
+  sendNotImplementedError();
+}
+
 
 export function getAllTasks(conn, req, res) {
-  try {
+  sendNotImplementedError();
+  /*try {
     console.log("response:", res);
     console.log("getting all itineraries");
     itineraryService.getAllItineraries(conn, (result) => {
@@ -15,7 +22,7 @@ export function getAllTasks(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export function findItinerariesByName(conn, req, res) {
@@ -39,7 +46,8 @@ export function findItinerariesByName(conn, req, res) {
 }
 
 export function findTaskById(conn, req, res) {
-  console.log("find itinerary by id", req.params.itineraryId);
+  sendNotImplementedError();
+  /*console.log("find itinerary by id", req.params.itineraryId);
   try {
     itineraryService.findItinerariesById(
       conn,
@@ -56,7 +64,7 @@ export function findTaskById(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export function findItinerariesByUserId(conn, req, res) {
@@ -124,7 +132,8 @@ export function createTask(conn, req, res) {
 }
 
 export function updateTask(conn, req, res) {
-  try {
+  sendNotImplementedError(res);
+  /*try {
     const itineraryId = req.params.itineraryId;
     console.log("updating itinerary", req.body);
     const itinerary = new Itinerary(
@@ -166,11 +175,12 @@ export function updateTask(conn, req, res) {
     res.status(code);
   } finally {
     res.send();
-  }
+  }*/
 }
 
 export function deleteTask(conn, req, res) {
-  try {
+  sendNotImplementedError();
+  /*try {
     const itineraryId = req.params.itineraryId;
     console.log("itineraryId", itineraryId);
 
@@ -191,5 +201,5 @@ export function deleteTask(conn, req, res) {
     res.status(code);
   } finally {
     res.send();
-  }
+  }*/
 }

@@ -166,3 +166,8 @@ app.listen(PORT, HOST, () => {
   console.log(`Server running at http://${HOST}:${PORT}/`);
 });
 
+export function sendNotImplementedError(response) {
+  response.status("500");
+  response.send({ "error": "Endpoint not implemented yet."})
+}
+

@@ -1,22 +1,10 @@
 // import Event from "../models/userHabit.js";
 import * as petService from "../services/petService.js";
+import {sendNotImplementedError} from "../app.js";
 
-export function getAllCollaborators(conn, req, res) {
-  try {
-    petService.getAllCollaborators(conn, (result) => {
-      if (result) {
-        res.status(200);
-      }
-      res.send(result);
-    });
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}
-
-export function findCollaboratorsByItineraryId(conn, req, res) {
-  try {
+export function findPetByUserId(conn, req, res) {
+  sendNotImplementedError(res);
+    /*try {
     petService.findCollaboratorsByItineraryId(
       conn,
       req.params.itineraryId,
@@ -32,11 +20,12 @@ export function findCollaboratorsByItineraryId(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
-export function findItinerariesByCollaboratorUserId(conn, req, res) {
-  try {
+export function createPet(conn, req, res) {
+  sendNotImplementedError(res);
+    /*try {
     petService.findItinerariesByCollaboratorUserId(
       conn,
       req.params.userId,
@@ -52,5 +41,28 @@ export function findItinerariesByCollaboratorUserId(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
+  }*/
+}
+
+export function updatePet(conn, req, res) {
+    sendNotImplementedError(res);
+    /*
+    try {
+
+    petService.getAllCollaborators(conn, (result) => {
+      if (result) {
+        res.status(200);
+      }
+      res.send(result);
+    });
+
+  } catch (code) {
+    res.status(code);
+    res.send();
   }
+     */
+}
+
+export function deletePet(conn, req, res) {
+    sendNotImplementedError(res);
 }

@@ -1,8 +1,10 @@
 import * as habitService from "../services/habitService.js";
+import {sendNotImplementedError} from "../app.js";
 
 export function getAllHabits(conn, req, res) {
-  try {
-    console.log("response:", res);
+    sendNotImplementedError(res);
+    /*try {
+      /!*
     console.log("getting all habits");
     habitService.getAllHabits(conn, (result) => {
       if (result) {
@@ -10,17 +12,42 @@ export function getAllHabits(conn, req, res) {
       }
       res.send(result);
     });
+    *!/
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export function getTaskRecommendations(conn, req, res) {
-  try {
-    habitService.getTaskRecommendations(
+    sendNotImplementedError(res);
+    /*
+    try {
+      habitService.getTaskRecommendations(
+          conn,
+          req.body.habit,
+          (result) => {
+            if (result.length === 1) {
+              res.status(200);
+            } else if (result.length === 0) {
+              res.status(403);
+            }
+            res.send(result);
+          }
+      );
+  } catch (code) {
+    res.status(code);
+    res.send();
+  }
+  */
+}
+
+export function getHabitCategories(conn, req, res) {
+    sendNotImplementedError(res);
+    /*try {
+      habitService.getHabitCategories(
         conn,
-        req.body.habit,
+        req.params.postId,
         (result) => {
           if (result.length === 1) {
             res.status(200);
@@ -29,53 +56,14 @@ export function getTaskRecommendations(conn, req, res) {
           }
           res.send(result);
         }
-    );
+      );
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
-export function findPostImagesByPostId(conn, req, res) {
-  try {
-    habitService.findPostImagesByPostId(
-      conn,
-      req.params.postId,
-      (result) => {
-        if (result.length === 1) {
-          res.status(200);
-        } else if (result.length === 0) {
-          res.status(403);
-        }
-        res.send(result);
-      }
-    );
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}
-
-export function findPostImagesByUserId(conn, req, res) {
-  try {
-    habitService.findPostImagesByUserId(
-        conn,
-        req.params.userId,
-        (result) => {
-          if (result.length === 1) {
-            res.status(200);
-          } else if (result.length === 0) {
-            res.status(403);
-          }
-          res.send(result);
-        }
-    );
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}
-
+/*
 export function createPostImage(conn, req, res) {
   try {
     let postImage = new TaskRecommendation(req.body.postId, req.body.userId, req.body.imagePath);
@@ -97,3 +85,4 @@ export async function uploadImage(req, res) {
   res.status(200);
   return res.send("Uploaded file");
 }
+*/

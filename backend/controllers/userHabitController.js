@@ -1,27 +1,31 @@
 import * as itineraryTypeService from "../services/taskService.js";
+import {sendNotImplementedError} from "../app.js";
 
 export function getAllUserHabits(conn, req, res) {
-  try {
+  sendNotImplementedError(res);
+  /*try {
     console.log("not implemented", res);
 
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export function updateUserHabit(conn, req, res) {
-  try {
+  sendNotImplementedError(res);
+  /*try {
     console.log("not implemented", res);
 
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export function deleteUserHabit(conn, req, res) {
-  try {
+  sendNotImplementedError(res);
+  /*try {
     console.log("response:", res);
     console.log("getting all itineraryTypes");
     itineraryTypeService.getAllItineraryTypes(conn, (result) => {
@@ -33,11 +37,12 @@ export function deleteUserHabit(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }
 
 export function createUserHabit(conn, req, res) {
-  try {
+  sendNotImplementedError(res);
+  /*try {
     itineraryTypeService.findItineraryTypeById(
       conn,
       req.params.id,
@@ -53,5 +58,5 @@ export function createUserHabit(conn, req, res) {
   } catch (code) {
     res.status(code);
     res.send();
-  }
+  }*/
 }

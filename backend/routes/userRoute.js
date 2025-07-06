@@ -53,7 +53,7 @@ userRouter.delete("/:userId/pet", (req, res) => {
 // Get tasks by user id
 userRouter.get("/:userId/tasks", (req, res) => {
     connect((conn) =>
-        taskController.findTaskById(conn, req, res)
+        taskController.findTaskByUserId(conn, req, res)
     );
 });
 

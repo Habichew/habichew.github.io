@@ -13,7 +13,7 @@ habitRouter.get("/", (req, res) => {
 // Get all habit categories
 habitRouter.get("/habits/categories", (req, res) => {
     connect((conn) =>
-        habitController.findItinerariesByUserId(conn, req, res)
+        habitController.getHabitCategories(conn, req, res)
     );
 });
 

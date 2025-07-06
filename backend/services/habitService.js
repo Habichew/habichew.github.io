@@ -21,7 +21,7 @@ class MyClassificationPipeline {
 const pipe = await pipeline("text-generation", "TinyLlama/TinyLlama-1.1B-Chat-v1.0");
 */
 
-export async function getAllCollaborators(conn, callback) {
+export async function getAllHabits(conn, callback) {
   console.log("get all collaborators");
   const result = await conn.query("SELECT * FROM collaborators");
   callback(result);
@@ -34,7 +34,7 @@ export async function getTaskRecommendations(conn, callback) {
   callback(result);
 }
 
-export async function findCollaboratorsByItineraryId(
+export async function getHabitCategories(
   conn,
   itineraryId,
   callback
