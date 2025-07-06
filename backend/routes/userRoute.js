@@ -11,24 +11,17 @@ userRouter.post("/login", userController.findUser);
 
 userRouter.post("/signup", userController.signUp);
 
+// Profile by user id
+userRouter.get("/:userId", userController.findUserById);
+
+userRouter.put("/:userId", userController.updateUser);
+
+userRouter.delete("/:userId", userController.deleteUser);
+
 /*userRouter.get("/profileName/:profileName", (req, res) => {
   pool((conn) => userController.findUserByUsername(conn, req, res));
 });
 
-userRouter.get("/:userId", (req, res) => {
-  pool((conn) => userController.findUserById(conn, req, res));
-});
-
-userRouter.post("/:userId/newsletter", (req, res) => {
-  pool((conn) => userController.subscribeUserToNewsletter(conn, req, res));
-});
-
-userRouter.put("/:userId", (req, res) => {
-  pool((conn) => userController.updateUser(conn, req, res));
-});
-
-userRouter.delete("/:userId", (req, res) => {
-  pool((conn) => userController.deleteUser(conn, req, res));
-});*/
+*/
 
 export {userRouter};
