@@ -10,7 +10,7 @@ export default function Index() {
       }}
     >
       <Text>Edit app/index.tsx to edit this screen.</Text>
-        <Text>Tested. 28/06/25</Text>
+        <Text>Tested. 06/07/25</Text>
     </View>
   );
 }

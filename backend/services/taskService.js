@@ -1,4 +1,3 @@
-/*
 export async function getAllItineraryTypes(conn, callback) {
   console.log("get all itineraryTypes");
   console.log("connection:", conn);
@@ -14,4 +13,3 @@ export async function findItineraryTypeById(conn, id, callback) {
   );
   callback(result);
 }
-*/

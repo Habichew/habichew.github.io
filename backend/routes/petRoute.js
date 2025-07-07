@@ -1,8 +1,7 @@
-/*
 import express from "express";
 import * as eventController from "../controllers/planetController.js";
 
-import { connect } from "../app.js";
+import { connect } from "../index.js";
 
 export const petRouter = express.Router();
 
@@ -29,4 +28,3 @@ petRouter.post("/", (req, res) => {
 petRouter.delete("/:id", (req, res) => {
   connect((conn) => eventController.deleteEvent(conn, req, res));
 });
-*/

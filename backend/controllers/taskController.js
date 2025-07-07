@@ -1,4 +1,3 @@
-/*
 import Itinerary from "../models/itinerary.js";
 import * as itineraryService from "../services/planetService.js";
 import * as eventService from "../services/petService.js";
@@ -194,4 +193,3 @@ export function deleteItinerary(conn, req, res) {
     res.send();
   }
 }
-*/

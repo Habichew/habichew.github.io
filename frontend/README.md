@@ -46,16 +46,63 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+## File Structure
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+``` 
+frontend/
+├── app/ # Main routing & screen entry points
+│ ├── (tabs)/ # Tab-based layout routing
+│ │ ├── _layout.tsx # Root layout for tab navigation
+│ │ ├── explore.tsx # Tab: Explore
+│ │ ├── index.tsx # Tab: Home (default route)
+│ │ ├── pet.tsx # Tab: Pet system
+│ │ ├── Tasks.tsx # Tab: Task manager
+│ │ └── Travel.tsx # Tab: Travel reward system
+│ │
+│ ├── auth/ # Authentication screens
+│ │ ├── sign-in.tsx
+│ │ └── sign-up.tsx
+│ │
+│ ├── main/ # Primary pages in the app
+│ │ ├── AddTasks.tsx
+│ │ ├── Insights.tsx
+│ │ ├── Kitchen.tsx
+│ │ └── MoodCheck.tsx
+│ │
+│ ├── onboarding/ # wip pages
+│ └── +not-found.tsx # Fallback route for unknown paths
+│
+├── assets/ # Static assets (images, fonts, etc.)
+│ ├── fonts/
+│ └── images/
+│
+├── components/ # Reusable visual UI components
+│ ├── ui/
+│ │ ├── Collapsible.tsx # Expand/collapse UI component
+│ │ ├── ExternalLink.tsx # Safe external URL handling
+│ │ ├── HapticTab.tsx # Haptic tab button wrapper
+│ │ ├── HelloWave.tsx # Greeting animation
+│ │ ├── ParallaxScrollView.tsx # Custom scroll experience
+│ │ ├── ThemedText.tsx # Text with theme adaptation
+│ │ └── ThemedView.tsx # View wrapper with theming
+│ └── topbar.tsx # Topbar with dynamic title/theme
+│
+├── constants/ # Constant values (e.g. color theme)
+│ └── Colors.ts
+│
+├── hooks/ # Custom React hooks
+│ ├── useColorScheme.ts
+│ ├── useColorScheme.web.ts
+│ └── useThemeColor.ts
+│
+├── node_modules/ # Installed dependencies (auto-generated)
+├── .gitignore # Files/directories to exclude from Git
+├── app.json # Expo configuration
+├── eas.json # EAS (Expo Application Services) build config
+├── eslint.config.js # Linting rules
+├── expo-env.d.ts # Type declarations for Expo env
+├── package.json # Project metadata and dependencies
+├── package-lock.json # Locked dependency versions
+├── tsconfig.json # TypeScript configuration
+└── README.md # You are here
+```

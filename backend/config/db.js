@@ -61,3 +61,15 @@ export default pool;
 
 // Also export as named export for compatibility
 export { pool };
+
+export async function connect(controllerMethod) {
+  try {
+    controllerMethod(conn);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    if (conn) {
+      //conn.release();
+    }
+  }
+}

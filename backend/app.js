@@ -18,13 +18,6 @@ import pool from "./config/db.js";
 
 const app = express();
 
-// Routers
-/*import { habitRouter } from "./routes/habitRoute.js";
-import { petRouter } from "./routes/petRoute.js";
-import { planetRouter } from "./routes/planetRoute.js";
-import { taskRouter } from "./routes/taskRoute.js";
-import { userHabitRouter } from "./routes/userHabitRoute.js";
-import { userRouter } from "./routes/userRoute.js";*/
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -62,16 +55,16 @@ export const upload = multer({
   },
   limits: { fileSize: 5 * 1000 * 1000 },
 });
-//const hostname = "nodejs_2425-cs7025-group1";
 
 // Configuration
 const PORT = process.env.BACKEND_PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0'; // Important for Docker
+const HOST = '0.0.0.0'; // Important for Docker
 // Database connection test
 const testDbConnection = async () => {
   try {
     const conn = await pool.getConnection();
     console.log('MySQL database connected successfully');
+    // Release the connection to MySQL
     conn.release();
   } catch (err) {
     console.error('MySQL connection failed:', err.message);
@@ -119,6 +112,16 @@ app.post("/upload", upload.single("img"), (req, res) => {
 });
 
 /************** ROUTES ******************/
+// Routers
+/*import { habitRouter } from "./routes/habitRoute.js";
+import { petRouter } from "./routes/petRoute.js";
+import { planetRouter } from "./routes/planetRoute.js";
+import { taskRouter } from "./routes/taskRoute.js";
+import { userHabitRouter } from "./routes/userHabitRoute.js";
+*/
+// Users
+import {userRouter} from "./routes/userRoute.js";
+app.use("/users", userRouter);
 
 /*// Habits
 app.use("/habits", habitRouter);
@@ -135,8 +138,7 @@ app.use("/tasks", taskRouter);
 // User Habits
 app.use("/userHabits", userHabitRouter);
 
-// Users
-app.use("/users", userRouter);
+
 
 // Images
 app.get("/uploads/:image", function (req, res) {
