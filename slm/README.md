@@ -1,7 +1,5 @@
 ## Small-Language Model Web Server
 This web-service provides the task recommendations for habichew by embedding a small language model inside that can be accessed via a REST API. 
-Consult [frontend README](./frontend/README.md) for installation and development details.
-
 Currently, the API consists of the following endpoints:
 
 ## Break down habit
@@ -20,7 +18,8 @@ Currently, the API consists of the following endpoints:
   - Code: 400 BAD REQUEST
   - Content: { error : "Missing parameters" }
 - Sample Call:
-const response = await fetch("https://localhost:8100/breakdown/habit, method: "POST", body: { "habit": "eat healthy" })
+  
+```const response = await fetch("https://localhost:8100/breakdown/habit, method: "POST", body: { "habit": "eat healthy" })```
 
 ## Break down task
 - Route: /breakdown/task
@@ -38,4 +37,5 @@ const response = await fetch("https://localhost:8100/breakdown/habit, method: "P
   - Code: 400 BAD REQUEST
   - Content: { error : "Missing parameters" }
 - Sample Call:
+  
   ```const response = await fetch("https://localhost:8100/breakdown/task, method: "POST", body: { "task": "find low-carb recipes" })```
