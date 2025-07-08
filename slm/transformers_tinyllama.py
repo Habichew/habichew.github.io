@@ -14,9 +14,9 @@ app = Flask(__name__)
 cors = CORS(app) # allow CORS for all domains on all routes.
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route("/", methods = ['POST'])
+@app.route("/breakdown/habit", methods = ['POST'])
 @cross_origin()
-def createTaskRecommendations():
+def breakdownHabit():
     logging.info("creating task recommendations")
     req_data = request.get_json()
     device = 'cuda' if cuda.is_available() else 'cpu'
@@ -29,11 +29,50 @@ def createTaskRecommendations():
 
     if len(missing_params)==0:
         #access slm response HuggingFaceTB/SmolLM-360M-Instruct
-        pipe = pipeline("text-generation", model="HuggingFaceTB/SmolLM-360M-Instruct")
+        pipe = pipeline("text-generation", model="TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+        #pipe = pipeline("text-generation", model="HuggingFaceTB/SmolLM-360M-Instruct")
         messages = [
-            {"role": "user", "content": "Break down this habit into a list of 5 tasks that can be directly and chronologically executed: %s. No examples." %(req_data['habit'])},
+            {"role": "user", "content": "In short sentences, break down this habit into a list of broad tasks: %s. No examples." %(req_data['habit'])},
         ]
-        response = jsonify(pipe(messages, max_length=256)).json
+        response = jsonify(pipe(messages, max_new_tokens=96)).json
+        res_content = response[0]["generated_text"][1]["content"].splitlines()
+        print(res_content)
+
+        # res_content = [subtask[3:] if subtask and len(subtask) > 3 and subtask[0].isdigit() and subtask[1] == "." and subtask[2] == " " else None for subtask in res_content]
+        # while None in res_content: res_content.remove(None)
+        # while '' in res_content: res_content.remove('')
+        print(res_content)
+        logging.info("finished creating recommendations")
+        return jsonify(res_content)
+    else:
+         resp = {
+                 "status":"failure",
+                 "error" : "missing parameters",
+                 "message" : "Provide %s in request" %(missing_params)
+                }
+         return jsonify(resp)
+
+@app.route("/breakdown/task", methods = ['POST'])
+@cross_origin()
+def breakdownTask():
+    logging.info("creating task recommendations")
+    req_data = request.get_json()
+    device = 'cuda' if cuda.is_available() else 'cpu'
+    cuda.empty_cache()
+    print("device", device)
+    print("req_data %s", req_data)
+    required_params = ['habit']
+    print(request.form.keys)
+    missing_params = [key for key in required_params if key not in req_data.keys()]
+
+    if len(missing_params)==0:
+        #access slm response HuggingFaceTB/SmolLM-360M-Instruct
+        pipe = pipeline("text-generation", model="TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+        #pipe = pipeline("text-generation", model="HuggingFaceTB/SmolLM-360M-Instruct")
+        messages = [
+            {"role": "user", "content": "In short sentences, break down this task into a list of specific subtasks that can be directly and chronologically executed: %s." %(req_data['habit'])},
+        ]
+        response = jsonify(pipe(messages, max_new_tokens=96)).json
         res_content = response[0]["generated_text"][1]["content"].splitlines()
         print(res_content)
 
