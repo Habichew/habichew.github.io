@@ -1,7 +1,7 @@
 # Small-Language Model Web Server
 This web-service provides the task recommendations for habichew by embedding a small language model inside that can be accessed via a REST API. 
 
-## Starting the web-server
+## Starting the Server
 ```python ./slm/transformers_tinyllama.py```
 
 ## REST API
