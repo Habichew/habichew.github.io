@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     input: {
-        backgroundColor: 'rgb(238, 238, 238)',
+        // backgroundColor: 'rgb(238, 238, 238)',
         padding: 8,
         borderRadius: 8,
     }

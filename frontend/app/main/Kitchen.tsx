@@ -113,7 +113,6 @@ export default function KitchenScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContainer: {
     flexGrow: 1,
