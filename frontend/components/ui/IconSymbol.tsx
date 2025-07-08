@@ -6,7 +6,11 @@ const MAPPING = {
   'checkmark.circle.fill': 'check-circle',
   'airplane': 'flight',
   'person.fill': 'person',
+  'chevron.left.forwardslash.chevron.right': 'chevron-left',
+  'chevron.right': 'chevron-right',
 } as const;
+
+
 
 type IconSymbolName = keyof typeof MAPPING;
 

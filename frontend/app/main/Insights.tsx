@@ -67,7 +67,7 @@ export default function InsightsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingBottom: 20 },
+  container: { flex: 1, paddingBottom: 20 },
   title: {
     fontSize: 18,
     fontWeight: '600',
