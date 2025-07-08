@@ -65,7 +65,7 @@ export default function PetScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f4f4f7' },
+  container: { flex: 1},
   scrollContainer: {
     padding: 16,
     paddingBottom: 40,
