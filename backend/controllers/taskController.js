@@ -1,4 +1,4 @@
-import Itinerary from "../models/itinerary.js";
+import Task from "../models/task.js";
 import * as itineraryService from "../services/planetService.js";
 import * as eventService from "../services/petService.js";
 import {sendNotImplementedError} from "../app.js";

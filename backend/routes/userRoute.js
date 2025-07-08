@@ -4,7 +4,6 @@ import * as userController from "../controllers/userController.js";
 import {getAllUsers} from "../services/userService.js";
 import * as petController from "../controllers/petController.js";
 import * as taskController from "../controllers/taskController.js";
-import {connect} from "../index.js";
 import * as userHabitController from "../controllers/userHabitController.js";
 
 // Get all users's information
