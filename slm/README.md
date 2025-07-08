@@ -2,7 +2,11 @@
 This web-service provides the task recommendations for habichew by embedding a small language model inside that can be accessed via a REST API. 
 
 ## Starting the Server
-```python ./slm/transformers_tinyllama.py```
+To start the web server, install Python 3.13 before installing the following libraries: 
+```pip install transformers torch flask flask_cors```
+
+Then, execute the following python command from this directory:
+```python ./transformers_tinyllama.py```
 
 ## REST API
 Currently, the API consists of the following endpoints:
