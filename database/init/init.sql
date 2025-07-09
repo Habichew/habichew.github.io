@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Insert sample data
+-- Insert sample users data
 INSERT INTO users (username, email, password) VALUES
 ('john_doe', 'john@example.com', 'hashed_password_123'),
 ('jane_smith', 'jane@example.com', 'hashed_password_456');
@@ -64,20 +64,28 @@ CREATE TABLE IF NOT EXISTS `habits` (
 
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `title` varchar(255),
   `description` varchar(255),
   `score` integer,
   `level` integer,
   `priority` integer,
   `recommendation` varchar(255),
   `category_id` integer,
+  `habit_id` integer,
   `due_at` datetime,
-  `created_at` timestamp
+  `created_at` default current_timestamp
 );
+
+-- Insert sample tasks data
+INSERT INTO tasks (description, score, level, priority, recommendation, category_id, due_at) VALUES ('eat healthily', '50', '3', 2, '', 1, '2026-01-01'), ('study for exam', '30', '3', 1, '', 1, '2025-07-10');
 
 CREATE TABLE IF NOT EXISTS `habit_categories` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255)
 );
+
+-- Insert sample habit_categories data
+INSERT INTO habit_categories VALUES (0, 'Health'), (1, 'Studies'), (2, 'Hobbies'), (3, 'Mindfulness');
 
 ALTER TABLE `users` ADD FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`);
 

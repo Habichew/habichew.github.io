@@ -121,7 +121,11 @@ import { userHabitRouter } from "./routes/userHabitRoute.js";
 */
 // Users
 import {userRouter} from "./routes/userRoute.js";
+import {taskRouter} from "./routes/taskRoute.js";
 app.use("/users", userRouter);
+
+// Tasks
+app.use("/tasks", taskRouter);
 
 /*// Habits
 app.use("/habits", habitRouter);
@@ -132,13 +136,8 @@ app.use("/pets", petRouter);
 // Planets
 app.use("/planets", planetRouter);
 
-// Tasks
-app.use("/tasks", taskRouter);
-
 // User Habits
 app.use("/userHabits", userHabitRouter);
-
-
 
 // Images
 app.get("/uploads/:image", function (req, res) {
