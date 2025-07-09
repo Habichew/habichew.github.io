@@ -73,8 +73,8 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `category_id` integer,
   `habit_id` integer,
   `due_at` datetime,
-  `created_at` default current_timestamp
-);
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
 -- Insert sample tasks data
 INSERT INTO tasks (description, score, level, priority, recommendation, category_id, due_at) VALUES ('eat healthily', '50', '3', 2, '', 1, '2026-01-01'), ('study for exam', '30', '3', 1, '', 1, '2025-07-10');

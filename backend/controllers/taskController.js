@@ -81,45 +81,29 @@ export function findItinerariesByUserId(conn, req, res) {
   }
 }
 
-export function createTask(conn, req, res) {
+export async function createTask(req, res) {
   try {
-    const userId = req.params.userId;
-    const itinerary = new Itinerary(
-      req.body.name,
-      userId,
-      req.body.startDate,
-      req.body.endDate,
-      req.body.createdAt,
-      req.body.updatedAt,
-      req.body.type
-    );
-    const events = req.body.events;
-    if (events) {
-      console.log("itinerary", itinerary);
-      console.log("events", events);
-      console.log("userId", userId);
-      itineraryService.createItinerary(conn, itinerary, (result) => {
-        const itineraryId = result.insertId.toString();
+    const { task } = req.body;
 
-        console.log("itineraryId", itinerary);
-        let updatedEvents = [];
-        for (let e of events) {
-          updatedEvents.push([e[0], itineraryId, e[1], e[2]]);
-        }
-        console.log("updated events", updatedEvents);
-
-        eventService.createEvents(conn, updatedEvents, (result) => {
-          res.status(200);
-        });
-      });
-    } else {
-      res.status(400);
-      res.send({ error: "missing events" });
+    // Check if task was provided in request body
+    if (!task) {
+      return res.status(400).json({message: `No object 'task' provided in request body`});
     }
-  } catch (code) {
-    res.status(code);
-  } finally {
-    res.send();
+
+    // Check if habit exists
+    // const r = await habitService.findHabitById(task.habitId);
+
+    const result = await taskService.createTask(task);
+
+    // Optionally re-fetch the updated user
+    const fetchedTask = await taskService.findTaskById(result.insertId);
+    return res.status(200).send({
+      message: 'Task created successfully',
+      task: fetchedTask[0],
+    });
+  } catch (err) {
+    console.error('Update error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
 
@@ -127,8 +111,6 @@ export async function updateTask(req, res) {
   try {
     const { taskId } = req.params;
     const { task } = req.body;
-    console.log("request parameters", req.params);
-    console.log("request body", req.body);
 
     // Check if task was provided in request body
     if (!task) {
@@ -154,8 +136,6 @@ export async function updateTask(req, res) {
       task.habitId || existingTask.habitId,
       task.dueAt || existingTask.dueAt
     )
-
-    console.log(updatedTask);
 
     const result = await taskService.updateTask(taskId, updatedTask);
 
