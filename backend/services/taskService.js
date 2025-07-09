@@ -37,6 +37,11 @@ export async function updateTask(id, task) {
   return row;
 }
 
+export async function deleteTask(id) {
+    const [rows] = await pool.query('DELETE FROM tasks WHERE id = ?', [id]);
+    return rows;
+}
+
 export async function findItineraryTypeById(conn, id, callback) {
   console.log("find itineraryTypes by id", id);
   const result = await conn.query(

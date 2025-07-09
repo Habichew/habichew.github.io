@@ -20,7 +20,6 @@ export async function getAllTasks(req, res) {
 }
 
 export async function findTaskById(req, res) {
-  // sendNotImplementedError();
   try {
     console.log("###### /tasks: Getting task by id ######");
     const task = await taskService.findTaskById(req.params.id);
@@ -151,8 +150,26 @@ export async function updateTask(req, res) {
   }
 }
 
-export function deleteTask(conn, req, res) {
-  sendNotImplementedError();
+export async function deleteTask(req, res) {
+  try {
+    const { taskId } = req.params;
+
+    // Get current task from DB, to update the changed fields only
+    const currentTask = await taskService.findTaskById(taskId);
+    if (!currentTask || currentTask.length === 0) {
+      return res.status(404).json({message: `Task does not exist`});
+    }
+
+    const result = await taskService.deleteTask(taskId);
+    console.log(result);
+
+    return res.status(200).send({
+      message: 'Task deleted successfully',
+    });
+  } catch (err) {
+    console.error('Update error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
   /*try {
     const itineraryId = req.params.itineraryId;
     console.log("itineraryId", itineraryId);
