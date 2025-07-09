@@ -9,6 +9,9 @@ taskRouter.get("/", taskController.getAllTasks);
 // Get task by id
 taskRouter.get("/:taskId", taskController.findTaskById);
 
+// Create task
+taskRouter.post("/", taskController.createTask);
+
 // Update task by id
 taskRouter.put("/:taskId", taskController.updateTask);
 

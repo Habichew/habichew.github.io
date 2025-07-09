@@ -10,6 +10,14 @@ export async function findTaskById(id) {
   return row;
 }
 
+export async function createTask(task) {
+    const [row] = await pool.query(
+        'INSERT INTO tasks (description, score, level, priority, recommendation, category_id, due_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [task.description, task.score, task.level, task.priority, task.recommendation, task.categoryId, task.dueAt]
+    );
+    return row;
+}
+
 export async function updateTask(id, task) {
   const [row] = await pool.query(
       `UPDATE tasks
