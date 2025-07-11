@@ -28,11 +28,11 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Insert sample users data
-INSERT INTO users (username, email, password) VALUES
-('john_doe', 'john@example.com', 'hashed_password_123'),
-('jane_smith', 'jane@example.com', 'hashed_password_456');
+INSERT INTO users (username, email, password, petId) VALUES
+('john_doe', 'john@example.com', 'hashed_password_123', 1),
+('jane_smith', 'jane@example.com', 'hashed_password_456', 2);
 
-CREATE TABLE IF NOT EXISTS user_habits (
+CREATE TABLE IF NOT EXISTS userHabits (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `userId` integer,
   `habitId` integer
@@ -45,8 +45,13 @@ CREATE TABLE IF NOT EXISTS pets (
   `personality` varchar(255),
   `level` integer,
   `hunger` integer,
-  `createdAt` timestamp
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Insert sample pets data
+INSERT INTO pets (name, mood, personality, level) VALUES
+('henry', 'happy', 'calm', 1),
+('filou', 'hungry', 'anxious', 1);
 
 CREATE TABLE IF NOT EXISTS `planets` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
@@ -77,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
     );
 
 -- Insert sample tasks data
-INSERT INTO tasks (description, score, level, priority, recommendation, category_id, due_at) VALUES ('eat healthily', '50', '3', 2, '', 1, '2026-01-01'), ('study for exam', '30', '3', 1, '', 1, '2025-07-10');
+INSERT INTO tasks (description, score, level, priority, recommendation, categoryId, dueAt) VALUES ('eat healthily', '50', '3', 2, '', 1, '2026-01-01'), ('study for exam', '30', '3', 1, '', 1, '2025-07-10');
 
 CREATE TABLE IF NOT EXISTS `habitCategories` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
@@ -95,7 +100,7 @@ ALTER TABLE `users` ADD FOREIGN KEY (`petId`) REFERENCES `pets` (`id`);
 
 ALTER TABLE `users` ADD FOREIGN KEY (`currentPlanetId`) REFERENCES `planets` (`id`);
 
-ALTER TABLE `users` ADD FOREIGN KEY (`userHabitsId`) REFERENCES `user_habits` (`id`);
+ALTER TABLE `users` ADD FOREIGN KEY (`userHabitsId`) REFERENCES `userHabits` (`id`);
 
 ALTER TABLE `userHabits` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
 
@@ -103,6 +108,6 @@ ALTER TABLE `userHabits` ADD FOREIGN KEY (`habitId`) REFERENCES `habits` (`id`);
 
 ALTER TABLE `habits` ADD FOREIGN KEY (`taskId`) REFERENCES `tasks` (`id`);
 
-ALTER TABLE `tasks` ADD FOREIGN KEY (`categoryId`) REFERENCES `habit_categories` (`id`);
+ALTER TABLE `tasks` ADD FOREIGN KEY (`categoryId`) REFERENCES `habitCategories` (`id`);
 
 -- Add your existing database schema here
