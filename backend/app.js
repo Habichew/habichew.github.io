@@ -112,23 +112,21 @@ app.post("/upload", upload.single("img"), (req, res) => {
 });
 
 /************** ROUTES ******************/
-// Routers
-/*import { habitRouter } from "./routes/habitRoute.js";
-import { petRouter } from "./routes/petRoute.js";
-import { planetRouter } from "./routes/planetRoute.js";
-import { taskRouter } from "./routes/taskRoute.js";
-import { userHabitRouter } from "./routes/userHabitRoute.js";
-*/
+
 // Users
 import {userRouter} from "./routes/userRoute.js";
 import {taskRouter} from "./routes/taskRoute.js";
+import {habitRouter} from "./routes/habitRoute.js";
+
 app.use("/users", userRouter);
 
 // Tasks
 app.use("/tasks", taskRouter);
 
-/*// Habits
+// Habits
 app.use("/habits", habitRouter);
+
+/*
 
 // Pets
 app.use("/pets", petRouter);

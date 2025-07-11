@@ -42,9 +42,9 @@ export async function signUp(req, res) {
 export async function findUser(req, res) {
   try {
     const {email, password} = req.body;
-    await userService.findUserByEmail(email, (result) => {
-      console.log("###### /users/login: find user by email result ######", result);
-      if (result.length > 0) {
+    const result = await userService.findUserByEmail(email);
+    if(result.length > 0) {
+    console.log("###### /users/login: find user by email result ######", result);
         bcrypt.compare(
           password,
           result[0].password,
@@ -66,7 +66,6 @@ export async function findUser(req, res) {
         res.status(404);
         res.send({ error: "Incorrect user" });
       }
-    });
   } catch (code) {
     res.status(code);
     res.send();
@@ -91,6 +90,96 @@ export async function findUserById(req, res) {
   }
 }
 
+export async function updateEmailById(req, res) {
+  const { userId } = req.params;
+  const { newEmail } = req.body;
+  try {
+    // Check if the email is occupied
+    const existing = await userService.findUserByEmail(newEmail);
+    console.log(existing);
+
+    if (existing.length!==0 && existing.id !== parseInt(userId)) {
+      return res.status(409).json({ message: 'Email already registered.' });
+    }
+
+    const result = await userService.updateUserById(userId, 'email', newEmail);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findEmailById(req, res) {
+  const { userId } = req.params;
+  try {
+    const email = await userService.getUserById(userId, 'email');
+    res.status(200).send({ email });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function updatePasswordById(req, res) {
+  const { userId } = req.params;
+  const { oldPassword, newPassword } = req.body;
+  try {
+    const storedPassword = await userService.getUserById(userId, 'password');
+    bcrypt.compare(oldPassword, storedPassword, async function (err, verified) {
+      if (err) {
+        // If the input old password does not matched with stored password
+        return res.status(401).send({message: 'Old password not match'});
+      }
+      if (verified) {
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        const result = await userService.updateUserById(userId, 'password', hashedNewPassword);
+        res.status(200).send(result);}
+    });
+    } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findPasswordById(req, res) {
+  const { userId } = req.params;
+  try {
+    const password = await userService.getUserById(userId, 'password');
+    res.status(200).send({ password });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function updateUsernameById(req, res) {
+  const { userId } = req.params;
+  const { newUsername } = req.body;
+  try {
+    const result = await userService.updateUserById(userId, 'username', newUsername);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findUsernameById(req, res) {
+  const { userId } = req.params;
+  try {
+    const username = await userService.getUserById(userId, 'username');
+    res.status(200).send({ username });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findProfileImageById(req, res) {
+  const { userId } = req.params;
+  try {
+    const profileImage = await userService.getUserById(userId, 'profileImage');
+    res.status(200).send({ profileImage });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
 export async function updateUser(req, res) {
   try {
     const { userId } = req.params;
@@ -111,8 +200,7 @@ export async function updateUser(req, res) {
     };
 
     if (newPassword) {
-      const salt = await bcrypt.genSalt(10);
-      updatedFields.password = await bcrypt.hash(newPassword, salt);
+      updatedFields.password = await bcrypt.hash(newPassword, 10);
     }
 
     const result = await userService.updateUser(userId, updatedFields);
@@ -130,58 +218,6 @@ export async function updateUser(req, res) {
   }
 }
 
-
-/*
-export async function findUserByUsername(conn, req, res) {
-  try {
-    await userService.findUserByUsername(
-      conn,
-      req.params.profileName,
-      (result) => {
-        if (result.length === 1) {
-          res.status(200);
-        } else if (result.length === 0) {
-          res.status(404);
-        }
-        res.send(result);
-      }
-    );
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}*/
-
-
-/*export async function createUser(conn, req, res) {
-  try {
-    const user = new User(
-      req.body.email,
-      req.body.password,
-      req.body.profileName,
-      req.body.profileImage
-    );
-    await userService.findUserByEmail(conn, user.email, (result) => {
-      if (result.length > 0) {
-        res.status(400);
-        res.send({ error: "user already exists" });
-      } else {
-        userService.createUser(conn, user, (result) => {
-          if (result) {
-            res.status(200);
-            res.send({ success: "registered new user" });
-          } else {
-            res.status(500);
-            res.send({ error: "failed to register new user" });
-          }
-        });
-      }
-    });
-  } catch (err) {
-    res.status(500);
-    res.send(err);
-  }
-}*/
 
 /*export async function subscribeUserToNewsletter(conn, req, res) {
   try {

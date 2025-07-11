@@ -1,6 +1,6 @@
 -- Create database
 -- Drop the database and recreate before running, if there's too many changes to make.
--- DROP DATABASE IF EXISTS habichew_db;
+DROP DATABASE IF EXISTS habichew_db;
 CREATE DATABASE IF NOT EXISTS habichew_db;
 USE habichew_db;
 
@@ -15,11 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
   `profile_img` varchar(2083) DEFAULT 'https://i.ibb.co/q3MfyBnr/habichew.png',
   `mood` varchar(255),
   `pet_id` integer,
-  `score` integer,
-  `fuel_status` double,
-  `current_planet_id` integer,
-  `visited_planets` integer,
-  `finished_planets` integer,
+  `credits` integer,
   `user_habits_id` integer,
   `tasks_num` integer,
     -- Record created and updated time automatically
@@ -37,6 +33,8 @@ CREATE TABLE IF NOT EXISTS user_habits (
   `user_id` integer,
   `habit_id` integer
 );
+
+
 
 CREATE TABLE IF NOT EXISTS pets (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
@@ -81,15 +79,17 @@ INSERT INTO tasks (description, score, level, priority, recommendation, category
 
 CREATE TABLE IF NOT EXISTS `habit_categories` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `name` varchar(255)
+  `name` varchar(255) NOT NULL
 );
 
 -- Insert sample habit_categories data
-INSERT INTO habit_categories VALUES (0, 'Health'), (1, 'Studies'), (2, 'Hobbies'), (3, 'Mindfulness');
+INSERT INTO habit_categories( name ) VALUES
+('Health'),
+('Studies'),
+('Hobbies'),
+('Mindfulness');
 
 ALTER TABLE `users` ADD FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`);
-
-ALTER TABLE `users` ADD FOREIGN KEY (`current_planet_id`) REFERENCES `planets` (`id`);
 
 ALTER TABLE `users` ADD FOREIGN KEY (`user_habits_id`) REFERENCES `user_habits` (`id`);
 

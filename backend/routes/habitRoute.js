@@ -1,19 +1,17 @@
 import express from "express";
+const habitRouter = express.Router();
+
+import * as userController from "../controllers/userController.js";
 import * as habitController from "../controllers/habitController.js";
+import * as petController from "../controllers/petController.js";
+import * as taskController from "../controllers/taskController.js";
+import * as userHabitController from "../controllers/userHabitController.js";
 
-import { connect } from "../index.js";
-
-export const habitRouter = express.Router();
 
 // Get all habits
-habitRouter.get("/", (req, res) => {
-    connect((conn) => habitController.getAllHabits(conn, req, res));
-});
+habitRouter.get("/", habitController.getAllHabits);
 
 // Get all habit categories
-habitRouter.get("/habits/categories", (req, res) => {
-    connect((conn) =>
-        habitController.getHabitCategories(conn, req, res)
-    );
-});
+/*habitRouter.get("/categories", habitController.getAllHabitCategories);*/
 
+export {habitRouter};
