@@ -1,18 +1,31 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
+import { useThemeColor } from '@/hooks/useThemeColor';
+
 export type ThemedTextProps = TextProps & {
-  type?: 'h1' | 'h2' | 'body' | 'caption' | 'buttonText';
+  lightColor?: string;
+  darkColor?: string;
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
 };
 
 export function ThemedText({
   style,
-  type = 'body',
+  lightColor,
+  darkColor,
+  type = 'default',
   ...rest
 }: ThemedTextProps) {
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+
   return (
     <Text
       style={[
-        styles[type],
+        { color },
+        type === 'default' ? styles.default : undefined,
+        type === 'title' ? styles.title : undefined,
+        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
+        type === 'subtitle' ? styles.subtitle : undefined,
+        type === 'link' ? styles.link : undefined,
         style,
       ]}
       {...rest}
@@ -21,33 +34,27 @@ export function ThemedText({
 }
 
 const styles = StyleSheet.create({
-  h1: {
-    fontFamily: 'Lalezar',
-    fontSize: 24,
+  default: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  defaultSemiBold: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
     lineHeight: 32,
   },
-  h2: {
-    fontFamily: 'Poppins-SemiBold',
+  subtitle: {
     fontSize: 20,
-    lineHeight: 28,
-    color: '#000',
+    fontWeight: 'bold',
   },
-  body: {
-    fontFamily: 'Poppins',
+  link: {
+    lineHeight: 30,
     fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-  },
-  caption: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#333',
-  },
-  buttonText: {
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#000',
+    color: '#0a7ea4',
   },
 });

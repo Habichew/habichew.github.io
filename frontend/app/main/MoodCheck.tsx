@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import TopBar from '@/components/topbar';
+import TopBar from '@/components/bottomBar';
 
 const moods = ['😖', '😵', '😟', '😐', '😊'];
 
@@ -67,6 +67,7 @@ export default function MoodCheckScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     alignItems: 'center',
     paddingTop: 24,
   },

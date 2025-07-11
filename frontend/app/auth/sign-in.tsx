@@ -2,46 +2,64 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
+import CustomInput from '@/components/ui/input';
 
 export default function SignInScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [focusedInput, setFocusedInput] = useState<'email' | 'password' | null>(null);
 
-  const handleSignIn = () => {
-    if (email && password) {
-      // Login simulation successful, jump to home page
-      router.replace('../tabs');
-    } else {
-      Alert.alert('Missing input', 'Please enter email and password');
+
+const handleSignIn = async () => {
+  if (email && password) {
+    try {
+      const response = await fetch('http://localhost:3000/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Sign in successful!');
+        router.replace('/pet');
+      } else {
+        Alert.alert('Login Failed', data.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to connect to the server');
     }
-  };
+  } else {
+    Alert.alert('Missing input', 'Please enter email and password');
+  }
+};
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome back 👋</Text>
 
-      <TextInput
-        style={styles.input}
+  return (   
+    <View style={styles.screen}>
+      <View style={styles.purpleBackground}>
+      <Text style={styles.title}>Welcome back,{'\n'}ready to continue?</Text>
+
+      <CustomInput
         placeholder="Email"
-        placeholderTextColor="#999"
-        onChangeText={setEmail}
         value={email}
-        keyboardType="email-address"
-        autoCapitalize="none"
+        onChangeText={setEmail}
       />
-      <TextInput
-        style={styles.input}
+
+      <CustomInput
         placeholder="Password"
-        placeholderTextColor="#999"
-        secureTextEntry
-        onChangeText={setPassword}
         value={password}
+        onChangeText={setPassword}
       />
 
       <TouchableOpacity>
         <Text style={styles.link}>Forgot password?</Text>
       </TouchableOpacity>
+      </View>
 
       <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
         <Text style={styles.signInText}>Sign In</Text>
@@ -56,44 +74,46 @@ export default function SignInScreen() {
         <FontAwesome name="facebook" size={24} color="#555" style={styles.icon} />
       </View>
 
-      <TouchableOpacity onPress={() => router.push('./auth/sign-up')}>
+      <TouchableOpacity onPress={() => router.push('/auth/sign-up')}>
         <Text style={styles.link}>Don't have an account? <Text style={{ fontWeight: 'bold' }}>Sign up</Text></Text>
       </TouchableOpacity>
-    </View>
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    padding: 24,
-    justifyContent: 'center',
     backgroundColor: '#fff',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+    purpleBackground: {
+    width: '100%',
+    backgroundColor: '#E8C9FD',
+    paddingBottom: 40,
+    paddingTop: 200,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: '700',
     marginBottom: 32,
   },
-  input: {
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-  },
   signInButton: {
-    backgroundColor: '#333',
-    borderRadius: 8,
+    backgroundColor: '#1CC282',
     paddingVertical: 14,
-    marginTop: 8,
-    marginBottom: 16,
+    paddingHorizontal: 60,
+    borderRadius: 25,
+    marginTop: 20,
   },
   signInText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: '600',
+    color: '#000',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   link: {
     color: '#444',
@@ -103,7 +123,8 @@ const styles = StyleSheet.create({
   orText: {
     textAlign: 'center',
     color: '#999',
-    marginVertical: 12,
+    marginBottom: 20,
+    marginTop:30,
   },
   iconRow: {
     flexDirection: 'row',
@@ -114,4 +135,7 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 20,
   },
+  inputFocused: {
+  backgroundColor: '#f0f0f0', 
+},
 });

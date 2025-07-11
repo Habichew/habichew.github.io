@@ -1,6 +1,6 @@
 -- Create database
 -- Drop the database and recreate before running, if there's too many changes to make.
--- DROP DATABASE IF EXISTS habichew_db;
+DROP DATABASE IF EXISTS habichew_db;
 CREATE DATABASE IF NOT EXISTS habichew_db;
 USE habichew_db;
 
@@ -85,7 +85,11 @@ CREATE TABLE IF NOT EXISTS `habit_categories` (
 );
 
 -- Insert sample habit_categories data
-INSERT INTO habit_categories VALUES (0, 'Health'), (1, 'Studies'), (2, 'Hobbies'), (3, 'Mindfulness');
+INSERT INTO habit_categories (name) VALUES
+('Health'),
+('Studies'),
+('Hobbies'),
+('Mindfulness');
 
 ALTER TABLE `users` ADD FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`);
 

@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import TopBar from '@/components/topbar';
+import TopBar from '@/components/bottomBar';
 import { Ionicons } from '@expo/vector-icons';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -113,6 +113,7 @@ export default function KitchenScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   scrollContainer: {
     flexGrow: 1,

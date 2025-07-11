@@ -1,6 +1,12 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import React, { useState } from 'react';
+import BackButton from 'components/ui/BackButton';
+
+<View style={{ marginTop: 50, marginLeft: 20 }}>
+  <BackButton />
+</View>
+
 
 const storyImages = [
   require('../../assets/images/story1.png'),
@@ -41,75 +47,111 @@ export default function StoryScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={storyImages[index]} style={styles.image} />
-      </View>
-
-      <View style={styles.textContainer}>
-        {storyTexts[index].map((line, i) => (
-          <Text key={i} style={styles.line}>{line}</Text>
-        ))}
-      </View>
-
-      <TouchableOpacity style={styles.arrowContainer} onPress={handleNext}>
-        <Text style={styles.arrow}>→</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backArrow}>←</Text>
-      </TouchableOpacity>
+  <View style={styles.container}>
+    <View style={styles.imageSection}>
+      <Image source={storyImages[index]} style={styles.image} />
     </View>
-  );
+
+    {/* text */}
+    <View style={styles.textSection}>
+      {storyTexts[index].map((line, i) => (
+        <Text key={i} style={styles.line}>{line}</Text>
+      ))}
+    </View>
+
+    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+      <View style={styles.circleButton}>
+        <Text style={styles.arrowText}>{'<'}</Text>
+      </View>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.arrowContainer} onPress={handleNext}>
+      <View style={styles.circleButton}>
+        <Text style={styles.arrowText }>{'>'}</Text>
+      </View>
+    </TouchableOpacity>
+
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
-      backButton: {
-    position: 'absolute',
-    top: 48,
-    left: 24,
-    zIndex: 1,
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  imageSection: {
+    flex: 1,
+    backgroundColor: '#ffffff', 
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  textSection: {
+    flex: 0.7,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: 36,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  line: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  arrow: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   backArrow: {
     fontSize: 24,
     color: '#000',
   },
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  imageContainer: {
-    height: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  image: {
-    width: '70%',
-    height: '70%',
-    resizeMode: 'contain',
-  },
-  textContainer: {
-    height: '40%',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: 32,
-    paddingHorizontal: 24,
-    backgroundColor: 'white',
-  },
-  line: {
-    fontSize: 13,
-    textAlign: 'center',
-    color: '#333',
-    marginBottom: 8,
-  },
+  backButton: {
+  position: 'absolute',
+  top: 28,
+  left: 24,
+  zIndex: 10,
+},
+
   arrowContainer: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 36,
     right: 24,
+    zIndex: 10,
   },
-  arrow: {
-    fontSize: 18,
+
+  circleButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+
+  arrowText: {
     color: '#000',
+    fontSize: 24,
+    fontWeight: 'bold',
+    lineHeight: 24,
   },
 });
+
