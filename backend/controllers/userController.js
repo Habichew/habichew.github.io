@@ -126,14 +126,19 @@ export async function updatePasswordById(req, res) {
     const storedPassword = await userService.getUserById(userId, 'password');
     bcrypt.compare(oldPassword, storedPassword, async function (err, verified) {
       if (err) {
-        // If the input old password does not matched with stored password
-        return res.status(401).send({message: 'Old password not match'});
+        console.error('bcrypt error:', err);
+        return res.status(500).send({ message: 'Server error during password check' });
       }
-      if (verified) {
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        const result = await userService.updateUserById(userId, 'password', hashedNewPassword);
-        res.status(200).send(result);}
-    });
+
+      if (!verified) {
+        return res.status(401).send({ message: 'Old password does not match' });
+      }
+
+      // If verified
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      const result = await userService.updateUserById(userId, 'password', hashedNewPassword);
+      return res.status(200).send(result);
+      });
     } catch (err) {
     res.status(500).send({ error: err.message });
   }
