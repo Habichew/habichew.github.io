@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import Checkbox from 'expo-checkbox';
+import CustomInput from '@/components/ui/input';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -9,110 +10,141 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agree, setAgree] = useState(false);
-
-  const handleSignUp = () => {
+  const isFormValid = username && agree && email && password;
+  const handleSignUp = async () => {
     if (!agree) {
       alert('Please agree to the terms.');
       return;
     }
-    console.log('Registered:', { username, email, password });
-    // Jump after registration logic
-    router.replace('/Pet');
+
+    if (!email || !password) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/users/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Registration successful!');
+        router.replace('/pet'); 
+      } else {
+        alert(`Registration failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
   };
 
-  return (
-    <View style={styles.container}>
-      <Image
-        source={require('../../assets/images/placeholder.png')}
-        style={styles.image}
-        resizeMode="contain"
-      />
+return (
+  <View style={styles.screen}>
+    <Text style={styles.title}>Let’s get{'\n'}you started!</Text>
 
-      <Text style={styles.title}>Create an Account</Text>
+    <View style={styles.formContainer}>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#888"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#888"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#888"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+<CustomInput
+  placeholder="Username"
+  value={username}
+  onChangeText={setUsername}
+/>
+
+<CustomInput
+  placeholder="Email"
+  value={email}
+  onChangeText={setEmail}
+/>
+
+<CustomInput
+  placeholder="Password"
+  value={password}
+  onChangeText={setPassword}
+/>
+
 
       <View style={styles.checkboxContainer}>
-        <Checkbox value={agree} onValueChange={setAgree} color={agree ? '#333' : undefined} />
-        <Text style={styles.checkboxLabel}> I agree with Terms & Conditions</Text>
+        <Checkbox value={agree} onValueChange={setAgree} color={agree ? '#000' : undefined} />
+        <Text style={styles.checkboxLabel}> I agree with the Terms & Conditions</Text>
       </View>
 
       <TouchableOpacity
-        style={[styles.button, { opacity: agree ? 1 : 0.6 }]}
+        style={[styles.button, { opacity: isFormValid ? 1 : 0.6 }]}
         onPress={handleSignUp}
-        disabled={!agree}
+        disabled={!isFormValid}
       >
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
     </View>
-  );
+  </View>
+);
 }
+
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    padding: 20,
-    justifyContent: 'center',
     backgroundColor: '#fff',
-  },
-  image: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-    marginBottom: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: 80,
   },
   title: {
-    fontSize: 20,
+    fontSize: 60,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 60,
+    color: '#000',
+  },
+  formContainer: {
+    flex: 1, 
+    width: '100%',
+    backgroundColor: '#DAB7FF',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    paddingVertical: 60,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 6,
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     marginBottom: 12,
+    fontSize: 16,
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop:20,
+    marginBottom: 30,
   },
   checkboxLabel: {
+    fontSize: 13,
     marginLeft: 8,
-    fontSize: 14,
+    color: '#000',
   },
   button: {
-    backgroundColor: '#4B5563',
-    padding: 12,
-    borderRadius: 6,
-    alignItems: 'center',
+    backgroundColor: '#1CC282',
+    paddingVertical: 14,
+    paddingHorizontal: 60,
+    borderRadius: 25,
+    marginTop: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: '#000',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
+
+
+

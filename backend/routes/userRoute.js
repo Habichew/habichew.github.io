@@ -45,24 +45,16 @@ userRouter.get("/profileName/:profileName", (req, res) => {
 
 /* User Pets */
 // Find pet by user id
-userRouter.get("/:userId/pet", (req, res) => {
-    connect((conn) => petController.findPetByUserId(conn, req, res));
-})
+userRouter.get("/:userId/pet", petController.findPetByUserId);
 
 // Create pet
-userRouter.post("/:userId/pet", (req, res) => {
-    connect((conn) => petController.createPet(conn, req, res));
-})
+userRouter.post("/:userId/pet", petController.createPet);
 
 // Update pet
-userRouter.put("/:userId/pet", (req, res) => {
-    connect((conn) => petController.updatePet(conn, req, res));
-})
+userRouter.put("/:userId/pet", petController.updatePet);
 
 // Delete pet
-userRouter.delete("/:userId/pet", (req, res) => {
-    connect((conn) => petController.deletePet(conn, req, res));
-})
+userRouter.delete("/:userId/pet", petController.deletePet);
 
 /* User Tasks */
 // Get tasks by user id

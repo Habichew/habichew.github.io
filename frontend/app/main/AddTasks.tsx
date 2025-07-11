@@ -2,14 +2,9 @@ import React, {useState} from 'react';
 import {
     View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, ScrollView
 } from 'react-native';
-import TopBar from '@/components/topbar';
+import TopBar from '@/components/bottomBar';
 import {Ionicons} from '@expo/vector-icons';
 
-import Colors from '../../constants/Colors';
-import { useFonts } from 'expo-font';
-import { Dimensions } from 'react-native';
-
-const screenWidth = Dimensions.get('window').width;
 const mockTasks = [
     {
         id: '1',
@@ -34,17 +29,6 @@ export default function AddTasksScreen() {
     const [subTasks, setSubTasks] = useState<string[]>(['']);
     const [taskAdded, setTaskAdded] = useState<boolean>(false);
     const [slmResponse,  setSlmResponse] = React.useState("");
-
-    const [fontsLoaded] = useFonts({
-        Poppins: require('@/assets/fonts/Poppins-Regular.ttf'),
-        Lalezar: require('@/assets/fonts/Lalezar-Regular.ttf'),
-        'Poppins-SemiBold': require('@/assets/fonts/Poppins-SemiBold.ttf'),
-        'Poppins-Medium': require('@/assets/fonts/Poppins-Medium.ttf'),
-      });
-    
-      if (!fontsLoaded) {
-        return null;
-      }
 
     async function sendTask() {
         console.log('Sending task...', task);
@@ -104,23 +88,18 @@ export default function AddTasksScreen() {
 
             {/* Tab Toggle */}
             <View style={styles.tabRow}>
-            {['Habits', 'Tasks'].map((t, index) => (
-                <TouchableOpacity
-                key={t}
-                onPress={() => setTab(t as 'Habits' | 'Tasks')}
-                style={[
-                    styles.tabButton,
-                    tab === t && styles.tabSelected,
-                    index !== ['Habits', 'Tasks'].length - 1 && { marginRight: 8 } 
-                ]}
-                >
-                <Text style={[styles.tabText, tab === t && styles.tabTextSelected]}>
-                    {t}
-                </Text>
+                {['Habits', 'Tasks'].map(t => (
+                    <TouchableOpacity
+                        key={t}
+                        onPress={() => setTab(t as 'Habits' | 'Tasks')}
+                        style={[styles.tabButton, tab === t && styles.tabSelected]}>
+                        <Text>{t}</Text>
+                    </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={styles.plusButton}>
+                    <Ionicons name="add" size={20}/>
                 </TouchableOpacity>
-            ))}
             </View>
-
 
             {/* Add Task Section */}
             <View style={styles.addBox}>
@@ -138,6 +117,10 @@ export default function AddTasksScreen() {
                     :
                     ""
                 }
+                <View style={styles.iconRow}>
+                    <Ionicons name="time-outline" size={18}/>
+                    <Ionicons name="calendar-outline" size={18} style={{marginLeft: 16}}/>
+                </View>
                 <View style={styles.btnRow}>
                     <TouchableOpacity style={styles.subBtn} onPress={() => sendTask()}>
                         <Text style={styles.subBtnText}>Generate sub-tasks</Text>
@@ -147,6 +130,16 @@ export default function AddTasksScreen() {
                     </TouchableOpacity>
                 </View>
 
+            </View>
+
+            {/* Pagination Progress */}
+            <View style={styles.progressBar}>
+                <View style={[styles.bar, {width: '45%'}]}/>
+                <View style={styles.dotsRow}>
+                    <View style={styles.dot}/>
+                    <View style={[styles.dot, styles.dotActive]}/>
+                    <View style={styles.dot}/>
+                </View>
             </View>
 
             {/* Task Cards */}
@@ -174,63 +167,33 @@ export default function AddTasksScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: Colors.background,
-      },
-
-      tabRow: {
+    container: {flex: 1, backgroundColor: '#f8f8fb'},
+    tabRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',  
-        width: '100%',
         marginHorizontal: 16,
-        marginTop: 16,
-      },
-
-      tabsContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-      },
-      
-      
-      tabButton: {
+        marginTop: 16
+    },
+    tabButton: {
         paddingHorizontal: 16,
         paddingVertical: 8,
-        borderRadius: 4,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      
-      tabSelected: {
-
-      },
-      
-      tabText: {
-        fontFamily: 'Poppins-SemiBold',
-        fontSize: 24,
-        color: 'rgba(0,0,0,0.5)',
-        textDecorationLine: 'none',
-        textAlign: 'center', 
-      },
-
-      tabTextSelected: {
-        color: '#000000',
-        borderBottomWidth: 6,
-        borderBottomColor: '#DAB7FF',
-        paddingBottom: 1,
-      },
-      
-      underline: {
-        marginTop: 4,
-        height: 2,
-        backgroundColor: '#DAB7FF',
-        alignSelf: 'stretch',
-      },
-
+        backgroundColor: '#e4e6eb',
+        marginRight: 8,
+        borderRadius: 4
+    },
+    tabSelected: {
+        backgroundColor: '#cbd0d6'
+    },
+    plusButton: {
+        marginLeft: 'auto',
+        padding: 6,
+        backgroundColor: '#e4e6eb',
+        borderRadius: 4
+    },
     addBox: {
         margin: 16,
         padding: 12,
-        backgroundColor: Colors.purple,
+        backgroundColor: '#fff',
         borderRadius: 8
     },
     addTitle: {

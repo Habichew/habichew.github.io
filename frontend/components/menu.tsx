@@ -1,4 +1,4 @@
-// components/TopBar.tsx
+// components/menu.tsx
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Text, Image, Modal } from 'react-native';
@@ -15,7 +15,7 @@ export default function TopBar() {
       </TouchableOpacity>
 
       {/* Home button */}
-      <TouchableOpacity onPress={() => router.push('/Pet')}>
+      <TouchableOpacity onPress={() => router.push('/pet')}>
         <View style={styles.homeContainer}>
           <Image source={require('@/assets/images/home.png')} style={styles.icon} />
         </View>

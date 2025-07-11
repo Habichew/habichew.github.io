@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView
 } from 'react-native';
-import TopBar from '@/components/topbar';
+import TopBar from '@/components/bottomBar';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -67,7 +67,7 @@ export default function InsightsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingBottom: 20 },
+  container: { flex: 1, backgroundColor: '#fff', paddingBottom: 20 },
   title: {
     fontSize: 18,
     fontWeight: '600',

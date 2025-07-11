@@ -1,48 +1,32 @@
-import { Tabs } from 'expo-router';
+// app/(tabs)/_layout.tsx
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
+import { View, StyleSheet } from 'react-native';
+import BottomBar from '@/components/bottomBar';
 
 export default function TabLayout() {
+  const router = useRouter();
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="Pet"
-        options={{
-          title: 'Pet',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="pawprint.fill" color={color} />,
+    <View style={styles.container}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: { display: 'none' }, 
         }}
-      />
-      <Tabs.Screen
-        name="Tasks"
-        options={{
-          title: 'Tasks',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checkmark.circle.fill" color={color} />,
-        }}
-      />
-    <Tabs.Screen
-        name="Explore"
-        options={{
-            title: 'Explore',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="airplane" color={color} />,
-        }}
-    />
-    </Tabs>
+      >
+        <Tabs.Screen name="Pet" />
+        <Tabs.Screen name="Tasks" />
+        <Tabs.Screen name="Explore" />
+        <Tabs.Screen name="Profile" />
+      </Tabs>
+      <BottomBar />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import TopBar from '@/components/topbar';
+import TopBar from '@/components/bottomBar';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PetScreen() {
@@ -65,7 +65,7 @@ export default function PetScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1},
+  container: { flex: 1, backgroundColor: '#f4f4f7' },
   scrollContainer: {
     padding: 16,
     paddingBottom: 40,
