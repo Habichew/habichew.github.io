@@ -94,7 +94,7 @@ export async function findUserById(req, res) {
 export async function updateUser(req, res) {
   try {
     const { userId } = req.params;
-    const { newEmail, newPassword, newUsername } = req.body;
+    const { newEmail, newPassword, newUsername, newPetId } = req.body;
 
     // Get current user from DB, to update the changed fields only
     const currentUser = await userService.findUserById(userId);
@@ -108,6 +108,7 @@ export async function updateUser(req, res) {
       email: newEmail || existingUser.email,
       password: newPassword || existingUser.password,
       username: newUsername || existingUser.username,
+      petId: newPetId || existingUser.petId,
     };
 
     if (newPassword) {

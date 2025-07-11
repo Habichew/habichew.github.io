@@ -1,5 +1,6 @@
 import { pool } from "../config/db.js";
 
+
 export async function getAllPets() {
   const [result] = await pool.query('SELECT * FROM pets');
   return result;
@@ -11,60 +12,38 @@ export async function findPetById(petId) {
   return result;
 }
 
-export async function getAllEvents(conn, callback) {
-  console.log("get all events");
-  const result = await conn.query("SELECT * FROM events");
-  callback(result);
-}
-
-export async function findEventsByItineraryId(conn, itineraryId, callback) {
-  console.log("find events by itinerary_id", itineraryId);
-  const result = await conn.query(
-    `SELECT * FROM events WHERE itinerary_id = (?)`,
-    [itineraryId]
+export async function createPet(pet) {
+  const [row] = await pool.query(
+      'INSERT INTO pets (name, mood, personality, level, hunger) VALUES (?, ?, ?, ?, ?)',
+      [pet.name, pet.mood, pet.personality, pet.level, pet.hunger]
   );
-  callback(result);
+  return row;
 }
 
-export async function findEventsById(conn, id, callback) {
-  console.log("find events by id", id);
-  const result = await conn.query(`SELECT * FROM events WHERE id = (?)`, [id]);
-  callback(result);
-}
-
-export async function createEvent(conn, event, callback) {
-  const result = await conn.query(
-    "INSERT INTO events (`name`, `itinerary_id`, `start_time`, `end_time`) VALUES (?, ?, ?, ?);",
-    [event.name, event.itineraryId, event.startDate, event.endDate]
+export async function updatePet(id, pet) {
+  const [row] = await pool.query(
+      `UPDATE pets
+         SET name = ?,
+             mood = ?,
+             personality = ?,
+             level = ?,
+             hunger = ?
+         WHERE id = ?`,
+      [
+        pet.name,
+        pet.mood,
+        pet.personality,
+        pet.level,
+        pet.hunger,
+        id
+      ]
   );
-  callback(result);
+  return row;
 }
 
-export async function createEvents(conn, events, callback) {
-  const result = await conn.batch(
-    "INSERT INTO events (`name`, `itinerary_id`, `start_time`, `end_time`) VALUES (?, ?, ?, ?);",
-    events,
-    (err, res, meta) => {
-      if (err) {
-        console.error("Error loading data, reverting changes: ", err);
-      } else {
-        console.log(res);
-        console.log(meta);
-      }
-    }
-  );
-  callback(result);
-}
-
-export async function updateEvent(conn, id, event, callback) {
-  console.log("updating event", id);
-  const result = await conn.query(
-    `UPDATE events
-            SET overpass_id = ?, itinerary_id = ?, start_time = ?, end_time = ?
-            WHERE overpass_id = ?`,
-    [event.id, event.itineraryId, event.startTime, event.endTime, event.id]
-  );
-  callback(result);
+export async function deletePet(id) {
+  const [rows] = await pool.query('DELETE FROM pets WHERE id = ?', [id]);
+  return rows;
 }
 
 export async function deleteEvent(conn, id, callback) {
@@ -77,12 +56,3 @@ export async function deleteEvent(conn, id, callback) {
   callback(result);
 }
 
-export async function deleteEvents(conn, itineraryId, callback) {
-  console.log("deleting events with itineraryId", itineraryId);
-  const result = await conn.batch(
-    `DELETE FROM events
-      WHERE itinerary_id = ?`,
-    [itineraryId]
-  );
-  callback(result);
-}
