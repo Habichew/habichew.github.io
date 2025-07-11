@@ -1,3 +1,16 @@
+import { pool } from "../config/db.js";
+
+export async function getAllPets() {
+  const [result] = await pool.query('SELECT * FROM pets');
+  return result;
+}
+
+
+export async function findPetById(petId) {
+  const [result] = await pool.query('SELECT * FROM pets WHERE id = ?', [petId]);
+  return result;
+}
+
 export async function getAllEvents(conn, callback) {
   console.log("get all events");
   const result = await conn.query("SELECT * FROM events");

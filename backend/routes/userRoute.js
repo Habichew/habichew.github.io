@@ -29,9 +29,7 @@ userRouter.get("/profileName/:profileName", (req, res) => {
 
 /* User Pets */
 // Find pet by user id
-userRouter.get("/:userId/pet", (req, res) => {
-    connect((conn) => petController.findPetByUserId(conn, req, res));
-})
+userRouter.get("/:userId/pet", petController.findPetByUserId);
 
 // Create pet
 userRouter.post("/:userId/pet", (req, res) => {

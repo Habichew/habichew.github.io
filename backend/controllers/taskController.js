@@ -21,8 +21,8 @@ export async function getAllTasks(req, res) {
 
 export async function findTaskById(req, res) {
   try {
-    console.log("###### /tasks: Getting task by id ######");
-    const task = await taskService.findTaskById(req.params.id);
+    console.log("###### /tasks: Getting task by id ######", req.params.taskId);
+    const task = await taskService.findTaskById(req.params.taskId);
     if (!task || task.length === 0) {
       return res.status(404).json({ message: 'No task found.' });
     }
@@ -33,8 +33,28 @@ export async function findTaskById(req, res) {
   }
 }
 
-export function findTaskByUserId(conn, req, res) {
+export async function findTaskByUserId(conn, req, res) {
   sendNotImplementedError();
+  /*try {
+    console.log("###### /tasks: Getting task by user id ######");
+
+    // Find all habits from user
+    const habits = await habitService.findHabitsByUserId(req.params.userId);
+    if (!habits || !habits.length === 0) {
+      return res.status(404).json({ message: 'No user habits found.' });
+    }
+
+    // Get all tasks from all user habits
+
+    const task = await taskService.findTaskByUserId(req.params.userId);
+    if (!task || task.length === 0) {
+      return res.status(404).json({ message: 'No task found.' });
+    }
+    res.status(200).json(task);
+  } catch (err) {
+    console.error('getAllTasks failed:', err);
+    res.status(500).json({ error: 'Server error' });
+  }*/
 }
 
 
@@ -89,7 +109,7 @@ export async function createTask(req, res) {
       return res.status(400).json({message: `No object 'task' provided in request body`});
     }
 
-    // Check if habit exists
+    // TODO: Check if habit exists
     // const r = await habitService.findHabitById(task.habitId);
 
     const result = await taskService.createTask(task);
