@@ -17,7 +17,23 @@ userRouter.post("/signup", userController.signUp);
 // Profile by user id
 userRouter.get("/:userId", userController.findUserById);
 
+userRouter.get("/:userId/email", userController.findEmailById);
+
+userRouter.get("/:userId/password", userController.findPasswordById);
+
+userRouter.get("/:userId/username", userController.findUsernameById);
+
+userRouter.get("/:userId/profileImage", userController.findProfileImageById);
+
 userRouter.put("/:userId", userController.updateUser);
+
+userRouter.put("/:userId/email", userController.updateEmailById);
+
+userRouter.put("/:userId/password", userController.updatePasswordById);
+
+userRouter.put("/:userId/username", userController.updateUsernameById);
+
+/*userRouter.put("/:userId/profileImage", userController.updateProfileImageById);*/
 
 userRouter.delete("/:userId", userController.deleteUser);
 

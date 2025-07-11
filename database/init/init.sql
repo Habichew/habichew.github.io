@@ -14,12 +14,9 @@ CREATE TABLE IF NOT EXISTS users (
     -- 2083 is the most recommended length for URL
   `profileImg` varchar(2083) DEFAULT 'https://i.ibb.co/q3MfyBnr/habichew.png',
   `mood` varchar(255),
+  `credits` integer,
+  `tasks_num` integer,
   `petId` integer,
-  `score` integer,
-  `fuelStatus` double,
-  `currentPlanetId` integer,
-  `visitedPlanets` integer,
-  `finishedPlanets` integer,
   `userHabitsId` integer,
   `tasksNum` integer,
     -- Record created and updated time automatically
@@ -86,7 +83,7 @@ INSERT INTO tasks (description, score, level, priority, recommendation, category
 
 CREATE TABLE IF NOT EXISTS `habitCategories` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `name` varchar(255)
+  `name` varchar(255) NOT NULL
 );
 
 -- Insert sample habit_categories data
@@ -97,8 +94,6 @@ INSERT INTO habitCategories (name) VALUES
 ('Mindfulness');
 
 ALTER TABLE `users` ADD FOREIGN KEY (`petId`) REFERENCES `pets` (`id`);
-
-ALTER TABLE `users` ADD FOREIGN KEY (`currentPlanetId`) REFERENCES `planets` (`id`);
 
 ALTER TABLE `users` ADD FOREIGN KEY (`userHabitsId`) REFERENCES `userHabits` (`id`);
 
