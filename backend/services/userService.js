@@ -85,18 +85,6 @@ export async function updateUser(userId, updatedFields) {
   return result;
 }
 
-
-/*export async function updateProfileName(conn, userId, profileName, callback) {
-  console.log(conn);
-  const result = await conn.query(
-    `UPDATE users
-    SET profileName = ?
-    WHERE id = ?`,
-    [profileName, userId]
-  );
-  callback(result);
-}*/
-
 export async function updateProfileImage(conn, userId, profileImage, callback) {
   console.log(conn);
   const result = await conn.query(

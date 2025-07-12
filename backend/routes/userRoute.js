@@ -37,12 +37,6 @@ userRouter.put("/:userId/username", userController.updateUsernameById);
 
 userRouter.delete("/:userId", userController.deleteUser);
 
-/*
-userRouter.get("/profileName/:profileName", (req, res) => {
-  pool((conn) => userController.findUserByUsername(conn, req, res));
-});
-*/
-
 /* User Pets */
 // Find pet by user id
 userRouter.get("/:userId/pet", petController.findPetByUserId);
