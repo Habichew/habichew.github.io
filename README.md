@@ -1,5 +1,6 @@
 # habichew
 ## Project Description: 
+Habichew gamifies productivity by turning habit-building and focusing into an engaging experience. Users follow a visual journey, completing micro-tasks to reach their goals. Inspired by Tamagotchi, Habichew makes habit formation fun and effective for users by raising digital pets with accomplishment.
 
 ## Project Roles:
 - **UI Design and UX Research**: Mannat & Wendi
