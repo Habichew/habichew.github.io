@@ -97,7 +97,7 @@ export async function updateTask(req, res) {
 
         // Optionally re-fetch the updated task
         const fetchedTask = await taskService.findTaskById(taskId);
-        return res.status(204).send({
+        return res.status(200).send({
             message: 'Task updated successfully',
             task: fetchedTask[0],
         });

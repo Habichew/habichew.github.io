@@ -14,7 +14,7 @@ export async function findTaskById(id) {
 
 export async function createTask(task) {
     const [row] = await pool.query(
-        'INSERT INTO tasks (title, description, score, level, priority, recommendation, categoryId, dueAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO tasks (title, description, score, level, priority, recommendation, categoryId, habitId, dueAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [task.title, task.description, task.score, task.level, task.priority, task.recommendation, task.categoryId, task.dueAt]
     );
     return row;
@@ -30,6 +30,7 @@ export async function updateTask(id, task) {
              priority = ?,
              recommendation = ?,
              categoryId = ?,
+             habitId = ?,
              dueAt = ?
          WHERE id = ?`,
         [
@@ -40,6 +41,7 @@ export async function updateTask(id, task) {
             task.priority,
             task.recommendation,
             task.categoryId,
+            task.habitId,
             task.dueAt,
             id
         ]
