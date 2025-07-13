@@ -6,9 +6,9 @@ export default function PolicyScreen() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
 
-        <TouchableOpacity onPress={() => router.replace('/(tabs)/profile')} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} style={styles.backBtn}>
 
         <Text style={styles.backText}>{'<'}</Text>
       </TouchableOpacity>
@@ -62,7 +62,7 @@ export default function PolicyScreen() {
           <Text style={styles.bulletItem}>• If you violate these terms, we reserve the right to suspend or terminate your account.</Text>
         </View>
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 }
 

@@ -35,7 +35,7 @@ export default function SignUpScreen() {
 
       if (response.ok) {
         alert('Registration successful!');
-        router.replace('/pet'); 
+        router.replace('../onboarding/launch'); 
       } else {
         alert(`Registration failed: ${data.error || 'Unknown error'}`);
       }

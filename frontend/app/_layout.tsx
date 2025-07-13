@@ -1,7 +1,9 @@
+// app/_layout.tsx
 import React from 'react';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { UserProvider } from './context/UserContext'; 
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -21,5 +23,9 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Slot />;
+  return (
+    <UserProvider>
+      <Slot />
+    </UserProvider>
+  );
 }

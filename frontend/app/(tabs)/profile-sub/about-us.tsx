@@ -6,8 +6,8 @@ export default function About() {
   const router = useRouter();
 
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity onPress={() => router.replace('/(tabs)/profile')} style={styles.backBtn}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+      <TouchableOpacity onPress={() =>router.push('/(tabs)/profile')} style={styles.backBtn}>
         <Text style={styles.backText}>{'<'}</Text>
       </TouchableOpacity>
       <Text style={styles.title}>About Us</Text>

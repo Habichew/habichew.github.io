@@ -1,16 +1,19 @@
+// app/(tabs)/Profile.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useUser } from '@/app/context/UserContext'; 
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { user } = useUser(); // use user data
 
   const navigateTo = (screen: string) => {
-    router.push(`../profile/${screen}`);
+    router.push(`./profile-sub/${screen}`);
   };
 
   const handleLogout = () => {
-    router.replace('./auth/sign-in');
+    router.replace('../auth/sign-in');
   };
 
   const handleDelete = () => {
@@ -22,13 +25,13 @@ export default function ProfileScreen() {
       {/* Avatar & Name */}
       <View style={styles.header}>
         {/* <Image source={require('@/assets/images/purplecat.png')} style={styles.avatar} /> */}
-        <Text style={styles.name}>Daisy Mayer</Text>
+        <Text style={styles.name}>{user?.username || 'Unknown User'}</Text>
       </View>
 
       {/* Section: My Profile */}
       <Text style={styles.sectionTitle}>My Profile</Text>
-      <ProfileItem label="Email" value="xxx@gmail.com" onPress={() => navigateTo('email')} />
-      <ProfileItem label="Name" value="Daisy Maye" onPress={() => navigateTo('name')} />
+      <ProfileItem label="Email" value={user?.email || 'no@email.com'} onPress={() => navigateTo('email')} />
+      <ProfileItem label="Name" value={user?.username || 'No Name'} onPress={() => navigateTo('name')} />
       <ProfileItem label="Change psw" onPress={() => navigateTo('change-psw')} />
       <ProfileItem label="Delete Account" onPress={handleDelete} />
 

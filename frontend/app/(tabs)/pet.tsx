@@ -28,7 +28,7 @@ export default function PetScreen() {
         <View style={styles.sectionBox}>
           <Text style={styles.sectionTitle}>Hall of Fame</Text>
           <Text style={styles.subText}>this will have all badges, from travel et</Text>
-          <TouchableOpacity style={styles.rowEnd} onPress={() => router.push('/main/Insights')}>
+          <TouchableOpacity style={styles.rowEnd} onPress={() => router.push('./(tabs)/insights')}>
             <Text style={styles.linkText}>View Insights</Text>
             <Ionicons name="arrow-forward" size={16} />
           </TouchableOpacity>

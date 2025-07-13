@@ -14,6 +14,9 @@ export default function CustomDropdown({
   placeholder,
   zIndex = 1000,
   zIndexInverse = 500,
+  backgroundColor = '#ffffff',  
+  textColor = '#000',         
+  placeholderColor = '#999',    
 }: {
   items: Option[];
   value: string | null;
@@ -21,6 +24,9 @@ export default function CustomDropdown({
   placeholder?: string;
   zIndex?: number;
   zIndexInverse?: number;
+  backgroundColor?: string;
+  textColor?: string;
+  placeholderColor?: string;
 }) {
   const [open, setOpen] = useState(false);
 
