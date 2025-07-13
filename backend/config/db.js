@@ -18,6 +18,7 @@ const dbConfig = {
   user: process.env.DB_USER || 'appuser',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'habichew_db',
+  charset: 'utf8mb4', // allow emoji to be stored
   connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 5,
   /*acquireTimeout: 60000,
   timeout: 60000,
@@ -33,8 +34,7 @@ console.log('Database configuration:', {
   host: dbConfig.host,
   port: dbConfig.port,
   user: dbConfig.user,
-  database: dbConfig.database,
-  connectionLimit: dbConfig.connectionLimit
+  database: dbConfig.database
 });
 
 /* Connection pooling is a technique that helps improve the performance of Node.js applications which make frequent database requests.
