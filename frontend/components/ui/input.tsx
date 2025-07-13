@@ -6,10 +6,12 @@ export default function CustomInput({
   value,
   onChangeText,
   placeholder,
+  secureTextEntry = false, 
 }: {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
+  secureTextEntry?: boolean;
 }) {
   const [focused, setFocused] = React.useState(false);
 
@@ -26,6 +28,7 @@ export default function CustomInput({
         activeUnderlineColor="transparent"
         style={styles.input}
         placeholderTextColor="#999"
+        secureTextEntry={secureTextEntry}
         theme={{
           colors: {
             text: '#000',

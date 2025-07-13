@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomInput from '@/components/ui/input';
+import { useUser } from '../context/UserContext';
 
 export default function SignInScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser } = useUser();
   const [focusedInput, setFocusedInput] = useState<'email' | 'password' | null>(null);
 
 
@@ -25,6 +27,7 @@ const handleSignIn = async () => {
       const data = await response.json();
 
       if (response.ok) {
+        setUser(data[0]);//save user data for global use
         alert('Sign in successful!');
         router.replace('/pet');
       } else {
@@ -54,6 +57,7 @@ const handleSignIn = async () => {
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
+        secureTextEntry={true}
       />
 
       <TouchableOpacity>

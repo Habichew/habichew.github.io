@@ -1,3 +1,4 @@
+// components/bottomBar.tsx
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Image, Text, Platform } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
@@ -9,44 +10,44 @@ export default function BottomBar() {
 
   return (
     <View style={styles.container}>
-{/* left buttons */}
+      {/* Left buttons */}
       <View style={styles.sideGroup}>
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/pet')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/(tabs)/home')}>
           <Image
             source={require('@/assets/images/home.png')}
-            style={[styles.icon, isActive('/Pet') && styles.activeIcon]}
+            style={[styles.icon, isActive('/home') && styles.activeIcon]}
           />
           <Text style={styles.label}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/Tasks')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/(tabs)/tasks')}>
           <Image
             source={require('@/assets/images/tasks.png')}
-            style={[styles.icon, isActive('/Tasks') && styles.activeIcon]}
+            style={[styles.icon, isActive('/tasks') && styles.activeIcon]}
           />
-          <Text style={styles.label}>Tasks</Text>
+          <Text style={styles.label}>List</Text>
         </TouchableOpacity>
       </View>
-      
-      {/* middle cat */}
-      <TouchableOpacity style={styles.centerIconContainer} onPress={() => router.push('/pet')}>
+
+      {/* Middle cat icon */}
+      <TouchableOpacity style={styles.centerIconContainer} onPress={() => router.push('/(tabs)/pet')}>
         <Image
           source={require('@/assets/images/catWhiteCircle.png')}
           style={styles.centerIcon}
         />
       </TouchableOpacity>
 
-
+      {/* Right buttons */}
       <View style={styles.sideGroup}>
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/profile')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/(tabs)/insights')}>
           <Image
-            source={require('@/assets/images/travel.png')}
-            style={[styles.icon, isActive('/Explore') && styles.activeIcon]}
+            source={require('@/assets/images/insights.png')}
+            style={[styles.icon, isActive('/insight') && styles.activeIcon]}
           />
-          <Text style={styles.label}>Travel</Text>
+          <Text style={styles.label}>Insights</Text>
         </TouchableOpacity>
-{/* right buttons */}
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/profile')}>
+
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/(tabs)/profile')}>
           <Image
             source={require('@/assets/images/profile.png')}
             style={[styles.icon, isActive('/Profile') && styles.activeIcon]}
@@ -57,7 +58,6 @@ export default function BottomBar() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

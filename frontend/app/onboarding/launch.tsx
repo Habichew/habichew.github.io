@@ -29,7 +29,7 @@ export default function LaunchScreen() {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require('@/assets/images/placeholder.png')}
+          source={require('@/assets/images/previouscat.png')}
           style={styles.image}
           resizeMode="cover"
         />
@@ -52,29 +52,28 @@ export default function LaunchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FCFF',
+    backgroundColor: '#fff',
   },
   imageContainer: {
     flex: 1,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop:100,
     overflow: 'hidden',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: 350,
+    height: 170,
   },
   bottomSection: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 72,
-    paddingHorizontal: 24,
+    // paddingHorizontal: 14,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: '600',
     color: '#444',
-    marginBottom: 12,
   },
   logo: {
     width: 300,
