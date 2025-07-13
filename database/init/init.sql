@@ -1,6 +1,6 @@
 -- Create database
 -- Drop the database and recreate before running, if there's too many changes to make.
-DROP DATABASE IF EXISTS habichew_db;
+-- DROP DATABASE IF EXISTS habichew_db;
 CREATE DATABASE IF NOT EXISTS habichew_db;
 USE habichew_db;
 
@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS users (
   `password` varchar(255),
     -- 2083 is the most recommended length for URL
   `profileImg` varchar(2083) DEFAULT 'https://i.ibb.co/q3MfyBnr/habichew.png',
-  `mood` varchar(255),
   `credits` integer,
   `tasks_num` integer,
   `petId` integer,
@@ -25,15 +24,59 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Insert sample users data
-INSERT INTO users (username, email, password, petId) VALUES
-('john_doe', 'john@example.com', 'hashed_password_123', 1),
-('jane_smith', 'jane@example.com', 'hashed_password_456', 2);
+INSERT INTO users (username, email, password, petId)
+VALUES
+    ('john_doe',
+     'john@example.com',
+     '$2b$10$oLLIBsQbaByUKb8/U138uuItjNLWcf6jZFT8fXTTiEJxTKT.wRGD6', -- password = 'john'
+     1),
+    ('jane_smith',
+     'jane@example.com',
+     '$2b$10$i.lhKkpYxtxq5XmLt4Wpd.n9fuv7xmfVS6IGAr2UjPPfef411i6VC', -- password = 'jane'
+     2);
 
 CREATE TABLE IF NOT EXISTS userHabits (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `userId` integer,
   `habitId` integer
 );
+
+-- Mood types for mood logs to enumerate
+CREATE TABLE IF NOT EXISTS moodTypes(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    label VARCHAR(50) NOT NULL UNIQUE,
+    -- Optional hex code colours for display in frontend
+    colorCode VARCHAR(7)
+);
+
+-- Insert into sample mood types table
+INSERT INTO moodTypes (label, colorCode) VALUES
+('Focused', '#B363E8'),
+('Overwhelmed', '#FFAF59'),
+('Unmotivated','#FFED95'),
+('Distracted','#FF5950');
+
+-- Mood logs for users
+CREATE TABLE IF NOT EXISTS moodLogs (
+    id integer PRIMARY KEY AUTO_INCREMENT,
+    userId integer NOT NULL,
+    moodTypeId integer NOT NULL,
+    -- Optional notes for the mood log
+    note TEXT,
+    -- The date of the mood log
+    moodDate DATE NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+
+    CONSTRAINT fkUserMood FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fkMoodType FOREIGN KEY (moodTypeId) REFERENCES moodTypes(id),
+    -- The user can have one and only one mood log everyday
+    UNIQUE(userId, moodDate)
+);
+
+INSERT INTO moodLogs (userId, moodTypeId, note, moodDate)
+VALUES (1, 3, 'Felt a bit low today.', '2025-07-13');
+
 
 CREATE TABLE IF NOT EXISTS pets (
   `id` integer PRIMARY KEY AUTO_INCREMENT,

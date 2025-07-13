@@ -117,7 +117,9 @@ app.post("/upload", upload.single("img"), (req, res) => {
 import {userRouter} from "./routes/userRoute.js";
 import {taskRouter} from "./routes/taskRoute.js";
 import {habitRouter} from "./routes/habitRoute.js";
+import {moodRouter} from "./routes/moodRoute.js";
 
+// Users
 app.use("/users", userRouter);
 
 // Tasks
@@ -125,6 +127,9 @@ app.use("/tasks", taskRouter);
 
 // Habits
 app.use("/habits", habitRouter);
+
+// Moods
+app.use('/moods', moodRouter);
 
 /*
 

@@ -1,11 +1,11 @@
 import express from "express";
 const userRouter = express.Router();
 import * as userController from "../controllers/userController.js";
-import {getAllUsers} from "../services/userService.js";
 import * as petController from "../controllers/petController.js";
 import * as taskController from "../controllers/taskController.js";
-import * as userHabitController from "../controllers/userHabitController.js";
 
+
+// ============== User Profile Information ================== //
 // Get all users's information
 userRouter.get("/", userController.getAllUsers);
 
@@ -37,13 +37,7 @@ userRouter.put("/:userId/username", userController.updateUsernameById);
 
 userRouter.delete("/:userId", userController.deleteUser);
 
-/*
-userRouter.get("/profileName/:profileName", (req, res) => {
-  pool((conn) => userController.findUserByUsername(conn, req, res));
-});
-*/
-
-/* User Pets */
+// ====================== User Pets ======================= //
 // Find pet by user id
 userRouter.get("/:userId/pet", petController.findPetByUserId);
 
@@ -55,35 +49,5 @@ userRouter.put("/:userId/pet", petController.updatePet);
 
 // Delete pet
 userRouter.delete("/:userId/pet", petController.deletePet);
-
-/* User Tasks */
-// Get tasks by user id
-userRouter.get("/:userId/tasks", (req, res) => {
-    connect((conn) =>
-        taskController.findTaskByUserId(conn, req, res)
-    );
-});
-
-/* User Habits */
-// Add habit to user
-userRouter.post("/:userId/habits", (req, res) => {
-    connect((conn) =>
-        userHabitController.createUserHabit(conn, req, res)
-    );
-});
-
-// Update user habit
-userRouter.put("/:userId/habits", (req, res) => {
-    connect((conn) =>
-        userHabitController.updateUserHabit(conn, req, res)
-    );
-});
-
-// Delete user habit
-userRouter.delete("/:userId/habits", (req, res) => {
-    connect((conn) =>
-        userHabitController.deleteUserHabit(conn, req, res)
-    );
-});
 
 export {userRouter};

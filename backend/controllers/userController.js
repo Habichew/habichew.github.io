@@ -224,65 +224,6 @@ export async function updateUser(req, res) {
   }
 }
 
-
-/*export async function subscribeUserToNewsletter(conn, req, res) {
-  try {
-    const id = req.params.userId;
-
-    await userService.subscribeUserToNewsletter(conn, id, (result) => {
-        if (result) {
-          res.status(200).send({ success: "subscribed user to newsletter" });
-        } else {
-          res.status(500).send({ error: "failed to subscribe user to newsletter" });
-        }
-    });
-
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}*/
-
-export async function updateProfileName(conn, req, res) {
-  try {
-    const userId = req.params.userId;
-    const newProfileName = req.body.newProfileName;
-    console.log("userId", userId);
-    console.log("profileName", newProfileName);
-
-    await userService.updateProfileName(
-      conn,
-      userId,
-      newProfileName,
-      (result) => {
-        if (result) {
-          res.status(204).send({ success: "updated user profile name" });
-        }
-      }
-    );
-  } catch (code) {
-    res.status(code).send();
-  }
-}
-
-export async function updateProfileImage(conn, req, res) {
-  try {
-    const userId = req.params.userId;
-    const newProfileImage = req.body.newProfileImage;
-    console.log("userId", userId);
-    console.log("profileImage", newProfileImage);
-
-    await userService.updateProfileName(conn, userId, newProfileName, () => {
-      res.status(204);
-      res.send();
-    });
-  } catch (code) {
-    res.status(code);
-  } finally {
-    res.send();
-  }
-}
-
 export async function deleteUser(req, res) {
   try {
     const { userId } = req.params;
