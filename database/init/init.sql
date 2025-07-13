@@ -57,6 +57,7 @@ INSERT INTO moodTypes (label, colorCode) VALUES
 ('Distracted','#FF5950');
 
 -- Mood logs for users
+DROP TABLE moodLogs;
 CREATE TABLE IF NOT EXISTS moodLogs (
     id integer PRIMARY KEY AUTO_INCREMENT,
     userId integer NOT NULL,
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS moodLogs (
     note TEXT,
     -- The date of the mood log
     moodDate DATE NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 
     CONSTRAINT fkUserMood FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
@@ -75,7 +76,9 @@ CREATE TABLE IF NOT EXISTS moodLogs (
 );
 
 INSERT INTO moodLogs (userId, moodTypeId, note, moodDate)
-VALUES (1, 3, 'Felt a bit low today.', '2025-07-13');
+VALUES
+    (1, 3, 'Felt a bit low today.', '2025-07-12'),
+    (1,2,'','2025-07-13');
 
 
 CREATE TABLE IF NOT EXISTS pets (
