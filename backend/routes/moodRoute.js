@@ -11,12 +11,12 @@ moodRouter.get('/', moodController.getAllMoodTypes);
 moodRouter.get('/:userId', moodController.getMoodLogs);
 
 // Insert mood log by user and date
-moodRouter.post('/:userId/:date', moodController.insertMoodLog);
+moodRouter.post('/:userId', moodController.insertMoodLog);
 
 // Update mood log by user and date
-moodRouter.put('/:userId/:date', moodController.updateMoodLog);
+moodRouter.put('/:userId/', moodController.upsertMoodLog);
 
 // Delete mood log by user and date
-moodRouter.delete('/:userId/:date', moodController.deleteMoodLog);
+moodRouter.delete('/:userId', moodController.deleteMoodLog);
 
 export {moodRouter};

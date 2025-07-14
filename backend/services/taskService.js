@@ -24,9 +24,9 @@ export async function updateTask(id, task) {
     const [row] = await pool.query(
         `UPDATE tasks
          SET title = ?,
+             completed = ?,
              description = ?,
              score = ?,
-             level = ?,
              priority = ?,
              recommendation = ?,
              categoryId = ?,
@@ -35,9 +35,9 @@ export async function updateTask(id, task) {
          WHERE id = ?`,
         [
             task.title,
+            task.completed,
             task.description,
             task.score,
-            task.level,
             task.priority,
             task.recommendation,
             task.categoryId,

@@ -1,4 +1,5 @@
 import * as moodService from "../services/moodService.js";
+import * as userService from "../services/userService.js";
 
 export async function getAllMoodTypes(req, res) {
   try {
@@ -45,44 +46,43 @@ export async function getMoodLogs(req, res) {
     }
 }
 
-export async function updateMoodLog(req, res) {
-  const { userId } = req.params;
-  const { newEmail } = req.body;
+export async function upsertMoodLog(req, res) {
   try {
-    // Check if the email is occupied
-    const existing = await moodService.findUserByEmail(newEmail);
-    console.log(existing);
+    const { moodDate, moodTypeId, note } = req.body;
+    const { userId } = req.params;
 
-    if (existing.length!==0 && existing.id !== parseInt(userId)) {
-      return res.status(409).json({ message: 'Email already registered.' });
+    if (!userId || !moodDate) {
+      return res.status(400).json({ message: 'User id and mood log date are required.' });
     }
 
-    const result = await moodService.updateUserById(userId, 'email', newEmail);
-    res.status(200).send(result);
+    if (!note) {
+      const note = await moodService.getMoodLogsByUser(userId);
+    }
+
+    const logs = await moodService.upsertMoodLog(userId, moodDate, moodTypeId, note);
+    res.status(200).json({ message: 'Update mood logs successfully.', logs });
   } catch (err) {
-    res.status(500).send({ error: err.message });
+    res.status(500).json({ message: 'Failed to update mood logs', error: err.message });
   }
 }
 
 export async function deleteMoodLog(req, res) {
+
   try {
+    const { moodDate } = req.body;
     const { userId } = req.params;
 
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
+    const userCheck = await userService.findUserById(userId);
+    console.log (userCheck);
+    if (userCheck.length===0) {
+      return res.status(404).json({ message: 'No user found.' });
     }
 
-    const result = await moodService.deleteUser(userId);
-
-    // Deletion failed
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'User does not exist' });
-    }
+    const logs = await moodService.deleteMoodLog(userId, moodDate);
 
     // Deletion succeed
-    return res.status(200).json({ message: 'User deleted successfully' });
+    return res.status(200).json({ message: 'The mood log is deleted' , logs });
   } catch (err) {
-    console.error('Delete error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ message: 'Deletion error: ', error: err.message });
   }
 }

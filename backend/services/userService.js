@@ -2,6 +2,11 @@
 import bcrypt from "bcrypt";
 import {pool} from "../config/db.js";
 
+export async function updateUserTaskLastCompleted(userId) {
+  const [rows] = await pool.query('UPDATE `users` SET taskLastCompleted = current_timestamp WHERE id = ?', [userId]);
+  return rows;
+}
+
 export async function getAllUsers() {
   const [rows] = await pool.query('SELECT * FROM users');
   return rows;
@@ -28,20 +33,6 @@ export async function createUser(username, email, password) {
   };
 }
 
-
-export async function findEmailPassword(email, password, callback) {
-
-  let result;
-  bcrypt.genSalt(10, function (err, salt) {
-    bcrypt.hash(password, salt, async function (err, hash) {
-      result = await conn.query(
-        `SELECT * FROM users WHERE email = ? AND password = ?`,
-        [email, hash]
-      );
-      callback(result);
-    });
-  });
-}
 
 export async function findUserByEmail(email) {
   const [result] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);

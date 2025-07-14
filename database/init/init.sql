@@ -16,11 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
   `credits` integer,
   `tasks_num` integer,
   `petId` integer,
-  `userHabitsId` integer,
   `tasksNum` integer,
+  `taskLastCompleted` timestamp DEFAULT CURRENT_TIMESTAMP,
     -- Record created and updated time automatically
   `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Insert sample users data
@@ -34,12 +34,6 @@ VALUES
      'jane@example.com',
      '$2b$10$i.lhKkpYxtxq5XmLt4Wpd.n9fuv7xmfVS6IGAr2UjPPfef411i6VC', -- password = 'jane'
      2);
-
-CREATE TABLE IF NOT EXISTS userHabits (
-  `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `userId` integer,
-  `habitId` integer
-);
 
 -- Mood types for mood logs to enumerate
 CREATE TABLE IF NOT EXISTS moodTypes(
@@ -57,6 +51,7 @@ INSERT INTO moodTypes (label, colorCode) VALUES
 ('Distracted','#FF5950');
 
 -- Mood logs for users
+DROP TABLE moodLogs;
 CREATE TABLE IF NOT EXISTS moodLogs (
     id integer PRIMARY KEY AUTO_INCREMENT,
     userId integer NOT NULL,
@@ -65,7 +60,7 @@ CREATE TABLE IF NOT EXISTS moodLogs (
     note TEXT,
     -- The date of the mood log
     moodDate DATE NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 
     CONSTRAINT fkUserMood FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
@@ -75,7 +70,9 @@ CREATE TABLE IF NOT EXISTS moodLogs (
 );
 
 INSERT INTO moodLogs (userId, moodTypeId, note, moodDate)
-VALUES (1, 3, 'Felt a bit low today.', '2025-07-13');
+VALUES
+    (1, 3, 'Felt a bit low today.', '2025-07-12'),
+    (1,2,'','2025-07-13');
 
 
 CREATE TABLE IF NOT EXISTS pets (
@@ -104,15 +101,19 @@ CREATE TABLE IF NOT EXISTS `planets` (
 CREATE TABLE IF NOT EXISTS `habits` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
-  `taskId` integer
+  `userId` integer
 );
+
+-- Insert sample users data
+INSERT INTO habits (name, userId) VALUES
+    ('Find new job', '1');
 
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `title` varchar(255),
-  `description` varchar(255),
+    `completed` boolean,
+    `description` varchar(255),
   `score` integer,
-  `level` integer,
   `priority` integer,
   `recommendation` varchar(255),
   `categoryId` integer,
@@ -122,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
     );
 
 -- Insert sample tasks data
-INSERT INTO tasks (description, score, level, priority, recommendation, categoryId, dueAt) VALUES ('eat healthily', '50', '3', 2, '', 1, '2026-01-01'), ('study for exam', '30', '3', 1, '', 1, '2025-07-10');
+INSERT INTO tasks (title, completed, description, score, priority, recommendation, categoryId, habitId, dueAt) VALUES ('find t1d cooking blogs', false,'improve my hba1c through better diet' '50', 3, 2, 1, 1,1, '2026-01-01'), ('study for exam', true, 'prepare for my biology exam',30, 3, 1, 1, 1, '2025-07-10');
 
 CREATE TABLE IF NOT EXISTS `habitCategories` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
@@ -138,13 +139,7 @@ INSERT INTO habitCategories (name) VALUES
 
 ALTER TABLE `users` ADD FOREIGN KEY (`petId`) REFERENCES `pets` (`id`);
 
-ALTER TABLE `users` ADD FOREIGN KEY (`userHabitsId`) REFERENCES `userHabits` (`id`);
-
-ALTER TABLE `userHabits` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
-
-ALTER TABLE `userHabits` ADD FOREIGN KEY (`habitId`) REFERENCES `habits` (`id`);
-
-ALTER TABLE `habits` ADD FOREIGN KEY (`taskId`) REFERENCES `tasks` (`id`);
+ALTER TABLE `habits` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
 
 ALTER TABLE `tasks` ADD FOREIGN KEY (`categoryId`) REFERENCES `habitCategories` (`id`);
 

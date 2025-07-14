@@ -3,6 +3,8 @@ import * as itineraryService from "../services/planetService.js";
 import * as eventService from "../services/petService.js";
 import {sendNotImplementedError} from "../app.js";
 import * as taskService from "../services/taskService.js";
+import * as userService from "../services/userService.js";
+import * as habitService from "../services/habitService.js";
 
 export async function getAllTasks(req, res) {
     // sendNotImplementedError(res);
@@ -83,15 +85,25 @@ export async function updateTask(req, res) {
 
         const updatedTask = new Task(
             task.title || existingTask.title,
+            task.completed != null ? task.completed : existingTask.completed,
             task.description || existingTask.description,
             task.score || existingTask.score,
-            task.level || existingTask.level,
             task.priority || existingTask.priority,
             task.recommendation || existingTask.recommendation,
             task.categoryId || existingTask.categoryId,
             task.habitId || existingTask.habitId,
             task.dueAt || existingTask.dueAt
         )
+
+        if (task.completed && !existingTask.completed) {
+            // update last time user completed any task in user table
+            const habitResult = await habitService.getHabitById(task.habitId);
+            if (!habitResult || habitResult.length === 0) {
+                return res.status(404).json({message: `Task does not have a valid habit id`});
+            }
+
+            const userResult = await userService.updateUserTaskLastCompleted(habitResult[0].userId);
+        }
 
         const result = await taskService.updateTask(taskId, updatedTask);
 
