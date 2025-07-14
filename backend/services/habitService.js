@@ -1,3 +1,12 @@
+import pool from "../config/db.js";
+
+export async function getHabitById(id) {
+  const [row] = await pool.query(`SELECT *
+                                  FROM habits
+                                  WHERE id = ?`, [id]);
+  return row;
+}
+
 /* import { pipeline, env } from '@huggingface/transformers';
 
 class MyClassificationPipeline {

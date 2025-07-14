@@ -2,6 +2,11 @@
 import bcrypt from "bcrypt";
 import {pool} from "../config/db.js";
 
+export async function updateUserTaskLastCompleted(userId) {
+  const [rows] = await pool.query('UPDATE `users` SET taskLastCompleted = current_timestamp WHERE id = ?', [userId]);
+  return rows;
+}
+
 export async function getAllUsers() {
   const [rows] = await pool.query('SELECT * FROM users');
   return rows;
