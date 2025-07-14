@@ -1,10 +1,62 @@
 import pool from "../config/db.js";
 
-export async function getHabitById(id) {
-  const [row] = await pool.query(`SELECT *
-                                  FROM habits
-                                  WHERE id = ?`, [id]);
-  return row;
+export async function getHabitCategories() {
+  const [rows] = await pool.query(`
+    SELECT * FROM habitCategories`);
+  return rows;
+}
+
+export async function getPresetHabits(categoryId) {
+  const [rows] = await pool.query(`
+    SELECT h.id, h.title, c.id, c.name AS categoryName
+    FROM habits h
+           LEFT JOIN habitCategories c ON h.categoryId = c.id
+    WHERE h.categoryId = ?;`,[categoryId]);
+  return rows;
+}
+
+export async function getUserHabits(userId) {
+  const [rows] = await pool.query(`
+    SELECT
+      uh.id AS userHabitId,
+      COALESCE(uh.customTitle, h.title) AS habitTitle,
+      uh.priority,
+      uh.startDate,
+      uh.goalDate,
+      uh.frequency,
+      uh.isArchived
+    FROM userHabits uh
+    LEFT JOIN habits h ON uh.habitId = h.id
+    WHERE uh.userId = ?;`, [userId]);
+  return rows;
+}
+
+export async function createHabitByUser(userId, customTitle, priority, startDate, goalDate,frequency){
+  // Validation (basic): customTitle should exist
+  if (!customTitle || !userId) {
+    throw new Error('customTitle and userId are required');
+  }
+
+  // Insert into userHabits as custom habit
+  const [result] = await pool.query(
+      `INSERT INTO userHabits
+     (userId, habitId, customTitle, priority, startDate, goalDate, frequency)
+     VALUES (?, NULL, ?, ?, ?, ?, ?)`,
+      [userId, customTitle, priority, startDate, goalDate, frequency]
+  );
+
+  const userHabitId = result.insertId;
+
+  // Return inserted record
+  const [rows] = await pool.query(
+      `SELECT id AS userHabitId, customTitle AS habitTitle, priority, startDate, goalDate, frequency
+     FROM userHabits
+     WHERE id = ?`,
+      [userHabitId]
+  );
+
+  return rows[0];
+
 }
 
 /* import { pipeline, env } from '@huggingface/transformers';
@@ -30,41 +82,9 @@ class MyClassificationPipeline {
 const pipe = await pipeline("text-generation", "TinyLlama/TinyLlama-1.1B-Chat-v1.0");
 */
 
-export async function getAllHabits(conn, callback) {
-  console.log("get all collaborators");
-  const result = await conn.query("SELECT * FROM collaborators");
-  callback(result);
-}
-
 export async function getTaskRecommendations(conn, callback) {
   /*console.log("get task recommendations from TinyLlama");
   const classifier = await MyClassificationPipeline.getInstance();
   const result = await classifier(text);*/
-  callback(result);
-}
-
-export async function getHabitCategories(
-  conn,
-  itineraryId,
-  callback
-) {
-  console.log("find collaborators by itinerary_id", itineraryId);
-  const result = await conn.query(
-    `SELECT * FROM collaborators WHERE itinerary_id = (?)`,
-    [itineraryId]
-  );
-  callback(result);
-}
-
-export async function findItinerariesByCollaboratorUserId(
-  conn,
-  userId,
-  callback
-) {
-  console.log("find collaborators by user_id", userId);
-  const result = await conn.query(
-    `SELECT * FROM collaborators WHERE user_id = (?)`,
-    [userId]
-  );
   callback(result);
 }
