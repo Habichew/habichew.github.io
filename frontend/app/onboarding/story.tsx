@@ -34,7 +34,7 @@ export default function StoryScreen() {
     if (index < storyImages.length - 1) {
       setIndex(index + 1);
     } else {
-      router.push('/onboarding/info-1');
+      router.push('/onboarding/info');
     }
   };
 
@@ -110,22 +110,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
-  arrow: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  backArrow: {
-    fontSize: 24,
-    color: '#000',
-  },
   backButton: {
-  position: 'absolute',
-  top: 28,
-  left: 24,
-  zIndex: 10,
-},
-
+    position: 'absolute',
+    top: 28,
+    left: 24,
+    zIndex: 10,
+  },
   arrowContainer: {
     position: 'absolute',
     bottom: 36,

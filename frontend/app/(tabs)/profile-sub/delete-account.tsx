@@ -1,12 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Modal,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {Modal,StyleSheet,ScrollView,View,Text,TouchableOpacity,} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/app/context/UserContext';
 

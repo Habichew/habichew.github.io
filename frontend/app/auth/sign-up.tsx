@@ -67,8 +67,6 @@ return (
   value={password}
   onChangeText={setPassword}
 />
-
-
       <View style={styles.checkboxContainer}>
         <Checkbox value={agree} onValueChange={setAgree} color={agree ? '#000' : undefined} />
         <Text style={styles.checkboxLabel}> I agree with the Terms & Conditions</Text>
