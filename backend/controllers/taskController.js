@@ -48,8 +48,11 @@ export async function createTask(req, res) {
             return res.status(400).json({message: `No object 'task' provided in request body`});
         }
 
-        // TODO: Check if habit exists
-        // const r = await habitService.findHabitById(task.habitId);
+        // check if task has a valid habit
+        const habitResult = await habitService.getHabitById(task.habitId);
+        if (!habitResult || habitResult.length === 0) {
+            return res.status(404).json({message: `Task does not have a valid habit id`});
+        }
 
         const result = await taskService.createTask(task);
 
@@ -95,13 +98,14 @@ export async function updateTask(req, res) {
             task.dueAt || existingTask.dueAt
         )
 
+        // check if task has a valid habit
+        const habitResult = await habitService.getHabitById(task.habitId);
+        if (!habitResult || habitResult.length === 0) {
+            return res.status(404).json({message: `Task does not have a valid habit id`});
+        }
+
         if (task.completed && !existingTask.completed) {
             // update last time user completed any task in user table
-            const habitResult = await habitService.getHabitById(task.habitId);
-            if (!habitResult || habitResult.length === 0) {
-                return res.status(404).json({message: `Task does not have a valid habit id`});
-            }
-
             const userResult = await userService.updateUserTaskLastCompleted(habitResult[0].userId);
         }
 
