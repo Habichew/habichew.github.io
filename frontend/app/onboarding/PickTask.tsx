@@ -1,71 +1,163 @@
-// app/(tasks)/PickTask.tsx
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
-
-const CATEGORIES = ['Work', 'Health', 'Learning'];
-const TASKS = ['Design', 'Yoga', 'Read', 'Walk', 'Code', 'Meditate', 'Study', 'Sleep'];
+// app/(tabs)/pick-task.tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 export default function PickTask() {
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
-  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const router = useRouter();
+  const { habit } = useLocalSearchParams();
 
-  const toggleTask = (task: string) => {
-    setSelectedTasks((prev) =>
-      prev.includes(task) ? prev.filter(t => t !== task) : [...prev, task]
-    );
+  const [taskInputs, setTaskInputs] = useState(['', '', '']);
+
+  const handleChange = (text: string, index: number) => {
+    const newTasks = [...taskInputs];
+    newTasks[index] = text;
+    setTaskInputs(newTasks);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Choose a category</Text>
-      <View style={styles.dropdownWrapper}>
-        <Picker
-          selectedValue={selectedCategory}
-          onValueChange={(itemValue) => setSelectedCategory(itemValue)}>
-          {CATEGORIES.map((cat) => <Picker.Item label={cat} value={cat} key={cat} />)}
-        </Picker>
-      </View>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/onboarding/PickHabit')}>
+        <View style={styles.circleButton}>
+          <Text style={styles.arrowText}>{'<'}</Text>
+        </View>
+      </TouchableOpacity>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        <Image
+          source={require('@/assets/images/previouscat3.png')} 
+          style={styles.image}
+          resizeMode="contain"
+        />
 
-      <Text style={styles.label}>Choose a task</Text>
-      <View style={styles.taskArea}>
-        {TASKS.map((task) => (
-          <TouchableOpacity
-            key={task}
-            style={[styles.tag, selectedTasks.includes(task) && styles.selectedTag]}
-            onPress={() => toggleTask(task)}>
-            <Text style={styles.tagText}>{task}</Text>
-          </TouchableOpacity>
+        <Text style={styles.habitText}>{habit || 'Your habit appears here'}</Text>
+
+        <Text style={styles.descriptionText}>
+          is too big for me to chew{'\n'}let’s break it down {'\n'}with just a click!
+        </Text>
+        <Text style={styles.edit}>or edit the text below to add your own</Text>
+        {taskInputs.map((task, index) => (
+          <View style={styles.taskRow} key={index}>
+            <TextInput
+              style={styles.taskInput}
+              // placeholder="or edit the text to add your own"
+              // placeholderTextColor="#BBBBBB"
+              value={task}
+              onChangeText={(text) => handleChange(text, index)}
+            />
+            <Text style={styles.editIcon}>✎</Text>
+          </View>
         ))}
-      </View>
 
-      <TouchableOpacity
-        style={styles.continueBtn}
-        onPress={() => router.push({ pathname: '/onboarding/GenerateSubTask', params: { task: selectedTasks[0] || '' } })}>
-        <Text style={styles.btnText}>Continue</Text>
+        <TouchableOpacity style={styles.generateBtn}>
+          <Text style={styles.generateText}>Generate Tasks</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <TouchableOpacity style={styles.arrowContainer} onPress={() => router.push('/(tabs)/pet')}>
+        <View style={styles.circleButton}>
+          <Text style={styles.arrowText}>{'>'}</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: 'white' },
-  label: { fontWeight: 'bold', marginTop: 20 },
-  dropdownWrapper: { borderWidth: 1, borderColor: '#ccc', marginTop: 8 },
-  taskArea: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 20, backgroundColor: '#f0f1f4', padding: 20,
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems:'center',
   },
-  tag: {
-    backgroundColor: '#484C59', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 14,
+  image: {
+    width: 150,
+    height: 100,
+    marginTop: 140,
+    alignSelf:'center',
   },
-  selectedTag: {
-    backgroundColor: '#1c1f26',
+  habitText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginTop: 16,
+    alignSelf:'center',
   },
-  tagText: { color: '#fff' },
-  continueBtn: {
-    backgroundColor: '#484C59', paddingVertical: 14, marginTop: 30, borderRadius: 6, alignItems: 'center',
+  descriptionText: {
+    textAlign: 'center',
+    fontSize: 30,
+    color: '#DAB7FF',
+    fontWeight: 'bold',
+    marginVertical: 16,
   },
-  btnText: { color: 'white', fontWeight: 'bold' },
+  edit:{
+    textAlign: 'center',
+    fontSize:14,
+    color:'#bbbbbb',
+    margin:10,
+  },
+  taskRow: {
+    flexDirection: 'row',
+    backgroundColor: '#eee',
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    marginBottom: 16,
+    marginLeft:24,
+    marginRight:24,
+  },
+  taskInput: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: 'bold',
+    paddingVertical: 12,
+    color: '#000',
+  },
+  editIcon: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#000',
+  },
+  generateBtn: {
+    backgroundColor: '#DAB7FF',
+    borderRadius: 24,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 12,
+    marginLeft:24,
+    marginRight:24,
+  },
+  generateText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 28,
+    left: 24,
+    zIndex: 10,
+  },
+  arrowContainer: {
+    position: 'absolute',
+    bottom: 36,
+    right: 24,
+    zIndex: 10,
+  },
+  circleButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  arrowText: {
+    color: '#000',
+    fontSize: 24,
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
 });

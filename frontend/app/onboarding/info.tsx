@@ -5,17 +5,25 @@ import CustomDropdown from '@/components/ui/select';
 import CustomInput from '@/components/ui/input';
 
 export default function InfoScreen1() {
-  const router = useRouter();
+    const router = useRouter();
   const [pronoun, setPronoun] = useState<string | null>(null);
   const [pace, setPace] = useState<string | null>(null);
   const [name, setName] = useState('');
-    const handleBack = () => {
-      router.push('../onboarding/story');
+
+  const isFormValid = pronoun && pace && name;
+
+  const handleBack = () => {
+    router.push('../onboarding/story');
+  };
+
+  const handleContinue = () => {
+    if (!isFormValid) return;
+    router.push('/onboarding/PickHabit');
   };
 
   const pronounOptions = [
-    { label: 'He/Him', value: 'he' },
     { label: 'She/Her', value: 'she' },
+    { label: 'He/Him', value: 'he' },
     { label: 'They/Them', value: 'they' },
   ];
 
@@ -27,44 +35,49 @@ export default function InfoScreen1() {
 
   return (
     <View style={styles.container}>
-    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-      <View style={styles.circleButton}>
-        <Text style={styles.arrowText}>{'<'}</Text>
-      </View>
-    </TouchableOpacity>
-    <Image
-      source={require('@/assets/images/purplecat.png')}
-      style={styles.backgroundImage}
-      resizeMode="contain"
-    />
-    <Text style={styles.heading}>Let’s get to know you!</Text>
-    <CustomDropdown
-      items={pronounOptions}
-      value={pronoun}
-      setValue={setPronoun}
-      placeholder="Select Pronouns"
-      zIndex={4}
-      zIndexInverse={3}
-    />
-    <CustomDropdown
-      items={paceOptions}
-      value={pace}
-      setValue={setPace}
-      placeholder="Select your pace of work"
-      zIndex={2}
-      zIndexInverse={1}
-    />
-    <CustomInput
-      placeholder="Enter Name"
-      value={name}
-      onChangeText={setName}  
-    />
-    <TouchableOpacity
-      style={styles.button}
-      onPress={() => router.push('/onboarding/info-2')}
-    >
-      <Text style={styles.buttonText}>Continue</Text>
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <View style={styles.circleButton}>
+          <Text style={styles.arrowText}>{'<'}</Text>
+        </View>
+      </TouchableOpacity>
+
+      <Image
+        source={require('@/assets/images/purplecat.png')}
+        style={styles.backgroundImage}
+        resizeMode="contain"
+      />
+
+      <Text style={styles.heading}>Let’s get to know you!</Text>
+
+      <CustomDropdown
+        items={pronounOptions}
+        value={pronoun}
+        setValue={setPronoun}
+        placeholder="Select Pronouns"
+        zIndex={4}
+        zIndexInverse={3}
+      />
+      <CustomDropdown
+        items={paceOptions}
+        value={pace}
+        setValue={setPace}
+        placeholder="Select your pace of work"
+        zIndex={2}
+        zIndexInverse={1}
+      />
+      <CustomInput
+        placeholder="Enter Pet Name"
+        value={name}
+        onChangeText={setName}
+      />
+
+      <TouchableOpacity
+        style={[styles.button, { opacity: isFormValid ? 1 : 0.6 }]}
+        onPress={handleContinue}
+        disabled={!isFormValid}
+      >
+        <Text style={styles.buttonText}>Continue</Text>
+      </TouchableOpacity>
     </View>
   );
 }

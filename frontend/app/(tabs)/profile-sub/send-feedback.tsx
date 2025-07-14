@@ -1,14 +1,18 @@
 // app/profile/send-feedback.tsx
 import { useRouter } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
 
 export default function SendFeedback() {
   const router = useRouter();
-
+  const [comments, setComments] = useState('');
+  useEffect(() => {
+    setComments('');
+  }, []);
+    
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
       <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} style={styles.backBtn}>
-
         <Text style={styles.backText}>{'<'}</Text>
       </TouchableOpacity>
 
@@ -22,7 +26,12 @@ export default function SendFeedback() {
         placeholder="Thoughts And Comments"
         placeholderTextColor="#999"
         multiline
+        value={comments}
+        onChangeText={setComments}
       />
+      <TouchableOpacity onPress={() => router.push('/(tabs)/profile')} style={styles.saveBtn}>
+        <Text style={styles.saveText}>{'Submit'}</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -42,5 +51,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlignVertical: 'top',
     marginBottom: 24,
+  },
+    saveBtn: {
+    backgroundColor: '#1C1C1E',
+    paddingVertical: 12,
+    borderRadius: 24,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+    saveText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });

@@ -29,7 +29,7 @@ const handleSignIn = async () => {
       if (response.ok) {
         setUser(data[0]);//save user data for global use
         alert('Sign in successful!');
-        router.replace('/pet');
+        router.replace('../(tabs)/home');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
     purpleBackground: {
     width: '100%',
-    backgroundColor: '#E8C9FD',
+    backgroundColor: '#DAB7FF',
     paddingBottom: 40,
     paddingTop: 200,
     paddingHorizontal: 24,
