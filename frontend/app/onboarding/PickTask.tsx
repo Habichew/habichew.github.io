@@ -53,7 +53,7 @@ export default function PickTask() {
         </TouchableOpacity>
       </ScrollView>
 
-      <TouchableOpacity style={styles.arrowContainer} onPress={() => router.push('/(tabs)/pet')}>
+      <TouchableOpacity style={styles.arrowContainer} onPress={() => router.push('/(tabs)/home')}>
         <View style={styles.circleButton}>
           <Text style={styles.arrowText}>{'>'}</Text>
         </View>

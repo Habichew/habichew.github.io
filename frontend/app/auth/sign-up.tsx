@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet, TouchableOpacity, Text, Image } from 'reac
 import { useRouter } from 'expo-router';
 import Checkbox from 'expo-checkbox';
 import CustomInput from '@/components/ui/input';
+import { useUser } from '../context/UserContext';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [agree, setAgree] = useState(false);
   const isFormValid = username && agree && email && password;
+  const { setUser } = useUser();
   const handleSignUp = async () => {
     if (!agree) {
       alert('Please agree to the terms.');
@@ -34,6 +36,9 @@ export default function SignUpScreen() {
       const data = await response.json();
 
       if (response.ok) {
+
+        setUser(data.user); 
+
         alert('Registration successful!');
         router.replace('../onboarding/launch'); 
       } else {

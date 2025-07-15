@@ -46,29 +46,25 @@ const handleSignIn = async () => {
     <View style={styles.screen}>
       <View style={styles.purpleBackground}>
       <Text style={styles.title}>Welcome back,{'\n'}ready to continue?</Text>
-
       <CustomInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
-
       <CustomInput
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
       />
-
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
         <Text style={styles.link}>Forgot password?</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       </View>
 
       <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
         <Text style={styles.signInText}>Sign In</Text>
       </TouchableOpacity>
-
 
       <Text style={styles.orText}>OR LOG IN WITH</Text>
 
