@@ -37,14 +37,19 @@ export async function getHabitByUser(req, res) {
 export async function createHabitByUser(req, res) {
     try {
         const { userId } = req.params;
-        const { customTitle, priority, startDate, goalDate, frequency } = req.body;
+        const { habitId, customTitle, priority, startDate, goalDate, frequency } = req.body;
+
 
         // Basic validation
-        if (!customTitle) {
-            return res.status(400).json({ message: 'Habit title are required' });
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
         }
 
-        const habit = await habitService.createHabitByUser(userId, customTitle, priority, startDate, goalDate, frequency);
+        if (!customTitle && !habitId) {
+            return res.status(400).json({message: 'Choose a habit or add your custom one'})
+        }
+
+        const habit = await habitService.createHabitByUser(userId, habitId, customTitle, priority, startDate, goalDate, frequency);
         res.status(201).json({ message: 'Habit created', habit });
     } catch (err) {
         res.status(500).json({ message: 'Failed to create habit', error: err.message });

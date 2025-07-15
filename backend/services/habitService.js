@@ -31,33 +31,38 @@ export async function getUserHabits(userId) {
   return rows;
 }
 
-export async function createHabitByUser(userId, customTitle, priority, startDate, goalDate,frequency){
-  // Validation (basic): customTitle should exist
-  if (!customTitle || !userId) {
-    throw new Error('customTitle and userId are required');
-  }
+export async function createHabitByUser(userId, habitId, customTitle, priority, startDate, goalDate,frequency){
 
   // Insert into userHabits as custom habit
   const [result] = await pool.query(
       `INSERT INTO userHabits
      (userId, habitId, customTitle, priority, startDate, goalDate, frequency)
-     VALUES (?, NULL, ?, ?, ?, ?, ?)`,
-      [userId, customTitle, priority, startDate, goalDate, frequency]
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [userId, habitId, customTitle, priority, startDate, goalDate, frequency]
   );
 
   const userHabitId = result.insertId;
 
   // Return inserted record
   const [rows] = await pool.query(
-      `SELECT id AS userHabitId, customTitle AS habitTitle, priority, startDate, goalDate, frequency
-     FROM userHabits
-     WHERE id = ?`,
-      [userHabitId]
-  );
-
+      `SELECT
+         uh.id AS userHabitId,
+         COALESCE(uh.customTitle, h.title) AS habitTitle,
+         uh.priority,
+         uh.startDate,
+         uh.goalDate,
+         uh.frequency,
+         uh.isArchived
+       FROM userHabits uh
+              LEFT JOIN habits h ON uh.habitId = h.id
+       WHERE uh.id = ?;`, [userHabitId]);
   return rows[0];
 
 }
+
+/*export async function deleteHabitByUser (userId, userHabitId) {
+
+}*/
 
 /* import { pipeline, env } from '@huggingface/transformers';
 
