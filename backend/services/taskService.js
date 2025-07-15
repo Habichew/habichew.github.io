@@ -1,5 +1,14 @@
 import {pool} from "../config/db.js";
 
+export async function getTasksByUserId(userId) {
+    const [row] = await pool.query(`SELECT *
+                                    FROM habits
+                                    JOIN tasks
+                                    ON habits.id = tasks.habitId
+                                    WHERE habits.id = ?`, [userId]);
+    return row;
+}
+
 export async function getAllTasks() {
     const [rows] = await pool.query('SELECT * FROM tasks');
     return rows;

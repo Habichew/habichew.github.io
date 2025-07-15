@@ -50,4 +50,8 @@ userRouter.put("/:userId/pet", petController.updatePet);
 // Delete pet
 userRouter.delete("/:userId/pet", petController.deletePet);
 
+// ====================== User Tasks ======================= //
+// Find pet by user id
+userRouter.get("/:userId/tasks", taskController.getTasksByUserId);
+
 export {userRouter};

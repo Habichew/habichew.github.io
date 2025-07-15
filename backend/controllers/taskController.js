@@ -6,6 +6,21 @@ import * as taskService from "../services/taskService.js";
 import * as userService from "../services/userService.js";
 import * as habitService from "../services/habitService.js";
 
+export async function getTasksByUserId(req, res) {
+    try {
+        const {userId} = req.params;
+        const tasks = await taskService.getTasksByUserId(userId);
+
+        return res.status(200).send({
+            tasks: tasks
+        });
+    } catch (err) {
+        console.error('getTasksByUserId failed:', err);
+        res.status(500).json({error: 'Server error'});
+    }
+}
+
+
 export async function getAllTasks(req, res) {
     // sendNotImplementedError(res);
     try {
@@ -30,7 +45,7 @@ export async function findTaskById(req, res) {
         }
         res.status(200).json(task);
     } catch (err) {
-        console.error('getAllTasks failed:', err);
+        console.error('findTaskById failed:', err);
         return res.status(500).json({error: 'Server error'});
     }
 }
@@ -143,3 +158,5 @@ export async function deleteTask(req, res) {
         return res.status(500).json({error: 'Internal server error'});
     }
 }
+
+
