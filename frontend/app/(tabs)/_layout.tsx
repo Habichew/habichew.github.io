@@ -15,11 +15,11 @@ export default function TabLayout() {
           tabBarStyle: { display: 'none' }, 
         }}
       >
-        <Tabs.Screen name="Home" />
-        <Tabs.Screen name="Tasks" />
-        <Tabs.Screen name="Pet" />
-        <Tabs.Screen name="Insight" />
-        <Tabs.Screen name="Profile" />
+        <Tabs.Screen name="home" />
+        <Tabs.Screen name="tasks" />
+        <Tabs.Screen name="pet" />
+        <Tabs.Screen name="insight" />
+        <Tabs.Screen name="profile" />
       </Tabs>
       <BottomBar />
     </View>

@@ -12,9 +12,13 @@ habitRouter.get('/categories', habitController.getHabitCategories)
 
 habitRouter.get('/presets', habitController.getPresetHabits);
 
-habitRouter.get('/:userId', habitController.getHabitByUser);
+habitRouter.get('/:userId', habitController.getHabitListByUser);
+
+habitRouter.get('/:userId/:userHabitId', habitController.getHabitByUser);
 
 habitRouter.post('/:userId', habitController.createHabitByUser);
+
+habitRouter.patch('/:userId/:userHabitId', habitController.updateHabitByUser);
 
 // Get all habit categories
 /*habitRouter.get("/categories", habitController.getAllHabitCategories);*/

@@ -24,15 +24,26 @@ export async function getPresetHabits(req, res) {
 }
 
 
-export async function getHabitByUser(req, res) {
+export async function getHabitListByUser(req, res) {
     try {
         const {userId} = req.params;
-        const list = await habitService.getUserHabits(userId);
+        const list = await habitService.getUserHabitList(userId);
         res.status(200).json(list);
     } catch (err) {
-        res.status(500).json({message: 'Failed to fetch user habits', error: err.message});
+        res.status(500).json({message: 'Failed to fetch user habit list', error: err.message});
     }
 }
+
+export async function getHabitByUser(req, res) {
+    try {
+        const {userId, userHabitId} = req.params;
+        const habit = await habitService.getUserHabit(userId, userHabitId);
+        res.status(200).json(habit);
+    } catch (err) {
+        res.status(500).json({message: 'Failed to fetch the habit', error: err.message});
+    }
+}
+
 
 export async function createHabitByUser(req, res) {
     try {
@@ -53,6 +64,45 @@ export async function createHabitByUser(req, res) {
         res.status(201).json({ message: 'Habit created', habit });
     } catch (err) {
         res.status(500).json({ message: 'Failed to create habit', error: err.message });
+    }
+}
+
+export async function updateHabitByUser(req, res) {
+    try {
+        const { userId, userHabitId } = req.params;
+        const { customTitle, priority, startDate, goalDate, frequency } = req.body;
+
+
+        // Basic validation
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        if (!userHabitId) {
+            return res.status(400).json({ message: 'Habit Id is required for this user' });
+        }
+
+        const habit = await habitService.updateHabitByUser(userId, userHabitId, customTitle, priority, startDate, goalDate, frequency);
+        res.status(200).json({ message: 'User habit updated successfully' , habit });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to update habit', error: err.message });
+    }
+}
+
+export async function deleteUserHabit (req,res){
+    const {userId,userHabitId} = req.params;
+
+    try {
+        const deleted = await habitService.deleteUserHabit(userId, userHabitId);
+
+        if (!deleted) {
+            return res.status(404).json({ message: 'Habit not found or already deleted' });
+        }
+
+        res.status(200).json({ message: 'Habit and related tasks deleted successfully' });
+    } catch (err) {
+        console.error('Delete error:', err);
+        res.status(500).json({ message: 'Failed to delete habit', error: err.message });
     }
 }
 

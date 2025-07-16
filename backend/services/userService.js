@@ -41,7 +41,7 @@ export async function findUserByEmail(email) {
 
 export async function findUserById(id) {
   const [result] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
-  return result;
+  return result[0];
 }
 
 export async function getUserById(id, field) {
