@@ -51,6 +51,7 @@ const Home = () => {
   const handlePressHabit = (habit: any) => {
     router.push({
       pathname: './tasks',
+
       params: {
         habitId: habit.userHabitId,
         habitName: habit.habitTitle,
@@ -129,8 +130,6 @@ const Home = () => {
         style={styles.catImage}
         resizeMode="contain"
       />
-
-
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
         <Text style={{ fontSize: 24, fontWeight: 'bold' }}>To-Do</Text>
         <TouchableOpacity onPress={handleAdd}>
