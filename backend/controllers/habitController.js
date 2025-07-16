@@ -89,6 +89,23 @@ export async function updateHabitByUser(req, res) {
     }
 }
 
+export async function deleteUserHabit (req,res){
+    const {userId,userHabitId} = req.params;
+
+    try {
+        const deleted = await habitService.deleteUserHabit(userId, userHabitId);
+
+        if (!deleted) {
+            return res.status(404).json({ message: 'Habit not found or already deleted' });
+        }
+
+        res.status(200).json({ message: 'Habit and related tasks deleted successfully' });
+    } catch (err) {
+        console.error('Delete error:', err);
+        res.status(500).json({ message: 'Failed to delete habit', error: err.message });
+    }
+}
+
 export function getTaskRecommendations(conn, req, res) {
     sendNotImplementedError(res);
     /*
