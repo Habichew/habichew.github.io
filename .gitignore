@@ -13,3 +13,4 @@ frontedn/.expo/
 
 # dotenv
 .env
+node_modules

@@ -27,12 +27,12 @@ export default function CustomInput({
         underlineColor="transparent"
         activeUnderlineColor="transparent"
         style={styles.input}
-        placeholderTextColor="#999"
+        placeholderTextColor="#bbbbbb"
         secureTextEntry={secureTextEntry}
         theme={{
           colors: {
             text: '#000',
-            placeholder: '#999',
+            placeholder: '#bbbbbb',
           },
         }}
       />
@@ -56,5 +56,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 16,
     backgroundColor: 'transparent', 
+    fontWeight:'bold',
   },
 });
