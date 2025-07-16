@@ -1,13 +1,8 @@
 export default class Task {
   constructor(title, completed, description, score, priority, recommendation, categoryId, habitId, dueAt) {
     this.title = title;
+    this.habitId = habitId;
     this.completed = completed;
     this.description = description;
-    this.score = score;
-    this.priority = priority;
-    this.recommendation = recommendation;
-    this.categoryId = categoryId;
-    this.habitId = habitId;
-    this.dueAt = dueAt;
   }
 }

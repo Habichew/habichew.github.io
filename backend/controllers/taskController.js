@@ -159,4 +159,30 @@ export async function deleteTask(req, res) {
     }
 }
 
+export async function getPresetTasks(req, res) {
+    try {
+        console.log("###### /tasks: Getting preset tasks ######");
+        const task = await taskService.getPresetTasks();
+        if (!task || task.length === 0) {
+            return res.status(404).json({message: 'No preset task found.'});
+        }
+        res.status(200).json(task);
+    } catch (err) {
+        console.error('findPresetTaskById failed:', err);
+        return res.status(500).json({error: 'Server error'});
+    }
+}
 
+export async function getPresetTasksByHabitId(req, res) {
+    try {
+        console.log("###### /tasks: Getting preset task by id ######", req.params.taskId);
+        const task = await taskService.getPresetTasksByHabitId(req.params.taskId);
+        if (!task || task.length === 0) {
+            return res.status(404).json({message: 'No preset task found.'});
+        }
+        res.status(200).json(task);
+    } catch (err) {
+        console.error('findPresetTaskById failed:', err);
+        return res.status(500).json({error: 'Server error'});
+    }
+}

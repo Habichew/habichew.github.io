@@ -60,6 +60,13 @@ export async function createHabitByUser(userId, habitId, customTitle, priority, 
 
 }
 
+export async function getHabitById(id) {
+  const [row] = await pool.query(`SELECT *
+                                  FROM habits
+                                  WHERE id = ?`, [id]);
+  return row;
+}
+
 /*export async function deleteHabitByUser (userId, userHabitId) {
 
 }*/

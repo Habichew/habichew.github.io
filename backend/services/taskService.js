@@ -1,44 +1,55 @@
 import {pool} from "../config/db.js";
 
+export async function getPresetTasks() {
+    const [row] = await pool.query(`SELECT *
+                                  FROM tasks`);
+    return row;
+}
+
+export async function getPresetTasksByHabitId(habitId) {
+    const [row] = await pool.query(`SELECT *
+                                  FROM tasks
+                                  WHERE id = ?`, [habitId]);
+    return row;
+}
+
 export async function getTasksByUserId(userId) {
     const [row] = await pool.query(`SELECT *
                                     FROM habits
-                                    JOIN tasks
-                                    ON habits.id = tasks.habitId
+                                    JOIN userTasks
+                                    ON habits.id = userTasks.habitId
                                     WHERE habits.id = ?`, [userId]);
     return row;
 }
 
 export async function getAllTasks() {
-    const [rows] = await pool.query('SELECT * FROM tasks');
+    const [rows] = await pool.query('SELECT * FROM userTasks');
     return rows;
 }
 
 export async function findTaskById(id) {
     const [row] = await pool.query(`SELECT *
-                                    FROM tasks
+                                    FROM userTasks
                                     WHERE id = ?`, [id]);
     return row;
 }
 
 export async function createTask(task) {
     const [row] = await pool.query(
-        'INSERT INTO tasks (title, description, score, level, priority, recommendation, categoryId, habitId, dueAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [task.title, task.description, task.score, task.level, task.priority, task.recommendation, task.categoryId, task.dueAt]
+        'INSERT INTO userTasks (title, description, score, priority, habitId, dueAt) VALUES (?, ?, ?, ?, ?, ?)',
+        [task.title, task.description, task.score, task.priority, task.habitId, task.dueAt]
     );
     return row;
 }
 
 export async function updateTask(id, task) {
     const [row] = await pool.query(
-        `UPDATE tasks
+        `UPDATE userTasks
          SET title = ?,
              completed = ?,
              description = ?,
              score = ?,
              priority = ?,
-             recommendation = ?,
-             categoryId = ?,
              habitId = ?,
              dueAt = ?
          WHERE id = ?`,
@@ -49,7 +60,6 @@ export async function updateTask(id, task) {
             task.score,
             task.priority,
             task.recommendation,
-            task.categoryId,
             task.habitId,
             task.dueAt,
             id
@@ -59,6 +69,6 @@ export async function updateTask(id, task) {
 }
 
 export async function deleteTask(id) {
-    const [rows] = await pool.query('DELETE FROM tasks WHERE id = ?', [id]);
+    const [rows] = await pool.query('DELETE FROM userTasks WHERE id = ?', [id]);
     return rows;
 }
