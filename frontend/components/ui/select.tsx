@@ -78,11 +78,13 @@ const styles = StyleSheet.create({
     shadowColor: 'transparent',
   },
   text: {
+    fontWeight:'bold',
     fontSize: 16,
     color: '#000',
   },
   placeholder: {
-    color: '#999',
+    fontWeight:'bold',
+    color: '#bbbbbb',
   },
   arrow: {
     tintColor: '#DAB7FF', 

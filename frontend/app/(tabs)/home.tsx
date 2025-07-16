@@ -1,154 +1,289 @@
-// frontend/app/home.tsx
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
-import { useUser } from '../context/UserContext';
-import ItemModal from 'components/ui/ItemModal';
-import ProgressBar from 'components/ui/ProgressBar';
-import { useHabitSearch } from '../../hooks/useHabitSearch';
-import { calculateHabitProgress } from '../../hooks/calculateHabitProgress';
-import type { Habit } from '../context/UserContext';
+import React, { useState, useEffect } from 'react';
+import {View,Text,TextInput,FlatList,TouchableOpacity,Image,StyleSheet,Dimensions,} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useUser, Habit } from '../context/UserContext';
+import ItemModal from '@/components/ui/HabitModal'; 
 
+const screenWidth = Dimensions.get('window').width;
+const scale = (value: number) => (screenWidth / 375) * value;
 
 const Home = () => {
-  const { user, habits, tasks, addHabit, updateHabit } = useUser();
-  const [search, setSearch] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editHabit, setEditHabit] = useState<Habit | null>(null); 
+  const { user, habits, loadHabits, addHabit, updateHabit } = useUser();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredHabits, setFilteredHabits] = useState(habits);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editHabit, setEditHabit] = useState<Partial<Habit> | null>(null);
 
+  const router = useRouter();
 
-  const filteredHabits = useHabitSearch(habits, search);
+  useEffect(() => {
+    if (user) loadHabits();
+  }, [user]);
 
-  const handleSaveHabit = (habitData: any) => {
-    if (!habitData.id) {
-      addHabit({ ...habitData, id: Date.now().toString(), userId: user?.id });
+  useEffect(() => {
+    setFilteredHabits(
+      habits.filter(habit =>
+        habit.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, habits]);
+
+  const handleAdd = () => {
+    setEditHabit(null);
+    setModalVisible(true);
+  };
+
+  const handleSave = async (data: any) => {
+    if (editHabit) {
+      await updateHabit(data);
     } else {
-      updateHabit(habitData);
+      await addHabit(user!.id.toString(), data);
+    }
+    await loadHabits();
+  };
+
+  const handleEdit = (habit: any) => {
+    setEditHabit(habit);
+    setModalVisible(true);
+  };
+
+  const handlePressHabit = (habit: any) => {
+    router.push({
+      pathname: '/(tabs)/tasks',
+      params: {
+        habitId: habit.userHabitId,
+        habitName: habit.habitTitle,
+      },
+    });
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      const day = date.getUTCDate();
+      const month = date.toLocaleString('default', { month: 'short' });
+      return `${day} ${month}`;
+    } catch {
+      return '';
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <Image source={require('@/assets/images/previouscat4.png')} style={styles.catImage} />
+  const getPriorityLabel = (value: string | number) => {
+    switch (Number(value)) {
+      case 1:
+        return 'High Priority';
+      case 2:
+        return 'Medium Priority';
+      case 3:
+        return 'Low Priority';
+      default:
+        return 'Priority';
+    }
+  };
 
-      <View style={styles.header}>
-        <Text style={styles.title}>To-Do</Text>
-        <TouchableOpacity onPress={() => setShowModal(true)}>
-          <Text style={styles.addButton}>Add Habit</Text>
+  const renderHabit = ({ item }: { item: any }) => (
+  <TouchableOpacity
+    style={styles.card}
+    onPress={() => handlePressHabit(item)}
+    activeOpacity={0.8}
+  >
+    <View style={styles.headerRow}>
+      <Text style={styles.title}>{item.habitTitle}</Text>
+      <TouchableOpacity onPress={() => handleEdit(item)}>
+        <Ionicons name="pencil-outline" size={20} color="black" />
+      </TouchableOpacity>
+    </View>
+
+    <View style={styles.progressBarBackground}>
+      <View style={styles.progressBarFill} />
+    </View>
+
+    <View style={styles.tagRow}>
+      <View style={styles.tag}>
+        <Ionicons name="calendar-outline" size={16} color="black" />
+        <Text style={styles.tagText}> {formatDate(item.goalDate)}</Text>
+      </View>
+
+      <View style={styles.tag}>
+        <Ionicons name="flag-outline" size={16} color="black" />
+        <Text style={styles.tagText}> {getPriorityLabel(item.priority)}</Text>
+      </View>
+
+      <View style={styles.tag}>
+        <Ionicons name="time-outline" size={16} color="black" />
+        <Text style={styles.tagText}> {item.frequency}</Text>
+      </View>
+
+    </View>
+
+  </TouchableOpacity>
+);
+
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#fff', padding: 20 }}>
+      <Image
+        source={require('@/assets/images/previouscat4.png')}
+        style={styles.catImage}
+      />
+
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>To-Do</Text>
+        <TouchableOpacity onPress={handleAdd}>
+          <Text style={{
+            backgroundColor: '#1CC282',
+            padding: 10,
+            borderRadius: 20,
+            fontWeight: 'bold',
+            color: '#000'
+          }}>
+            Add Habit
+          </Text>
         </TouchableOpacity>
       </View>
 
       <TextInput
-        style={styles.searchInput}
         placeholder="Search Habit"
-        placeholderTextColor="#999"
-        value={search}
-        onChangeText={setSearch}
+        placeholderTextColor="#888"
+        style={{
+          backgroundColor: '#eee',
+          borderRadius: 20,
+          paddingHorizontal: 16,
+          paddingVertical: 10,
+          marginBottom: 12,
+        }}
+        value={searchTerm}
+        onChangeText={setSearchTerm}
       />
 
       <FlatList
         data={filteredHabits}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const progress = calculateHabitProgress(item.id, tasks);
-          return (
-            <View style={styles.habitCard}>
-              <Text style={styles.habitTitle}>{item.name}</Text>
-              <ProgressBar progress={progress} />
-              <View style={styles.tagsRow}>
-                {item.date && <Text style={styles.tag}>📅 {item.date}</Text>}
-                {item.priority && <Text style={styles.tag}>🚩 {item.priority}</Text>}
-                {item.category && <Text style={styles.tag}>📆 {item.category}</Text>}
-                <TouchableOpacity onPress={() => setEditHabit(item)}>
-                  <Text style={styles.editIcon}>✎</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        }}
+        keyExtractor={(item, index) =>
+          item.userHabitId ? String(item.userHabitId) : String(index)
+        }
+        renderItem={renderHabit}
       />
 
       <ItemModal
-        visible={showModal || !!editHabit}
-        type="habit"
+        visible={modalVisible}
         initialData={editHabit ?? undefined}
-        onClose={() => {
-          setEditHabit(null);
-          setShowModal(false);
-        }}
-        onSave={handleSaveHabit}
+        onClose={() => setModalVisible(false)}
+        onSave={handleSave}
       />
     </View>
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 80,
-    backgroundColor: '#fff'
+    paddingHorizontal: screenWidth > 400 ? 24 : 16,
+    paddingTop: scale(60),
+    backgroundColor: '#fff',
   },
   catImage: {
     width: '100%',
-    height: 180,
+    height: scale(180),
     resizeMode: 'contain',
-    marginBottom: 10,
+    marginBottom: scale(10),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    marginBottom: scale(12),
   },
   addButton: {
     backgroundColor: '#1CC282',
     color: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 6,
-    borderRadius: 24,
+    paddingHorizontal: scale(20),
+    paddingVertical: scale(8),
+    borderRadius: scale(24),
     fontWeight: 'bold',
   },
   searchInput: {
     backgroundColor: '#f0f0f0',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 14,
-    marginBottom: 10,
+    borderRadius: scale(12),
+    paddingHorizontal: scale(16),
+    paddingVertical: scale(10),
+    fontSize: scale(14),
+    marginBottom: scale(12),
   },
   habitCard: {
     backgroundColor: '#F6F6F6',
-    borderRadius: 16,
-    padding: 14,
-    marginBottom: 12,
+    borderRadius: scale(16),
+    padding: scale(14),
+    marginBottom: scale(12),
   },
   habitTitle: {
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: scale(8),
   },
   tagsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: 6,
-  },
-  tag: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-    fontSize: 12,
-    marginRight: 6,
+    gap: scale(6),
   },
   editIcon: {
-    fontSize: 16,
-    marginLeft: 6,
+    fontSize: scale(16),
+    marginLeft: scale(6),
+  },
+  card: {
+    backgroundColor: '#e0e0e0',
+    borderRadius: scale(16),
+    padding: scale(16),
+    marginBottom: scale(12),
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: scale(18),
+    fontWeight: 'bold',
+    color: '#111',
+  },
+  progressBarBackground: {
+    height: scale(16),
+    backgroundColor: '#fff',
+    borderRadius: scale(8),
+    marginTop: scale(8),
+    marginBottom: scale(12),
+    overflow: 'hidden',
+    width: '100%',
+  },
+  progressBarFill: {
+    height: '100%',
+    width: screenWidth * 0.6, // placeholder for 60% progress
+    backgroundColor: '#dab7ff',
+    borderRadius: scale(8),
+  },
+  tagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: scale(8),
+  },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: scale(12),
+    paddingVertical: scale(6),
+    borderRadius: scale(20),
+    marginBottom: scale(4),
+  },
+  tagText: {
+    fontSize: scale(12),
+    color: '#000',
+    marginLeft: scale(4),
   },
 });
+
 
 export default Home;
