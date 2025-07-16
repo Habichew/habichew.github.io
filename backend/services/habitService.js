@@ -92,7 +92,7 @@ export async function updateHabitByUser(userId, userHabitId, customTitle, priori
     throw new Error('Habit not found');
   }
 
-  // 校验逻辑
+// Verify the start date and goal date logic:
   if (startDate && goalDate && new Date(startDate) > new Date(goalDate)) {
     throw new Error('startDate must be before goalDate');
   }
@@ -134,9 +134,14 @@ export async function updateHabitByUser(userId, userHabitId, customTitle, priori
 
 }
 
-/*export async function deleteHabitByUser (userId, userHabitId) {
+export async function deleteUserHabit (userId, userHabitId) {
+    const [result] = await pool.query(
+        `DELETE FROM userHabits WHERE id = ? AND userId = ?`,
+        [userHabitId, userId]
+    );
 
-}*/
+    return result.affectedRows > 0;
+}
 
 /* import { pipeline, env } from '@huggingface/transformers';
 
