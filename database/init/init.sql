@@ -98,8 +98,6 @@ CREATE TABLE IF NOT EXISTS `habits` (
     id integer PRIMARY KEY AUTO_INCREMENT,
     title varchar(255),
     categoryId integer,
-
-
     CONSTRAINT fkHabitCategory FOREIGN KEY (categoryId) REFERENCES habitCategories(id)
 );
 CREATE TABLE userHabits (
@@ -211,35 +209,51 @@ INSERT INTO habits (title, categoryId) VALUES
 
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `title` varchar(255),
-  `completed` boolean,
-  `description` varchar(255),
-  `score` integer,
-  `priority` integer,
-  `recommendation` varchar(255),
+  `title` varchar(255) NOT NULL,
   `habitId` integer,
-  `dueAt` datetime,
-  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
+  `completed` boolean DEFAULT false,
+  `description` varchar(255)
+);
 
 -- Insert sample tasks data
-INSERT INTO tasks (title, completed, description, score, priority, recommendation, habitId, dueAt)
+INSERT INTO tasks (title, completed, description, habitId)
 VALUES ('find t1d cooking blogs',
         false,
-        'improve my hba1c through better diet' '50',
-        3,
+        'improve my hba1c through better diet',
+        1),
+       ('study for exam',
+        true,
+        'prepare for my biology exam',
+        1);
+
+CREATE TABLE IF NOT EXISTS `userTasks` (
+   `id` integer PRIMARY KEY AUTO_INCREMENT,
+   `title` varchar(255) NOT NULL,
+   `habitId` integer,
+   `completed` boolean DEFAULT false,
+   `description` varchar(255),
+   `score` integer,
+   `priority` integer,
+   `dueAt` datetime,
+   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample userTasks data
+INSERT INTO userTasks (title, completed, description, score, priority, habitId, dueAt)
+VALUES ('find t1d cooking blogs',
+        false,
+        'improve my hba1c through better diet',
+        50,
         2,
         1,
-        1,
         '2026-01-01'),
-    ('study for exam',
-     true,
-     'prepare for my biology exam',
-     30,
-     3,
-     1,
-     1,
-     '2025-07-10');
+       ('study for exam',
+        true,
+        'prepare for my biology exam',
+        30,
+        3,
+        1,
+        '2025-07-10');
 
 ALTER TABLE `users` ADD FOREIGN KEY (`petId`) REFERENCES `pets` (`id`);
 
