@@ -47,8 +47,8 @@ type UserDataContextType = {
   loadTasks: () => Promise<void>;
 
   addHabit: (userId: string, h: Habit) => Promise<void>;
-  //waiting for api
   updateHabit: (h: Habit) => Promise<void>;
+   //waiting for api
   deleteHabit: (habitId: string) => Promise<void>;
 
   addTask: (t: Task) => Promise<void>;
@@ -111,32 +111,36 @@ const addHabit = async (userId: string, habit: Habit) => {
 };
 
 const updateHabit = async (habit: Habit) => {
-  if (!user) return;
+  if (!user || !habit.userHabitId) return;
 
   try {
-    const response = await fetch(`http://localhost:3000/habits/${user.id}`, {
-      method: 'PUT',
+    const response = await fetch(`http://localhost:3000/habits/${user.id}/${habit.userHabitId}`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([
-        {
-          habit: {
-            id: Number(habit.userHabitId),
-            name: habit.habitTitle,
-            taskId: 0,
-          },
-        },
-      ]),
+      body: JSON.stringify({
+        customTitle: habit.habitTitle,
+        priority: habit.priority,
+        startDate: habit.startDate,
+        goalDate: habit.goalDate,
+        frequency: habit.frequency,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to update habit');
+      const err = await response.json();
+      throw new Error(err.message || 'Failed to update habit');
     }
 
-    console.log('Habit updated successfully');
+    const data = await response.json();
+    console.log('Habit updated successfully:', data);
+
+    // reload habit table
+    await loadHabits();
   } catch (error) {
     console.error('Failed to update habit:', error);
   }
 };
+
 
   const deleteHabit = async (habitId: string) => {
     if (!user) return;

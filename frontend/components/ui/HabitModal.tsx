@@ -49,16 +49,28 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave }) 
 
   useEffect(() => {
     if (initialData) {
+      const formatDate = (d: string | Date) => {
+        const date = new Date(d);
+        return date.toISOString().split('T')[0]; // transfer to  yyyy-mm-dd 
+      };
+
       setFormData({
         habitTitle: initialData.habitTitle || '',
-        goalDate: initialData.goalDate || '',
-        priority: initialData.priority || '',
+        goalDate: initialData.goalDate ? formatDate(initialData.goalDate) : '',
+        priority: reversePriorityMap[initialData.priority ?? 3] || '',
         frequency: initialData.frequency || '',
       });
     } else {
       setFormData({ habitTitle: '', goalDate: '', priority: '', frequency: '' });
     }
   }, [initialData]);
+
+
+  const reversePriorityMap: Record<number, string> = {
+    1: 'High',
+    2: 'Medium',
+    3: 'Low',
+  };
 
   const priorityMap: Record<string, number> = {
     Low: 3,
@@ -127,12 +139,21 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave }) 
                   mode="date"
                   display="calendar"
                   onChange={(event: any, selectedDate: Date | undefined) => {
-                    setShowDatePicker(false);
-                    if (selectedDate) {
-                      const formatted = selectedDate.toISOString().split('T')[0];
-                      setFormData({ ...formData, goalDate: formatted });
-                    }
-                  }}
+  setShowDatePicker(false);
+  if (selectedDate) {
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth() + 1; // month starts from 0
+    const day = selectedDate.getDate();
+
+    // Manual splicing
+    const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day
+      .toString()
+      .padStart(2, '0')}`;
+
+    setFormData({ ...formData, goalDate: formattedDate });
+  }
+}}
+
                 />
               )}
             </>

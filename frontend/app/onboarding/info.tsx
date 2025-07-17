@@ -10,7 +10,8 @@ export default function InfoScreen1() {
   const [pace, setPace] = useState<string | null>(null);
   const [name, setName] = useState('');
 
-  const isFormValid = pronoun && pace && name;
+  // const isFormValid = pronoun && pace && name;
+  const isFormValid = pace && name;
 
   const handleBack = () => {
     router.push('../onboarding/story');
@@ -49,14 +50,14 @@ export default function InfoScreen1() {
 
       <Text style={styles.heading}>Let’s get to know you!</Text>
 
-      <CustomDropdown
+      {/* <CustomDropdown
         items={pronounOptions}
         value={pronoun}
         setValue={setPronoun}
         placeholder="Select Pronouns"
         zIndex={4}
         zIndexInverse={3}
-      />
+      /> */}
       <CustomDropdown
         items={paceOptions}
         value={pace}

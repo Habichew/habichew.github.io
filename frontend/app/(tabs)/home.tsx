@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View,Text,TextInput,FlatList,TouchableOpacity,Image,StyleSheet,Dimensions,} from 'react-native';
+import {ScrollView, View,Text,TextInput,FlatList,TouchableOpacity,Image,StyleSheet,Dimensions,} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser, Habit } from '../context/UserContext';
@@ -36,12 +36,13 @@ const Home = () => {
 
   const handleSave = async (data: any) => {
     if (editHabit) {
-      await updateHabit(data);
+      await updateHabit({ ...data, userHabitId: editHabit.userHabitId });
     } else {
       await addHabit(user!.id.toString(), data);
     }
     await loadHabits();
   };
+
 
   const handleEdit = (habit: any) => {
     setEditHabit(habit);
@@ -122,7 +123,6 @@ const Home = () => {
   </TouchableOpacity>
 );
 
-
   return (
     <View style={{ flex: 1, backgroundColor: '#fff', padding: 20 }}>
       <Image
@@ -158,7 +158,7 @@ const Home = () => {
         value={searchTerm}
         onChangeText={setSearchTerm}
       />
-
+      <ScrollView style={{ paddingBottom: 100 }}>
       <FlatList
         data={filteredHabits}
         keyExtractor={(item, index) =>
@@ -166,7 +166,7 @@ const Home = () => {
         }
         renderItem={renderHabit}
       />
-
+      </ScrollView>
       <ItemModal
         visible={modalVisible}
         initialData={editHabit ?? undefined}
@@ -187,9 +187,10 @@ const styles = StyleSheet.create({
   },
   catImage: {
     width: '100%',
-    height: scale(180),
-    resizeMode: 'contain',
-    marginBottom: scale(10),
+    height: 180,
+    marginBottom: 10,
+    zIndex: 0,         
+    position: 'relative', 
   },
   header: {
     flexDirection: 'row',
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
     marginBottom: scale(4),
   },
   tagText: {
-    fontSize: scale(12),
+    fontSize: scale(11),
     color: '#000',
     marginLeft: scale(4),
   },

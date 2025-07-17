@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewStyle, TextStyle } from 'react-native';
 
 type Option = {
   label: string;
@@ -13,10 +13,8 @@ export default function CustomDropdown({
   setValue,
   placeholder,
   zIndex = 1000,
-  zIndexInverse = 500,
-  backgroundColor = '#ffffff',  
-  textColor = '#000',         
-  placeholderColor = '#999',    
+  zIndexInverse = 500,   
+  style = {},
 }: {
   items: Option[];
   value: string | null;
@@ -27,11 +25,12 @@ export default function CustomDropdown({
   backgroundColor?: string;
   textColor?: string;
   placeholderColor?: string;
+  style?: ViewStyle;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={[styles.wrapper, { zIndex }]}>
+    <View style={[styles.wrapper, { zIndex }, style]}>
       <DropDownPicker
         open={open}
         value={value}
@@ -83,6 +82,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   placeholder: {
+    // textAlign:'center',
     fontWeight:'bold',
     color: '#bbbbbb',
   },
