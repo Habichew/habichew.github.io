@@ -14,6 +14,10 @@ app = Flask(__name__)
 cors = CORS(app) # allow CORS for all domains on all routes.
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+@app.route('/')
+def index():
+    return "<h1>Hello World</h1>"
+
 @app.route("/breakdown/habit", methods = ['POST'])
 @cross_origin()
 def breakdownHabit():
