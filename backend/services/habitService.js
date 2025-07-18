@@ -8,7 +8,7 @@ export async function getHabitCategories() {
 
 export async function getPresetHabits(categoryId) {
   const [rows] = await pool.query(`
-    SELECT h.id, h.title, c.id, c.name AS categoryName
+    SELECT h.id as habitId, h.title, c.id, c.name AS categoryName
     FROM habits h
            LEFT JOIN habitCategories c ON h.categoryId = c.id
     WHERE h.categoryId = ?;`,[categoryId]);
@@ -78,13 +78,6 @@ export async function createHabitByUser(userId, habitId, customTitle, priority, 
        WHERE uh.id = ?;`, [userHabitId]);
   return rows[0];
 
-}
-
-export async function getHabitById(id) {
-    const [row] = await pool.query(`SELECT *
-                                  FROM habits
-                                  WHERE id = ?`, [id]);
-    return row;
 }
 
 export async function updateHabitByUser(userId, userHabitId, customTitle, priority, startDate, goalDate,frequency){

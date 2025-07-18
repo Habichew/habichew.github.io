@@ -1,45 +1,70 @@
 import {pool} from "../config/db.js";
+import result from "mysql/lib/protocol/packets/OkPacket.js";
 
-export async function getPresetTasks() {
-    const [row] = await pool.query(`SELECT *
-                                  FROM tasks`);
-    return row;
-}
-
-export async function getPresetTasksByHabitId(habitId) {
-    const [row] = await pool.query(`SELECT *
-                                  FROM tasks
-                                  WHERE id = ?`, [habitId]);
-    return row;
-}
-
-export async function getTasksByUserId(userId) {
-    const [row] = await pool.query(`SELECT *
-                                    FROM habits
-                                    JOIN userTasks
-                                    ON habits.id = userTasks.habitId
-                                    WHERE habits.id = ?`, [userId]);
-    return row;
-}
-
-export async function getAllTasks() {
-    const [rows] = await pool.query('SELECT * FROM userTasks');
-    return rows;
-}
-
-export async function findTaskById(id) {
-    const [row] = await pool.query(`SELECT *
-                                    FROM userTasks
-                                    WHERE id = ?`, [id]);
-    return row;
-}
-
-export async function createTask(task) {
+export async function getPresetTasks(habitId) {
     const [row] = await pool.query(
-        'INSERT INTO userTasks (title, description, score, priority, habitId, dueAt) VALUES (?, ?, ?, ?, ?, ?)',
-        [task.title, task.description, task.score, task.priority, task.habitId, task.dueAt]
-    );
+        `SELECT id as taskId, title, habitId, description FROM tasks 
+         WHERE habitId=?`,
+        [habitId]);
     return row;
+}
+
+
+export async function getTaskListByUserId(userId) {
+    const [row] = await pool.query(`
+        SELECT
+            uh.id AS userHabitId,
+            ut.id AS userTaskId,
+            COALESCE(ut.customTitle, t.title) AS taskTitle,
+            ut.description,
+            ut.completed,
+            ut.credit,
+            ut.priority,
+            ut.dueAt,
+            ut.createdAt
+        FROM userTasks ut
+                 JOIN userHabits uh ON ut.userHabitId = uh.id
+                 LEFT JOIN tasks t ON ut.taskId = t.id
+        WHERE uh.userId = ?`, [userId]);
+    return row;
+}
+
+export async function findUserTaskById(userTaskId) {
+    const [row] = await pool.query(`
+        SELECT
+            ut.userHabitId,
+            ut.id AS userTaskId,
+            COALESCE(ut.customTitle, t.title) AS taskTitle,
+            ut.description,
+            ut.completed,
+            ut.credit,
+            ut.priority,
+            ut.dueAt
+        FROM userTasks ut
+                 LEFT JOIN tasks t ON ut.taskId = t.id
+        WHERE ut.id = ?`, [userTaskId]);
+    return row[0];
+}
+
+export async function createTask({
+                                     taskId,
+                                     customTitle,
+                                     userHabitId,
+                                     description,
+                                     priority,
+                                     dueAt,
+                                     credit
+                                 }) {
+    // verify if the object task is legal
+    if (!userHabitId) throw new Error("userHabitId is required");
+
+    const [result] = await pool.query(`
+    INSERT INTO userTasks (taskId, customTitle, userHabitId, description, priority, dueAt, credit)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [taskId || null, customTitle || null, userHabitId, description, priority, dueAt, credit]
+    );
+
+    return result.insertId;
 }
 
 export async function updateTask(id, task) {
@@ -68,7 +93,7 @@ export async function updateTask(id, task) {
     return row;
 }
 
-export async function deleteTask(id) {
-    const [rows] = await pool.query('DELETE FROM userTasks WHERE id = ?', [id]);
-    return rows;
+export async function deleteTask(userTaskId) {
+    const [result] = await pool.query('DELETE FROM userTasks WHERE id = ?', [userTaskId]);
+    return result.affectedRows > 0;
 }

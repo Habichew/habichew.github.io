@@ -1,26 +1,23 @@
 import express from "express";
 const habitRouter = express.Router();
 
-import * as userController from "../controllers/userController.js";
 import * as habitController from "../controllers/habitController.js";
-import * as petController from "../controllers/petController.js";
-import * as taskController from "../controllers/taskController.js";
 
-
-// Get all habits
-habitRouter.get('/categories', habitController.getHabitCategories)
-
-habitRouter.get('/presets', habitController.getPresetHabits);
-
+// Get a user's habit list
 habitRouter.get('/:userId', habitController.getHabitListByUser);
 
+// Get a habit's detail
 habitRouter.get('/:userId/:userHabitId', habitController.getHabitByUser);
 
+// Create a habit
 habitRouter.post('/:userId', habitController.createHabitByUser);
 
+// Update a habit
 habitRouter.patch('/:userId/:userHabitId', habitController.updateHabitByUser);
 
-// Get all habit categories
-/*habitRouter.get("/categories", habitController.getAllHabitCategories);*/
+// Delete a habit
+habitRouter.delete('/:userId/:userHabitId', habitController.deleteUserHabit);
+
+
 
 export {habitRouter};
