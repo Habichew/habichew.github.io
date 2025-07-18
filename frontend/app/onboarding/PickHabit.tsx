@@ -1,68 +1,144 @@
-// app/main/pick-habit.tsx
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  TextInput,
+  ScrollView,
+  FlatList,
+  Dimensions,
+  Image
+} from 'react-native';
 import { useRouter } from 'expo-router';
+import CustomDropdown from '../../components/ui/select';
+import { useUser, Habit } from '../context/UserContext';
 
 export default function PickHabit() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [customHabit, setCustomHabit] = useState('');
-  const [recommendedHabit, setRecommendedHabit] = useState(''); // to be updated via API later
+  const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>('Choose a category');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [presets, setPresets] = useState<any[]>([]);
+  const { user } = useUser();
+  const userId = user?.id;
 
-  const handleSubmitCustomHabit = () => {
-    // Save habit for use in PickTask page
-    router.push({ pathname: '/onboarding/PickTask', params: { habit: customHabit } });
+  useEffect(() => {
+    fetch('http://localhost:3000/habits/categories')
+      .then((res) => res.json())
+      .then(setCategories)
+      .catch(console.error);
+  }, []);
+
+  const fetchPresets = async (categoryId: number) => {
+    try {
+      const res = await fetch(`http://localhost:3000/habits/presets?categoryId=${categoryId}`);
+      const data = await res.json();
+      setPresets(data);
+    } catch (err) {
+      console.error('Failed to fetch presets', err);
+    }
+  };
+
+  const handleSelectCategory = (id: number, name: string) => {
+    setSelectedCategoryId(id);
+    setSelectedCategoryName(name);
+    setShowDropdown(false);
+    fetchPresets(id);
+  };
+
+  const handleSubmitHabit = async (habit: string, habitId?: number) => {
+  if (!userId) {
+    alert('Please log in first');
+    return;
+  }
+
+  try {
+    const payload: any = {
+      ...(habitId ? { habitId } : {}),
+      customTitle: habit
+    };
+
+    const response = await fetch(`http://localhost:3000/habits/${userId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.message || 'Failed to create habit');
+    }
+
+    const result = await response.json();
+    console.log('Created:', result);
+
+    // optional cleanup
     setModalVisible(false);
     setCustomHabit('');
-  };
 
-  const handleSelectRecommendedHabit = () => {
-    router.push({ pathname: '/onboarding/PickTask', params: { habit: recommendedHabit } });
-  };
+    router.push({
+      pathname: '/onboarding/PickTask',
+      params: {
+        habit,
+        habitId: result.habit.userHabitId
+      }
+    });
+
+  } catch (error) {
+    console.error('Add habit error:', error);
+    alert('Failed to add habit. Please try again.');
+  }
+};
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/onboarding/info')}>
-        <View style={styles.circleButton}>
-          <Text style={styles.arrowText}>{'<'}</Text>
-        </View>
-      </TouchableOpacity>
-      <View style={styles.petContainer}>
-        <Image
-          source={require('../../assets/images/previouscat2.png')} // Replace with your actual pet image path
-          style={styles.petImage}
-          resizeMode="contain"
-        />
-      </View>
+      <Image source={require('../../assets/images/previouscat2.png')} style={styles.petImage} />
 
-      <Text style={styles.title}>Choose a habit to{"\n"}feed your pet</Text>
+      <Text style={styles.title}>Choose a habit to feed your pet</Text>
 
-      <TouchableOpacity style={styles.categoryBtn}>
-        <Text style={styles.categoryText}>Choose a category</Text>
-        <View style={styles.dropdownCircle}>
+      {/* <TouchableOpacity style={styles.dropdownBtn} onPress={() => setShowDropdown(!showDropdown)}>
+        <Text style={styles.dropdownText}>{selectedCategoryName}</Text>
+        <View style={styles.dropdownArrowCircle}>
           <Text style={styles.dropdownArrow}>▼</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
-      {/* Placeholder for future recommended habit */}
-      <TouchableOpacity
-        style={styles.recommendationBlock}
-        onPress={handleSelectRecommendedHabit}
-        disabled={!recommendedHabit}>
-        <Text style={styles.recommendationText}>
-          {recommendedHabit || 'Recommended habit will appear here'}
-        </Text>
-      </TouchableOpacity>
+      <CustomDropdown
+        items={categories.map((cat) => ({ label: cat.name, value: String(cat.id) }))}
+        value={selectedCategoryId ? String(selectedCategoryId) : null}
+        setValue={(val) => {
+          if (val !== null) {
+            const cat = categories.find((c) => String(c.id) === val);
+            if (cat) {
+              setSelectedCategoryId(cat.id);
+              fetchPresets(cat.id);
+            }
+          }
+        }}
+        style={{ width: '100%'}}
+        placeholder="Choose a category"
+      />
 
+      {/* Scrollable habit list with fixed height */}
+      <ScrollView style={styles.habitList}>
+        {presets.map((habit, idx) => (
+          <TouchableOpacity key={idx} style={styles.habitItem} onPress={() => handleSubmitHabit(habit.title, habit.id)}>
+            <Text style={styles.habitText}>{habit.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Add custom habit */}
       <TouchableOpacity style={styles.addBtn} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addText}>Or ddd your own</Text>
+        <Text style={styles.addText}>Or add your own</Text>
       </TouchableOpacity>
 
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setModalVisible(false)}>
+      <Modal visible={modalVisible} animationType="slide" transparent onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Add Your Own Habit</Text>
@@ -77,7 +153,7 @@ export default function PickHabit() {
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleSubmitCustomHabit} style={styles.saveBtn}>
+              <TouchableOpacity onPress={() => handleSubmitHabit(customHabit)} style={styles.saveBtn}>
                 <Text style={styles.submitText}>Continue</Text>
               </TouchableOpacity>
             </View>
@@ -88,61 +164,98 @@ export default function PickHabit() {
   );
 }
 
-import { Image } from 'react-native';
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', alignItems: 'center', paddingTop: 80 },
-  petContainer: { alignItems: 'center' },
-  petImage: { width: 160, height: 160, marginBottom: 24 },
-  title: { fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 32 },
-  categoryBtn: {
-    backgroundColor: '#eee',
-    borderRadius: 50,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: 320,
-    marginBottom: 20,
+  container: {
+    flex: 1, padding: 24, backgroundColor: '#fff', alignItems: 'center'
   },
-  categoryText: { alignSelf:'center', fontWeight: 'bold', fontSize: 14, color:'#999' },
-  dropdownCircle: {
+  petImage: {
+    width: 160, height: 160, marginBottom: 24
+  },
+  title: {
+    fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 20
+  },
+  dropdownBtn: {
+    width: '100%',
+    backgroundColor: '#eee',
+    borderRadius: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: '#000'
+  },
+  dropdownText: {
+    fontWeight: 'bold', fontSize: 16, color: '#222'
+  },
+  dropdownArrowCircle: {
     backgroundColor: '#000',
     borderRadius: 16,
     width: 32,
     height: 32,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
-  dropdownArrow: { color: '#0f0', fontSize: 18, marginTop: -2 },
-  recommendationBlock: {
-    height: 50,
-    justifyContent: 'center',
+  dropdownArrow: {
+    color: '#1CC282', fontSize: 18
+  },
+  dropdownList: {
+    position: 'absolute',
+    width: '100%',
+    maxHeight:80,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    marginBottom: 16,
+    paddingVertical: 6
+  },
+  dropdownItem: {
+    paddingVertical: 10, paddingHorizontal: 20
+  },
+  dropdownItemText: {
+    fontSize: 16, color: '#333'
+  },
+  habitList: {
+    flexGrow: 0,
+    maxHeight: 260,
+    width: '100%',
+    marginBottom: 20
+  },
+  habitItem: {
+    backgroundColor: '#f9f9f9',
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
-    marginVertical: 16,
+    marginVertical: 6,
+    marginHorizontal: 4
   },
-  recommendationText: { fontSize: 14, fontStyle: 'italic', color: '#666' },
+  habitText: {
+    fontSize: 16, fontStyle: 'italic', color: '#444'
+  },
   addBtn: {
     backgroundColor: '#1CC282',
-    borderRadius: 50,
-    paddingVertical: 16,
     paddingHorizontal: 40,
-    marginTop: 40,
+    paddingVertical: 16,
+    borderRadius: 40,
+    marginTop: 'auto',
+    marginBottom:100,
   },
-  addText: { fontWeight: 'bold', fontSize: 14, color: '#000' },
+  addText: {
+    fontSize: 16, fontWeight: 'bold', color: '#000'
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   modalContainer: {
     width: '80%',
     backgroundColor: '#fff',
     padding: 24,
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
   modalInput: {
@@ -151,44 +264,19 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 20,
+    marginBottom: 20
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
+    width: '100%'
   },
-  cancelText: { padding:10, color: '#999', fontWeight: 'bold' },
+  cancelText: { padding: 10, color: '#999', fontWeight: 'bold' },
   submitText: { color: '#000', fontWeight: 'bold' },
   saveBtn: {
     backgroundColor: '#1CC282',
     borderRadius: 24,
     alignItems: 'center',
-    padding: 10,
-  },
-    circleButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
-  },
-  arrowText: {
-    color: '#000',
-    fontSize: 24,
-    fontWeight: 'bold',
-    lineHeight: 24,
-  },
-    backButton: {
-    position: 'absolute',
-    top: 28,
-    left: 24,
-    zIndex: 10,
-  },
+    padding: 10
+  }
 });
