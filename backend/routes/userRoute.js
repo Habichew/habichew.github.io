@@ -51,7 +51,20 @@ userRouter.put("/:userId/pet", petController.updatePet);
 userRouter.delete("/:userId/pet", petController.deletePet);
 
 // ====================== User Tasks ======================= //
-// Find pet by user id
-userRouter.get("/:userId/tasks", taskController.getTasksByUserId);
+
+// Get all tasks belonging to a user by userId
+userRouter.get("/:userId/tasks", taskController.getTaskListByUserId);
+
+// Get a task details by userTaskId
+userRouter.get("/:userId/tasks/:userTaskId", taskController.findUserTaskById);
+
+// Create a task
+userRouter.post("/:userId/tasks", taskController.createTask);
+
+// Update a task
+userRouter.patch("/:userId/tasks/:userTaskId", taskController.updateTask);
+
+// Delete a task by userTaskId
+userRouter.delete("/:userId/tasks/:userTaskId", taskController.deleteTask);
 
 export {userRouter};

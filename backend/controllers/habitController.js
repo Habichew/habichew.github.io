@@ -15,7 +15,7 @@ export async function getHabitCategories(req, res) {
 
 export async function getPresetHabits(req, res) {
     try {
-        const { categoryId } = req.query;
+        const { categoryId } = req.params;
         const presets = await habitService.getPresetHabits(categoryId);
         res.status(200).json(presets);
     } catch (err) {
