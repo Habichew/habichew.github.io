@@ -55,7 +55,7 @@ export async function createTask(req, res) {
 
 export async function updateTask(req, res) {
     try {
-        const {taskId} = req.params;
+        const {userId, userTaskId} = req.params;
         const {task} = req.body;
 
         // Check if task was provided in request body
@@ -64,27 +64,16 @@ export async function updateTask(req, res) {
         }
 
         // Get current task from DB, to update the changed fields only
-        const currentTask = await taskService.findTaskById(taskId);
+        const currentTask = await taskService.findUserTaskById(userTaskId);
         if (!currentTask || currentTask.length === 0) {
             return res.status(404).json({message: `Task does not exist`});
         }
 
         const existingTask = currentTask[0];
 
-        const updatedTask = new Task(
-            task.title || existingTask.title,
-            task.completed != null ? task.completed : existingTask.completed,
-            task.description || existingTask.description,
-            task.score || existingTask.score,
-            task.priority || existingTask.priority,
-            task.recommendation || existingTask.recommendation,
-            task.categoryId || existingTask.categoryId,
-            task.habitId || existingTask.habitId,
-            task.dueAt || existingTask.dueAt
-        )
-
         // check if task has a valid habit
-        const habitResult = await habitService.getHabitById(task.habitId);
+        // YANG: this conditional statement is not necessary, if other data are handled nicely and all tasks have belonging habits
+        const habitResult = await habitService.getUserHabit(userId, existingTask.userHabitId);
         if (!habitResult || habitResult.length === 0) {
             return res.status(404).json({message: `Task does not have a valid habit id`});
         }
@@ -94,17 +83,17 @@ export async function updateTask(req, res) {
             const userResult = await userService.updateUserTaskLastCompleted(habitResult[0].userId);
         }
 
-        const result = await taskService.updateTask(taskId, updatedTask);
+        await taskService.updateTask(userTaskId, task);
 
         // Optionally re-fetch the updated task
-        const fetchedTask = await taskService.findTaskById(taskId);
+        const result = await taskService.findUserTaskById(userTaskId);
         return res.status(200).send({
             message: 'Task updated successfully',
-            task: fetchedTask[0],
+            task: result,
         });
     } catch (err) {
         console.error('Update error:', err);
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({message:"Failed to update the task", error: err.message});
     }
 }
 

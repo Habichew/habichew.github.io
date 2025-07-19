@@ -67,30 +67,30 @@ export async function createTask({
     return result.insertId;
 }
 
-export async function updateTask(id, task) {
-    const [row] = await pool.query(
-        `UPDATE userTasks
-         SET title = ?,
-             completed = ?,
-             description = ?,
-             score = ?,
-             priority = ?,
-             habitId = ?,
-             dueAt = ?
-         WHERE id = ?`,
-        [
-            task.title,
-            task.completed,
-            task.description,
-            task.score,
-            task.priority,
-            task.recommendation,
-            task.habitId,
-            task.dueAt,
-            id
-        ]
+export async function updateTask(userTaskId, task) {
+    const allowedFields = ['customTitle', 'description', 'priority', 'dueAt', 'completed', 'credit'];
+    const setClauses = [];
+    const values = [];
+
+    for (const field of allowedFields) {
+        if (field in task) {
+            setClauses.push(`${field} = ?`);
+            values.push(task[field]);
+        }
+    }
+
+    if (setClauses.length === 0) {
+        throw new Error("No valid fields provided for update");
+    }
+
+    values.push(userTaskId);
+
+    const [result] = await pool.query(
+        `UPDATE userTasks SET ${setClauses.join(', ')} WHERE id = ?`,
+        values
     );
-    return row;
+
+    return result.affectedRows > 0;
 }
 
 export async function deleteTask(userTaskId) {
