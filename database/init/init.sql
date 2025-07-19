@@ -23,18 +23,6 @@ CREATE TABLE IF NOT EXISTS users (
   `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Insert sample users data
-INSERT INTO users (username, email, password, petId)
-VALUES
-    ('john_doe',
-     'john@example.com',
-     '$2b$10$oLLIBsQbaByUKb8/U138uuItjNLWcf6jZFT8fXTTiEJxTKT.wRGD6', -- password = 'john'
-     1),
-    ('jane_smith',
-     'jane@example.com',
-     '$2b$10$i.lhKkpYxtxq5XmLt4Wpd.n9fuv7xmfVS6IGAr2UjPPfef411i6VC', -- password = 'jane'
-     2);
-
 -- Mood types for mood logs to enumerate
 CREATE TABLE IF NOT EXISTS moodTypes(
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -68,12 +56,6 @@ CREATE TABLE IF NOT EXISTS moodLogs (
     UNIQUE(userId, moodDate)
 );
 
-INSERT INTO moodLogs (userId, moodTypeId, note, moodDate)
-VALUES
-    (1, 3, 'Felt a bit low today.', '2025-07-12'),
-    (1,2,'','2025-07-13');
-
-
 CREATE TABLE IF NOT EXISTS pets (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
@@ -94,6 +76,17 @@ CREATE TABLE IF NOT EXISTS `habitCategories` (
  `name` varchar(255) NOT NULL
 );
 
+-- Insert sample habit_categories data
+INSERT INTO habitCategories (name)
+VALUES  ('Health'),
+        ('Quit'),
+        ('Hobbies'),
+        ('Lifestyle'),
+        ('Career'),
+        ('Study'),
+        ('Financial'),
+        ('Custom');
+
 CREATE TABLE IF NOT EXISTS `habits` (
     id integer PRIMARY KEY AUTO_INCREMENT,
     title varchar(255),
@@ -112,6 +105,7 @@ CREATE TABLE userHabits (
     isArchived BOOLEAN DEFAULT FALSE,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
+    -- The habitId represents a preset habit, the customTitle represents a custom habit, so they cannot be NULL at the same time.
     CONSTRAINT chk_customTitle_if_no_habitId
         CHECK (
             habitId IS NOT NULL OR (habitId IS NULL AND customTitle IS NOT NULL)
@@ -120,140 +114,32 @@ CREATE TABLE userHabits (
     -- CONSTRAINT fkHabit FOREIGN KEY (habitId) REFERENCES habits(id)
 );
 
-INSERT INTO userHabits (userId, habitId, customTitle, priority, startDate, goalDate, frequency)
-VALUES
-    (1,2,NULL,1, '2025-07-15','2025-08-15','Daily'),
-    (1, NULL, 'Read philosophy', 2, '2025-07-16', '2025-09-16', 'Weekly'),
-    (1, 5, 'Evening Yoga', 1, '2025-07-20', '2025-08-20', 'Daily'),
-    (2, NULL, 'Digital Detox', 3, '2025-07-10', '2025-10-10', 'Weekly');
-
--- Insert sample habit_categories data
-INSERT INTO habitCategories (name) VALUES
-   ('Health'),
-   ('Quit'),
-   ('Hobbies'),
-   ('Lifestyle'),
-   ('Career'),
-   ('Study'),
-   ('Financial'),
-   ('Custom');
-
--- Insert sample habits data
-INSERT INTO habits (title, categoryId) VALUES
--- Health (1)
-('Eat Healthy', 1),
-('Drink Enough Water', 1),
-('Eat Fruits', 1),
-('Exercise', 1),
-('Walk', 1),
-('Run', 1),
-('Stretch', 1),
-('Meditation', 1),
-('Yoga', 1),
-('Cycling', 1),
-('Swim', 1),
-
--- Quit (2)
-('Smoking', 2),
-('Vaping', 2),
-('Coffee', 2),
-('Drinking', 2),
-('Junk Food', 2),
-('Sugar', 2),
-('Porn', 2),
-('Social Media', 2),
-('Carbonated Drinks', 2),
-('Weed', 2),
-('Drugs', 2),
-('Swearing', 2),
-
--- Hobbies (3)
-('Reading', 3),
-('Drawing', 3),
-('Play Music', 3),
-('Photography', 3),
-('Writing', 3),
-('DIY Crafts', 3),
-
--- Lifestyle (4)
-('Bedtime Routine', 4),
-('Sleep Early', 4),
-('Sleep 8 Hrs', 4),
-('Wake Up Early', 4),
-('Make My Bed', 4),
-('Take a Shower', 4),
-('Eat Breakfast', 4),
-
--- Career (5)
-('Learn a Language', 5),
-('Be Consistent', 5),
-('Set Goals', 5),
-('Be Productive', 5),
-('New Project', 5),
-
--- Study (6)
-('Study', 6),
-('Review Notes', 6),
-('Pomodoro Sessions', 6),
-
--- Financial (7)
-('Track Expenses', 7),
-('Budgeting', 7),
-('Save Money', 7),
-('No-Spend Day', 7),
-('Invest Weekly', 7),
-
--- Custom (8)
-('Custom Habit 1', 8),
-('Custom Habit 2', 8);
 
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `habitId` integer,
-  `completed` boolean DEFAULT false,
   `description` varchar(255)
 );
 
--- Insert sample tasks data
-INSERT INTO tasks (title, completed, description, habitId)
-VALUES ('find t1d cooking blogs',
-        false,
-        'improve my hba1c through better diet',
-        1),
-       ('study for exam',
-        true,
-        'prepare for my biology exam',
-        1);
-
 CREATE TABLE IF NOT EXISTS `userTasks` (
    `id` integer PRIMARY KEY AUTO_INCREMENT,
-   `title` varchar(255) NOT NULL,
-   `habitId` integer,
+   `customTitle` varchar(255),
+   `taskId` integer,
+   `userHabitId` integer NOT NULL ,
    `completed` boolean DEFAULT false,
    `description` varchar(255),
-   `score` integer,
-   `priority` integer,
-   `dueAt` datetime,
-   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+   `credit` INT,
+   `priority` TEXT, -- low, medium, high
+   `dueAt` DATETIME,
+   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- Insert sample userTasks data
-INSERT INTO userTasks (title, completed, description, score, priority, habitId, dueAt)
-VALUES ('find t1d cooking blogs',
-        false,
-        'improve my hba1c through better diet',
-        50,
-        2,
-        1,
-        '2026-01-01'),
-       ('study for exam',
-        true,
-        'prepare for my biology exam',
-        30,
-        3,
-        1,
-        '2025-07-10');
+   CONSTRAINT chk_customTitle_if_no_taskId
+       CHECK (
+           taskId IS NOT NULL OR (taskId IS NULL AND customTitle IS NOT NULL)
+           ),
+   CONSTRAINT fkHabitTask FOREIGN KEY (userHabitId) REFERENCES userHabits(id) ON DELETE CASCADE
+);
 
 ALTER TABLE `users` ADD FOREIGN KEY (`petId`) REFERENCES `pets` (`id`);
 
