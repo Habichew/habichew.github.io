@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.habichew.habichewIOS",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -34,16 +38,23 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
+      "baseUrl": "",
       "typedRoutes": true
     },
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "58802a08-97e0-4b0d-99fe-cd544909b6b8"
+        "projectId": "ad4e0854-ebb2-4ec8-88c8-6a3d5a9b22d9"
       }
+    },
+    "owner": "habichew",
+    "runtimeVersion": "exposdk:53.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/ad4e0854-ebb2-4ec8-88c8-6a3d5a9b22d9"
     }
   }
 }

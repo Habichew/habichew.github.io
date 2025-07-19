@@ -275,8 +275,8 @@ VALUES
      ('Track your progress for a day', 17, ''),
      ('Repeat habit three times this week', 17, ''),
      ('Reflect on benefits and adjust if needed', 17, ''),
-    
-    -- Habit 18: Porn
+
+    -- Habit 18: Playing the piano
      ('Define what this habit means to you', 18, ''),
      ('Identify your current routine and gaps', 18, ''),
      ('Set a small, realistic starting goal', 18, ''),

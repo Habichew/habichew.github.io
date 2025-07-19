@@ -29,7 +29,7 @@ export async function findPetByUserId(req, res) {
             return res.status(404).send({error: "Pet does not exist."})
         }
     } catch (err) {
-        console.error('getAllTasks failed:', err);
+        console.error('findPetByUserId failed:', err);
         return res.status(500).json({error: 'Server error'});
     }
 }
