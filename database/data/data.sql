@@ -1,3 +1,111 @@
+-- Disable foreign key checks temporarily
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Truncate each table
+TRUNCATE TABLE users;
+TRUNCATE TABLE moodlogs;
+TRUNCATE TABLE habits;
+TRUNCATE TABLE userHabits;
+TRUNCATE TABLE tasks;
+TRUNCATE TABLE userTasks;
+
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Insert sample users data
+
+INSERT INTO users (username, email, password, petId)
+VALUES
+    ('john_doe',
+     'john@example.com',
+     '$2b$10$oLLIBsQbaByUKb8/U138uuItjNLWcf6jZFT8fXTTiEJxTKT.wRGD6', -- password = 'john'
+     1),
+    ('jane_smith',
+     'jane@example.com',
+     '$2b$10$i.lhKkpYxtxq5XmLt4Wpd.n9fuv7xmfVS6IGAr2UjPPfef411i6VC', -- password = 'jane'
+     2);
+
+-- Insert sample mood log data
+INSERT INTO moodLogs (userId, moodTypeId, note, moodDate)
+VALUES
+    (1, 3, 'Felt a bit low today.', '2025-07-12'),
+    (1,2,'','2025-07-13');
+
+
+-- Insert sample user habit data
+INSERT INTO userHabits (userId, habitId, customTitle, priority, startDate, goalDate, frequency)
+VALUES
+    (1,2,NULL,1, '2025-07-15','2025-08-15','Daily'),
+    (1, NULL, 'Read philosophy', 2, '2025-07-16', '2025-09-16', 'Weekly'),
+    (1, 5, 'Evening Yoga', 1, '2025-07-20', '2025-08-20', 'Daily'),
+    (2, NULL, 'Digital Detox', 3, '2025-07-10', '2025-10-10', 'Weekly'),
+    (2,1,NULL,2,'2025-07-20','2025-12-10',NULL);
+
+-- Insert sample habits data
+INSERT INTO habits (title, categoryId) VALUES
+-- Health (1)
+('Eat Healthy', 1),
+('Drink Enough Water', 1),
+('Eat Fruits', 1),
+('Exercise', 1),
+('Walk', 1),
+('Run', 1),
+('Stretch', 1),
+('Meditation', 1),
+('Yoga', 1),
+('Cycling', 1),
+('Swim', 1),
+
+-- Quit (2)
+('Smoking', 2),
+('Vaping', 2),
+('Coffee', 2),
+('Drinking', 2),
+('Junk Food', 2),
+('Sugar', 2),
+('Porn', 2),
+('Social Media', 2),
+('Carbonated Drinks', 2),
+('Weed', 2),
+('Drugs', 2),
+('Swearing', 2),
+
+-- Hobbies (3)
+('Reading', 3),
+('Drawing', 3),
+('Play Music', 3),
+('Photography', 3),
+('Writing', 3),
+('DIY Crafts', 3),
+
+-- Lifestyle (4)
+('Bedtime Routine', 4),
+('Sleep Early', 4),
+('Sleep 8 Hrs', 4),
+('Wake Up Early', 4),
+('Make My Bed', 4),
+('Take a Shower', 4),
+('Eat Breakfast', 4),
+
+-- Career (5)
+('Learn a Language', 5),
+('Be Consistent', 5),
+('Set Goals', 5),
+('Be Productive', 5),
+('New Project', 5),
+
+-- Study (6)
+('Study', 6),
+('Review Notes', 6),
+('Pomodoro Sessions', 6),
+
+-- Financial (7)
+('Track Expenses', 7),
+('Budgeting', 7),
+('Save Money', 7),
+('No-Spend Day', 7),
+('Invest Weekly', 7);
+
 -- Insert sample tasks data
 INSERT INTO tasks (title, habitId, description)
 VALUES
@@ -28,7 +136,7 @@ VALUES
     ('Prepare for bed by 9:30 PM', 31, ''),
     ('Reflect on energy after early sleep', 31, ''),
     ('Repeat routine for three nights', 31, ''),
-    -- Habit 4: 
+    -- Habit 4: Exercise
      ('Define what this habit means to you', 4, ''),
      ('Identify your current routine and gaps', 4, ''),
      ('Set a small, realistic starting goal', 4, ''),
@@ -487,3 +595,27 @@ VALUES
      ('Track your progress for a day', 49, ''),
      ('Repeat habit three times this week', 49, ''),
      ('Reflect on benefits and adjust if needed', 49, '');
+
+-- Insert sample userTasks data
+INSERT INTO userTasks (userHabitId, customTitle, taskId, description, credit, priority, dueAt)
+VALUES (5,
+        'Look through Youtube for knowledge on nutrition',
+        1,
+        '',
+        50,
+        'medium',
+        '2026-01-01'),
+       (1,
+        NULL,
+        10,
+        '',
+        50,
+        'high',
+        '2025-07-10'),
+       (2,
+        'Learn more about Wittgenstein',
+        NULL,
+        'A simple and modern logic structure might be helpful.',
+        50,
+        'low',
+        '2025-08-10');
