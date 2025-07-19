@@ -96,10 +96,10 @@ app.set("view engine", "ejs");
 
 
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.status(200).send("Backend running");
 });
 
-// profile image upload
+/*// profile image upload
 app.post("/upload", upload.single("img"), (req, res) => {
   console.log("req.body", req.body);
   if (req.file && req.file.path) {
@@ -109,7 +109,7 @@ app.post("/upload", upload.single("img"), (req, res) => {
       .status(400)
       .send({ error: "no file was uploaded", "request-body": req.body });
   }
-});
+});*/
 
 /************** ROUTES ******************/
 
@@ -117,7 +117,9 @@ app.post("/upload", upload.single("img"), (req, res) => {
 import {userRouter} from "./routes/userRoute.js";
 import {taskRouter} from "./routes/taskRoute.js";
 import {habitRouter} from "./routes/habitRoute.js";
+import {presetsRouter} from "./routes/presetsRoute.js";
 import {moodRouter} from "./routes/moodRoute.js";
+
 
 // Users
 app.use("/users", userRouter);
@@ -127,6 +129,9 @@ app.use("/tasks", taskRouter);
 
 // Habits
 app.use("/habits", habitRouter);
+
+// Presets
+app.use("/presets", presetsRouter);
 
 // Moods
 app.use('/moods', moodRouter);
