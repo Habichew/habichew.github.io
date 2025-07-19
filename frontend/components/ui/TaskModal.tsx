@@ -1,255 +1,149 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Modal,
   View,
   Text,
   TextInput,
-  Modal,
   TouchableOpacity,
   StyleSheet,
   Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from '@expo/vector-icons';
-import CustomDropdown from './select';
-import { webDateInput, webDateInputWrapper, webDateLabel } from './webDateStyles';
 
-interface Props {
+interface TaskModalProps {
   visible: boolean;
-  initialData?: any;
   onClose: () => void;
-  onSave: (data: any) => void;
+  onSave: (task: any) => void;
+  task?: any;
+  habitId?: number;
 }
 
-const TaskModal: React.FC<Props> = ({ visible, initialData, onClose, onSave }) => {
-  const isEdit = !!initialData;
-
-const [formData, setFormData] = useState<{
-  id?: string;
-  title: string;
-  description: string;
-  dueAt: string;
-  priority: string;
-  habitId: string;
-  }>({
-  id: '',
-  title: '',
-  description: '',
-  dueAt: '',
-  priority: '',
-  habitId: '',
-  });
-
+export default function TaskModal({ visible, onClose, onSave, task, habitId }: TaskModalProps) {
+  const [title, setTitle] = useState(task?.title || '');
+  const [dueDate, setDueDate] = useState<Date | null>(task?.dueAt ? new Date(task.dueAt) : null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [priority, setPriority] = useState(task?.priority || 1);
 
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        ...initialData,
-      });
+    if (task) {
+      setTitle(task.title || '');
+      setDueDate(task.dueAt ? new Date(task.dueAt) : null);
+      setPriority(task.priority || 1);
     } else {
-      setFormData({
-        title: '',
-        description: '',
-        dueAt: '',
-        priority: '',
-        habitId: '',
-      });
+      setTitle('');
+      setDueDate(null);
+      setPriority(1);
     }
-  }, [initialData]);
+  }, [task, visible]);
 
   const handleSave = () => {
-    const id = formData.id || Date.now().toString();
-    const dueDate = formData.dueAt || new Date().toISOString().split('T')[0];
-
     onSave({
-      ...formData,
-      id,
-      dueAt: dueDate,
+      ...task,
+      title,
+      dueAt: dueDate ? dueDate.toISOString().split('T')[0] : null,
+      priority,
+      habitId: task?.habitId || habitId || null,
     });
-    onClose();
   };
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        <View style={styles.modal}>
-          <Text style={styles.title}>{isEdit ? 'Task Edit' : 'Task Add'}</Text>
-
+        <View style={styles.container}>
+          <Text style={styles.label}>Task Title</Text>
           <TextInput
-            placeholder="AddTask"
-            placeholderTextColor="#bbb"
+            value={title}
+            onChangeText={setTitle}
             style={styles.input}
-            value={formData.title}
-            onChangeText={text => setFormData({ ...formData, title: text })}
+            placeholder="Add Task"
           />
 
-          {/* Due Date */}
-          {Platform.OS === 'web' ? (
-            <View style={webDateInputWrapper}>
-              <Text style={webDateLabel}></Text>
-              <input
-                type="text"
-                value={formatDate(formData.dueAt)}
-                placeholder="DDL"
-                onFocus={(e) => {
-                  e.target.type = 'date';
-                }}
-                onBlur={(e) => {
-                  e.target.type = 'text';
-                }}
-                onChange={(e) =>
-                  setFormData({ ...formData, dueAt: e.target.value })
-                }
-                style={webDateInput}
-              />
-            </View>
-          ) : (
-            <>
-              <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                <Text style={styles.tag}>{formData.dueAt || 'DDL'}</Text>
-              </TouchableOpacity>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={formData.dueAt ? new Date(formData.dueAt) : new Date()}
-                  mode="date"
-                  display="calendar"
-                  onChange={(event, selectedDate) => {
-                    setShowDatePicker(false);
-                    if (selectedDate) {
-                      const iso = selectedDate.toISOString().split('T')[0];
-                      setFormData({ ...formData, dueAt: iso });
-                    }
-                  }}
-                />
-              )}
-            </>
+          <Text style={styles.label}>Due Date</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+            <Text style={{ color: '#333' }}>{dueDate ? dueDate.toDateString() : 'Pick a date'}</Text>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              mode="date"
+              value={dueDate || new Date()}
+              onChange={(_, selected) => {
+                setShowDatePicker(false);
+                if (selected) setDueDate(selected);
+              }}
+            />
           )}
 
-          {/* Priority Dropdown */}
-          <CustomDropdown
-            zIndex={3}
-            zIndexInverse={2}
-            items={[
-              { label: 'Low', value: 'Low' },
-              { label: 'Medium', value: 'Medium' },
-              { label: 'High', value: 'High' },
-            ]}
-            value={formData.priority}
-            setValue={(val: string | null) => {
-              if (val !== null) {
-                setFormData({ ...formData, priority: val });
-              }
-            }}
-            placeholder="Priority"
-          />
-
-          {/* Habit Relation Input (Optional) */}
+          <Text style={styles.label}>Priority</Text>
           <TextInput
-            placeholder="Belonged Habit"
-            placeholderTextColor="#bbb"
+            value={String(priority)}
+            onChangeText={(val) => setPriority(Number(val))}
             style={styles.input}
-            value={formData.habitId}
-            onChangeText={text => setFormData({ ...formData, habitId: text })}
+            keyboardType="numeric"
           />
 
-          {/* Buttons */}
-          <View style={styles.buttons}>
+          <View style={styles.actions}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-              <Text style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>
+              <Text style={styles.saveText}>Save</Text>
             </TouchableOpacity>
           </View>
-
-          <Ionicons name="trash-outline" size={24} color="#555" style={styles.deleteIcon} />
         </View>
       </View>
     </Modal>
   );
-};
-
-export default TaskModal;
+}
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  modal: {
-    backgroundColor: '#DAB7FF',
-    borderRadius: 20,
-    padding: 20,
-    width: '90%',
-    position: 'relative',
+  container: {
+    width: '80%',
+    backgroundColor: '#fff',
+    padding: 24,
+    borderRadius: 16,
+    elevation: 4,
   },
-  title: {
-    fontSize: 20,
+  label: {
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#111',
+    marginTop: 12,
   },
   input: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 6,
   },
-  tag: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#000',
-    marginBottom: 10,
-  },
-  buttons: {
+  actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    marginTop: 24,
   },
   cancelBtn: {
-    backgroundColor: '#000',
     paddingVertical: 12,
-    paddingHorizontal: 28,
-    borderRadius: 28,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#000',
   },
   cancelText: {
-    color: '#DAB7FF',
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 18,
   },
   saveBtn: {
-    backgroundColor: '#1CC282',
     paddingVertical: 12,
-    paddingHorizontal: 28,
-    borderRadius: 28,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#1CC282',
   },
   saveText: {
     color: '#000',
     fontWeight: 'bold',
-    fontSize: 18,
-  },
-  deleteIcon: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
   },
 });
-
-const formatDate = (dateStr: string) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-};
