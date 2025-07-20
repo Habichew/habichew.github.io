@@ -69,16 +69,14 @@ export async function updateTask(req, res) {
             return res.status(404).json({message: `Task does not exist`});
         }
 
-        const existingTask = currentTask[0];
-
         // check if task has a valid habit
         // YANG: this conditional statement is not necessary, if other data are handled nicely and all tasks have belonging habits
-        const habitResult = await habitService.getUserHabit(userId, existingTask.userHabitId);
+        const habitResult = await habitService.getUserHabit(userId, currentTask.userHabitId);
         if (!habitResult || habitResult.length === 0) {
             return res.status(404).json({message: `Task does not have a valid habit id`});
         }
 
-        if (task.completed && !existingTask.completed) {
+        if (task.completed && !currentTask.completed) {
             // update last time user completed any task in user table
             const userResult = await userService.updateUserTaskLastCompleted(habitResult[0].userId);
         }
