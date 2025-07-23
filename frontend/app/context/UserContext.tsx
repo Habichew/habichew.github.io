@@ -22,15 +22,16 @@ export type Habit = {
   isArchived?: number;
 };
 
-
 export type Task = {
-  id: string;
+  userTaskId?: number;
   title: string;
-  description?: string;
-  completed?: boolean;
-  dueAt?: string;
-  priority?: string;
-  habitId?: string;
+  description?: string|null;
+  completed?: number;
+  credit?: number;
+  priority?: 'low' | 'medium' | 'high'| null;
+  dueAt?: string | null;
+  habitId?: number;
+  createdAt?: string;
 };
 
 type UserDataContextType = {
@@ -48,12 +49,12 @@ type UserDataContextType = {
 
   addHabit: (userId: string, h: Habit) => Promise<void>;
   updateHabit: (h: Habit) => Promise<void>;
-   //waiting for api
   deleteHabit: (habitId: string) => Promise<void>;
 
   addTask: (t: Task) => Promise<void>;
   updateTask: (t: Task) => Promise<void>;
-  deleteTask: (taskId: string) => Promise<void>;
+  deleteTask: (userTaskId: number) => Promise<void>;
+
 };
 
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
@@ -73,6 +74,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setTasks([]);
   };
 
+  
   // ----------------- Habit Logic -----------------
 const loadHabits = async () => {
   if (!user) return;
@@ -142,67 +144,131 @@ const updateHabit = async (habit: Habit) => {
 };
 
 
-  const deleteHabit = async (habitId: string) => {
-    if (!user) return;
-    try {
-      const res = await fetch(`http://localhost:3000/users/${user.id}/habits/${habitId}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) await loadHabits();
-    } catch (err) {
-      console.error('Failed to delete habit:', err);
+const deleteHabit = async (habitId: string) => {
+  if (!user) return;
+  try {
+    const res = await fetch(`http://localhost:3000/habits/${user.id}/${habitId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (res.ok) {
+      await loadHabits();  //reload
+    } else {
+      const errData = await res.json();
+      console.error('Delete failed:', errData.message);
     }
+  } catch (err) {
+    console.error('Failed to delete habit:', err);
+  }
+};
+
+
+// ----------------- Task Logic -----------------
+const loadTasks = async () => {
+  if (!user) return;
+  try {
+    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks`);
+    const data = await res.json();
+    const mapped = data.map((t: any) => {
+      const habit = habits.find(h => h.userHabitId === t.userHabitId);
+      return {
+        userTaskId: t.userTaskId,
+        habitId: t.userHabitId, 
+        title: t.taskTitle,
+        description: t.description,
+        priority: t.priority,
+        dueAt: t.dueAt,
+        credit: t.credit,
+        completed: t.completed,
+        habitTitle: habit?.habitTitle || '', 
+      };
+    });
+
+    setTasks(mapped);
+  } catch (err) {
+    console.error('Failed to load tasks:', err);
+  }
+};
+
+const addTask = async (t: Task) => {
+  if (!user) return;
+
+  const payload = {
+    task: {
+      customTitle: t.title,
+      taskId: null,
+      userHabitId: t.habitId,
+      description: t.description,
+      priority: t.priority,
+      dueAt: t.dueAt,
+      credit: t.credit,
+    },
   };
 
-  // ----------------- Task Logic -----------------
-  const loadTasks = async () => {
-    if (!user) return;
-    try {
-      const res = await fetch(`http://localhost:3000/users/${user.id}/tasks`);
-      const data = await res.json();
-      setTasks(data.tasks || []);
-    } catch (err) {
-      console.error('Failed to load tasks:', err);
-    }
-  };
+  console.log("Payload to send:", payload);
 
-  const addTask = async (t: Task) => {
-    if (!user) return;
-    try {
-      const res = await fetch(`http://localhost:3000/users/${user.id}/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: t }),
-      });
-      if (res.ok) await loadTasks();
-    } catch (err) {
+  try {
+    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      await loadTasks();
+    } else {
+      const err = await res.json();
       console.error('Failed to add task:', err);
     }
+  } catch (err) {
+    console.error('Error adding task:', err);
+  }
+};
+
+
+const updateTask = async (t: Task) => {
+  if (!user || !t.userTaskId) return;
+
+  const payload = {
+    task: {
+      customTitle: t.title,
+      description: t.description ?? '',
+      priority: t.priority ?? 'low',
+      dueAt: t.dueAt ?? new Date().toISOString(),
+      credit: t.credit ?? 0,
+      completed: t.completed ?? 0,
+    },
   };
 
-  const updateTask = async (t: Task) => {
-    try {
-      const res = await fetch(`http://localhost:3000/tasks/${t.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: t }),
-      });
-      if (res.ok) await loadTasks();
-    } catch (err) {
+  try {
+    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks/${t.userTaskId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      await loadTasks();
+    } else {
+      const err = await res.json();
       console.error('Failed to update task:', err);
     }
-  };
+  } catch (err) {
+    console.error(' Failed to update task:', err);
+  }
+};
 
-  const deleteTask = async (taskId: string) => {
-    try {
-      const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) await loadTasks();
-    } catch (err) {
-      console.error('Failed to delete task:', err);
-    }
-  };
+const deleteTask = async (userTaskId: number) => {
+  if (!user) return;
+  try {
+    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks/${userTaskId}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) await loadTasks();
+  } catch (err) {
+    console.error('Failed to delete task:', err);
+  }
+};
 
   return (
     <UserDataContext.Provider
