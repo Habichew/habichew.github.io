@@ -3,7 +3,9 @@ import {ScrollView, View,Text,TextInput,FlatList,TouchableOpacity,Image,StyleShe
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser, Habit } from '../context/UserContext';
-import ItemModal from '@/components/ui/HabitModal'; 
+import ItemModal from '@/components/ui/HabitModal';
+import BottomBar from "@/components/bottomBar";
+import {SystemBars} from "react-native-edge-to-edge";
 
 const screenWidth = Dimensions.get('window').width;
 const scale = (value: number) => (screenWidth / 375) * value;
@@ -119,62 +121,65 @@ const Home = () => {
       </View>
 
     </View>
-
   </TouchableOpacity>
 );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff', padding: 20 }}>
-      <Image
-        source={require('@/assets/images/previouscat4.png')}
-        style={styles.catImage}
-        resizeMode="contain"
-      />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>To-Do</Text>
-        <TouchableOpacity onPress={handleAdd}>
-          <Text style={{
-            backgroundColor: '#1CC282',
-            padding: 10,
-            borderRadius: 20,
-            fontWeight: 'bold',
-            color: '#000'
-          }}>
-            Add Habit
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <>
+        <SystemBars style={"light"}></SystemBars>
+        <View style={{flex: 1, backgroundColor: '#fff', padding: 20}}>
+          <Image
+              source={require('@/assets/images/previouscat4.png')}
+              style={styles.catImage}
+              resizeMode="contain"
+          />
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12}}>
+            <Text style={{fontSize: 24, fontWeight: 'bold'}}>To-Do</Text>
+            <TouchableOpacity onPress={handleAdd}>
+              <Text style={{
+                backgroundColor: '#1CC282',
+                padding: 10,
+                borderRadius: 20,
+                fontWeight: 'bold',
+                color: '#000'
+              }}>
+                Add Habit
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-      <TextInput
-        placeholder="Search Habit"
-        placeholderTextColor="#888"
-        style={{
-          backgroundColor: '#eee',
-          borderRadius: 20,
-          paddingHorizontal: 16,
-          paddingVertical: 10,
-          marginBottom: 12,
-        }}
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-      />
-      <ScrollView style={{ paddingBottom: 100 }}>
-      <FlatList
-        data={filteredHabits}
-        keyExtractor={(item, index) =>
-          item.userHabitId ? String(item.userHabitId) : String(index)
-        }
-        renderItem={renderHabit}
-      />
-      </ScrollView>
-      <ItemModal
-        visible={modalVisible}
-        initialData={editHabit ?? undefined}
-        onClose={() => setModalVisible(false)}
-        onSave={handleSave}
-      />
-    </View>
-  );
+          <TextInput
+              placeholder="Search Habit"
+              placeholderTextColor="#888"
+              style={{
+                backgroundColor: '#eee',
+                borderRadius: 20,
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                marginBottom: 12,
+              }}
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+          />
+          <ScrollView style={{paddingBottom: 100}}>
+            <FlatList
+                data={filteredHabits}
+                keyExtractor={(item, index) =>
+                    item.userHabitId ? String(item.userHabitId) : String(index)
+                }
+                renderItem={renderHabit}
+            />
+          </ScrollView>
+          <ItemModal
+              visible={modalVisible}
+              initialData={editHabit ?? undefined}
+              onClose={() => setModalVisible(false)}
+              onSave={handleSave}
+          />
+        </View>
+        <BottomBar/>
+      </>
+);
 };
 
 

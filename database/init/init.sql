@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS moodTypes(
 
 -- Insert into sample mood types table
 INSERT INTO moodTypes (label, colorCode) VALUES
-('Focused', '#B363E8'),
-('Overwhelmed', '#FFAF59'),
+('Focused', '#1CC282'),
+('Overwhelmed', '#FF5950'),
 ('Unmotivated','#FFED95'),
 ('Distracted','#FF5950');
 

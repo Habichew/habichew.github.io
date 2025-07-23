@@ -1,25 +1,35 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import TopBar from '@/components/bottomBar';
 import { Ionicons } from '@expo/vector-icons';
+import {useUser} from "@/app/context/UserContext";
+import BottomBar from "@/components/bottomBar";
 
 export default function PetScreen() {
   const router = useRouter();
+  const { pet, loadPet } = useUser(); // use user data
+
+  useState(() => {
+    console.log("load user pet");
+    loadPet();
+    console.log('PetScreen', pet);
+  });
 
   return (
     <View style={styles.container}>
-      <TopBar />
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Pet Info */}
         <View style={styles.sectionBox}>
           <View style={styles.petInfo}>
             <Image source={require('@/assets/images/placeholder.png')} style={styles.avatar} />
             <View>
-              <Text style={styles.textLine}>Pet Name</Text>
-              <Text style={styles.textLine}>Pet's Working Style</Text>
-              <Text style={styles.textLine}>Pet's Current Planet</Text>
+              <Text style={styles.textLine}>{pet?.name}</Text>
+              <Text style={styles.textLine}>{pet?.personality}</Text>
+              <Text style={styles.textLine}>{pet?.hunger}</Text>
+              <Text style={styles.textLine}>{pet?.level}</Text>
+              {/*<Text style={styles.textLine}>Pet's Working Style</Text>
+              <Text style={styles.textLine}>Pet's Current Planet</Text>*/}
             </View>
           </View>
         </View>
@@ -44,9 +54,9 @@ export default function PetScreen() {
           <Text style={styles.sectionTitle}>Mood Tracker</Text>
           <View style={styles.grid}>
             {Array.from({ length: 30 }).map((_, idx) => (
-              <View key={idx} style={styles.dotBox}>
-                <View style={styles.dot} />
-              </View>
+                <View key={idx} style={styles.dotBox}>
+                  <View style={styles.dot} />
+                </View>
             ))}
           </View>
         </View>
@@ -60,6 +70,7 @@ export default function PetScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <BottomBar />
     </View>
   );
 }

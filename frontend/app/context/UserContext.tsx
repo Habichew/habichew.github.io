@@ -1,5 +1,8 @@
 // frontend/context/UserContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import {Alert} from "react-native";
+
+const backendUrl = process.env.BACKEND_URL
 
 export type User = {
   id: number;
@@ -33,6 +36,16 @@ export type Task = {
   habitId?: string;
 };
 
+export type Pet = {
+  id: string;
+  name: string;
+  mood?: string;
+  personality?: string;
+  level?: number;
+  hunger?: number;
+  createdAt?: string;
+};
+
 type UserDataContextType = {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -40,11 +53,14 @@ type UserDataContextType = {
 
   habits: Habit[];
   tasks: Task[];
+  pet: Pet | null;
   setHabits: (h: Habit[]) => void;
   setTasks: (t: Task[]) => void;
+  setPet: (p: Pet) => void;
 
   loadHabits: () => Promise<void>;
   loadTasks: () => Promise<void>;
+  loadPet: () => Promise<void>;
 
   addHabit: (userId: string, h: Habit) => Promise<void>;
   updateHabit: (h: Habit) => Promise<void>;
@@ -62,6 +78,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUserState] = useState<User | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [pet, setPet] = useState<Pet | null>(null);
 
   const setUser = (user: User | null) => {
     setUserState(user);
@@ -204,6 +221,34 @@ const updateHabit = async (habit: Habit) => {
     }
   };
 
+  // -----------------
+  // Pet Logic
+  const loadPet = async () => {
+    if (!user) {
+      console.log("no user found");
+      return;
+    }
+    console.log("load user's pet");
+    try {
+      const response = await fetch(`http://localhost:3000/users/${user.id}/pet`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      const petData = await response.json();
+
+      if (response.ok) {
+        setPet(petData[0]);
+        console.log('loaded pet', petData);
+      } else {
+        Alert.alert('Missing input', 'Please enter email and password');
+      }
+    } catch (error) {
+        Alert.alert('Error', 'Failed to connect to the server');
+    }
+  }
+
   return (
     <UserDataContext.Provider
       value={{
@@ -212,16 +257,19 @@ const updateHabit = async (habit: Habit) => {
         clearUser,
         habits,
         tasks,
+        pet,
         setHabits,
         setTasks,
+        setPet,
         loadHabits,
         loadTasks,
+        loadPet,
         addHabit,
         updateHabit,
         deleteHabit,
         addTask,
         updateTask,
-        deleteTask,
+        deleteTask
       }}
     >
       {children}
