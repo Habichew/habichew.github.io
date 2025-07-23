@@ -70,7 +70,6 @@ export default function PetScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <BottomBar />
     </View>
   );
 }

@@ -49,7 +49,6 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
       </ScrollView>
-      <BottomBar/>
     </>
 
   );

@@ -3,6 +3,7 @@ import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import BottomBar from "@/components/bottomBar";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function TabLayout() {
                   <Tabs.Screen name="insights" />
                   <Tabs.Screen name="profile" />
               </Tabs>
+              <BottomBar></BottomBar>
           </View>
       </>
   );

@@ -138,7 +138,7 @@ export default function InsightsScreen() {
                             },
                             header: {
                                 paddingHorizontal: 50
-                            },
+                            }
                         }}
                         firstDayOfWeek={1}
                         timePicker={false}
@@ -239,7 +239,6 @@ export default function InsightsScreen() {
 
                 </View>
             </ScrollView>
-            <BottomBar/>
         </View>
     );
 }
