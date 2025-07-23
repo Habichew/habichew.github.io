@@ -78,7 +78,7 @@ export async function updateTask(req, res) {
 
         if (task.completed && !currentTask.completed) {
             // update last time user completed any task in user table
-            const userResult = await userService.updateUserTaskLastCompleted(habitResult[0].userId);
+            const userResult = await userService.updateUserTaskLastCompleted(habitResult.userId);
         }
 
         await taskService.updateTask(userTaskId, task);
