@@ -96,7 +96,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 const loadHabits = async () => {
   if (!user) return;
   try {
-    const res = await fetch(`http://localhost:3000/habits/${user.id}`);
+    const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/habits/${user.id}`);
     const data = await res.json();
     setHabits(data);
   } catch (err) {
@@ -114,7 +114,7 @@ const addHabit = async (userId: string, habit: Habit) => {
       frequency: habit.frequency,
     };
 
-    const response = await fetch(`http://localhost:3000/habits/${userId}`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/habits/${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -133,7 +133,7 @@ const updateHabit = async (habit: Habit) => {
   if (!user || !habit.userHabitId) return;
 
   try {
-    const response = await fetch(`http://localhost:3000/habits/${user.id}/${habit.userHabitId}`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/habits/${user.id}/${habit.userHabitId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -164,7 +164,7 @@ const updateHabit = async (habit: Habit) => {
 const deleteHabit = async (habitId: string) => {
   if (!user) return;
   try {
-    const res = await fetch(`http://localhost:3000/habits/${user.id}/${habitId}`, {
+    const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/habits/${user.id}/${habitId}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -184,20 +184,20 @@ const deleteHabit = async (habitId: string) => {
 const loadTasks = async () => {
   if (!user) return;
   try {
-    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks`);
+    const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/tasks`);
     const data = await res.json();
     const mapped = data.map((t: any) => {
       const habit = habits.find(h => h.userHabitId === t.userHabitId);
       return {
         userTaskId: t.userTaskId,
-        habitId: t.userHabitId, 
+        habitId: t.userHabitId,
         title: t.taskTitle,
         description: t.description,
         priority: t.priority,
         dueAt: t.dueAt,
         credit: t.credit,
         completed: t.completed,
-        habitTitle: habit?.habitTitle || '', 
+        habitTitle: habit?.habitTitle || '',
       };
     });
 
@@ -225,7 +225,7 @@ const addTask = async (t: Task) => {
   console.log("Payload to send:", payload);
 
   try {
-    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks`, {
+    const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/tasks`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -258,7 +258,7 @@ const updateTask = async (t: Task) => {
   };
 
   try {
-    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks/${t.userTaskId}`, {
+    const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/tasks/${t.userTaskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -278,7 +278,7 @@ const updateTask = async (t: Task) => {
 const deleteTask = async (userTaskId: number) => {
   if (!user) return;
   try {
-    const res = await fetch(`http://localhost:3000/users/${user.id}/tasks/${userTaskId}`, {
+    const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/tasks/${userTaskId}`, {
       method: 'DELETE',
     });
     if (res.ok) await loadTasks();
@@ -296,7 +296,7 @@ const deleteTask = async (userTaskId: number) => {
     }
     console.log("load user's pet");
     try {
-      const response = await fetch(`http://localhost:3000/users/${user.id}/pet`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/pet`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

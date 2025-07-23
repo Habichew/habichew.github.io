@@ -11,7 +11,7 @@ export default function DeleteAccountScreen() {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/users/${user?.id}`, {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user?.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });

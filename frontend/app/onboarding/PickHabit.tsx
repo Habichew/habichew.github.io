@@ -28,7 +28,7 @@ export default function PickHabit() {
   const userId = user?.id;
 
   useEffect(() => {
-    fetch('http://localhost:3000/presets/categories')
+    fetch(process.env.EXPO_PUBLIC_BACKEND_URL + '/presets/categories')
       .then((res) => res.json())
       .then(setCategories)
       .catch(console.error);
@@ -36,7 +36,7 @@ export default function PickHabit() {
 
   const fetchPresets = async (categoryId: number) => {
     try {
-      const res = await fetch(`http://localhost:3000/presets/categories/${categoryId}/habits`);
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/presets/categories/${categoryId}/habits`);
       const data = await res.json();
       setPresets(data);
     } catch (err) {
@@ -63,7 +63,7 @@ export default function PickHabit() {
       customTitle: habit
     };
 
-    const response = await fetch(`http://localhost:3000/habits/${userId}`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/habits/${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

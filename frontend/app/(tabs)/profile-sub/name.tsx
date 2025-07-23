@@ -16,7 +16,7 @@ export default function ChangeName() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/users/${user.id}/username`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/username`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

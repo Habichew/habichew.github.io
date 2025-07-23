@@ -32,7 +32,7 @@ export default function PickTasks() {
 
   const handleGeneratePresetTasks = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/presets/habits/${numericHabitId}/tasks`);
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/presets/habits/${numericHabitId}/tasks`);
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.message || 'Failed to fetch preset tasks');
