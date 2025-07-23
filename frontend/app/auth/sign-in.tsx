@@ -14,6 +14,7 @@ export default function SignInScreen() {
 
 
 const handleSignIn = async () => {
+  router.replace('../(tabs)/home');
   if (email && password) {
     try {
       const response = await fetch('http://localhost:3000/users/login', {

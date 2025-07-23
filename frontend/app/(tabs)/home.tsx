@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from 'react'; import { ScrollView, View, Text, TextInput, FlatList, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native'; import { useRouter } from 'expo-router'; import { Ionicons } from '@expo/vector-icons'; import { useUser, Habit } from '../context/UserContext'; import ItemModal from '@/components/ui/HabitModal';
+
 
 const screenWidth = Dimensions.get('window').width; const scale = (value: number) => (screenWidth / 375) * value;
 
@@ -35,6 +37,7 @@ const Home = () => {
         <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black" /><Text style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View>
         <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black" /><Text style={styles.tagText}> {item.frequency}</Text></View>
       </View>
+
     </TouchableOpacity>
   );
 
@@ -54,6 +57,7 @@ const Home = () => {
       <ItemModal visible={modalVisible} initialData={editHabit ?? undefined} onClose={() => setModalVisible(false)} onSave={handleSave} onDelete={deleteHabit} habitId={habitId} />
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({

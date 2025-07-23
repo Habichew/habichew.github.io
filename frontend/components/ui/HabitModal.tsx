@@ -62,7 +62,7 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
                 <Ionicons name="trash-outline" size={24} color="#555" />
               </TouchableOpacity>
             ) : (
-              <View style={{ width: 24 }} />  // 占位确保布局对齐
+              <View style={{ width: 24 }} />  // align
             )}
           </View>
 
