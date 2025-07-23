@@ -33,6 +33,7 @@ export type Task = {
   credit?: number;
   priority?: 'low' | 'medium' | 'high'| null;
   dueAt?: string | null;
+  //Habitid is used here because of the previous confusion,
   habitId?: number;
   createdAt?: string;
 };
@@ -65,7 +66,7 @@ type UserDataContextType = {
 
   addHabit: (userId: string, h: Habit) => Promise<void>;
   updateHabit: (h: Habit) => Promise<void>;
-  deleteHabit: (habitId: string) => Promise<void>;
+  deleteHabit: (userHabitId: number) => Promise<void>;
 
   addTask: (t: Task) => Promise<void>;
   updateTask: (t: Task) => Promise<void>;
@@ -160,16 +161,15 @@ const updateHabit = async (habit: Habit) => {
   }
 };
 
-
-const deleteHabit = async (habitId: string) => {
+const deleteHabit = async (userHabitId: number) => {
   if (!user) return;
   try {
-    const res = await fetch(`http://localhost:3000/habits/${user.id}/${habitId}`, {
+    const res = await fetch(`http://localhost:3000/habits/${user.id}/${userHabitId}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });
     if (res.ok) {
-      await loadHabits();  //reload
+      await loadHabits();
     } else {
       const errData = await res.json();
       console.error('Delete failed:', errData.message);
@@ -178,6 +178,7 @@ const deleteHabit = async (habitId: string) => {
     console.error('Failed to delete habit:', err);
   }
 };
+
 
 
 // ----------------- Task Logic -----------------
