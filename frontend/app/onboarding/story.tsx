@@ -7,22 +7,72 @@ import BackButton from 'components/ui/BackButton';
   <BackButton />
 </View>
 
-
 const storyImages = [
-  require('../../assets/images/story1.png'),
-  require('../../assets/images/story2.png'),
-  require('../../assets/images/story3.png'),
-  require('../../assets/images/story4.png'),
-  require('../../assets/images/story5.png'),
+  require('../../assets/story/P1.jpg'),
+  require('../../assets/story/P2.jpg'),
+  require('../../assets/story/P3.jpg'),
+  require('../../assets/story/P4.jpg'),
+  require('../../assets/story/P5.jpg'),
+  require('../../assets/story/P6.jpg'),
+  require('../../assets/story/P7.jpg'),
+  require('../../assets/story/P8.jpg'),
+  require('../../assets/story/P9.jpg'),
+  require('../../assets/story/P10.jpg'),
+  require('../../assets/story/P11.jpg'),
+  require('../../assets/story/P12.jpg'),
+  require('../../assets/story/P13.jpg'),
+  require('../../assets/story/P14.jpg'),
 ];
 
 const storyTexts = [
-  ["You wake up… weightless.", "Something happened. Your ship is drifting."],
-  ["A flashing red light catches your eye.", "The control panel is blinking."],
-  ["You float towards it.", "There's a message: SYSTEM FAILURE."],
-  ["You reach for the manual override.", "Your fingers tremble."],
-  ["With a deep breath, you press the button.", "A new journey begins…"],
+  [
+    "You wake up... weightless.",
+    "The window is somehow broken. Systems failing. You feel the emptiness closing in..."
+  ],
+  ["What is that??"],
+  ["A cat!"],
+  [
+    "“Hey... you’re finally awake! Come here”",
+    "Okay...?",
+    "Who are you? What happened to me?"
+  ],
+  [
+    "“Your ship got hit by a meteor storm.",
+    "Lucky I came by when I did — you were about to run out of power.",
+    "This place is a mess... you can’t stay here.”"
+  ],
+  [
+    "“Come with me — my little ship is nearby. It’s small, but cozy!”",
+    "Ohhh wait for me!"
+  ],
+  [""], // pic7
+  ["Here we are!"],
+  [
+    "“I’m a space stray! No name yet.",
+    "I used to travel with my kind, but got separated a long time ago.",
+    "Now I drift around... looking for bits of energy.”"
+  ],
+  [
+    "“Your ship’s too damaged to fly alone — but together we can fix it.",
+    "I know how to find energy out here — but I need your help.”"
+  ],
+  [
+    "“I feed on your goals — sounds weird, huh?”",
+    "“You set a goal, I chew it up into tiny tasks.”"
+  ],
+  [
+    "When you complete each one, it feeds me — and powers up our ships.”"
+  ],
+  [
+    "“So... how about it?",
+    "You help me find food, I help you get home — and we explore the stars together.”"
+  ],
+  [
+    "“Ready to try?",
+    "Let’s set your first big mission — I’m hungry already!”"
+  ]
 ];
+
 
 export default function StoryScreen() {
   const router = useRouter();
@@ -105,7 +155,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   line: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight:'bold',
     color: '#333',
     textAlign: 'center',
     marginBottom: 12,
