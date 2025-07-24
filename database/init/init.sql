@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS moodTypes(
 -- Insert into sample mood types table
 INSERT INTO moodTypes (label, colorCode) VALUES
 ('Focused', '#1CC282'),
-('Overwhelmed', '#FF5950'),
-('Unmotivated','#FFED95'),
-('Distracted','#FF5950');
+('Overwhelmed', '#ECECEC'),
+('Unmotivated','#DAB7FF'),
+('Distracted','#FF952C');
 
 -- Mood logs for users
 CREATE TABLE IF NOT EXISTS moodLogs (
@@ -99,11 +99,12 @@ CREATE TABLE userHabits (
     habitId INT,
     customTitle VARCHAR(255),
     priority INT,
-    startDate DATE,
-    goalDate DATE,
+    startDate DATETIME,
+    goalDate DATETIME,
     frequency VARCHAR(20),        -- e.g., 'Daily', 'Weekly'
     isArchived BOOLEAN DEFAULT FALSE,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `completedAt` DATE,
 
     -- The habitId represents a preset habit, the customTitle represents a custom habit, so they cannot be NULL at the same time.
     CONSTRAINT chk_customTitle_if_no_habitId
@@ -133,6 +134,7 @@ CREATE TABLE IF NOT EXISTS `userTasks` (
    `priority` TEXT, -- low, medium, high
    `dueAt` DATETIME,
    `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   `completedAt` DATE,
 
    CONSTRAINT chk_customTitle_if_no_taskId
        CHECK (

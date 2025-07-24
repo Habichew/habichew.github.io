@@ -76,12 +76,13 @@ export async function updateTask(req, res) {
             return res.status(404).json({message: `Task does not have a valid habit id`});
         }
 
-        if (task.completed && !currentTask.completed) {
+        let completeTask = task.completed && !currentTask.completed;
+        if (completeTask) {
             // update last time user completed any task in user table
             const userResult = await userService.updateUserTaskLastCompleted(habitResult.userId);
         }
 
-        await taskService.updateTask(userTaskId, task);
+        await taskService.updateTask(userTaskId, task, completeTask);
 
         // Optionally re-fetch the updated task
         const result = await taskService.findUserTaskById(userTaskId);

@@ -39,7 +39,8 @@ export async function findUserTaskById(userTaskId) {
             ut.completed,
             ut.credit,
             ut.priority,
-            ut.dueAt
+            ut.dueAt,
+            ut.completedAt
         FROM userTasks ut
                  LEFT JOIN tasks t ON ut.taskId = t.id
         WHERE ut.id = ?`, [userTaskId]);
@@ -67,7 +68,7 @@ export async function createTask({
     return result.insertId;
 }
 
-export async function updateTask(userTaskId, task) {
+export async function updateTask(userTaskId, task, completeTask) {
     const allowedFields = ['customTitle', 'description', 'priority', 'dueAt', 'completed', 'credit'];
     const setClauses = [];
     const values = [];
@@ -77,6 +78,11 @@ export async function updateTask(userTaskId, task) {
             setClauses.push(`${field} = ?`);
             values.push(task[field]);
         }
+    }
+
+    if (completeTask) {
+        setClauses.push(`completedAt = ?`);
+        values.push(`NOW()`);
     }
 
     if (setClauses.length === 0) {
