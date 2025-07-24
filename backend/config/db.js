@@ -27,7 +27,8 @@ const dbConfig = {
   // Additional MySQL 8.0 compatibility settings
   authPlugins: {
     mysql_native_password: () => () => Buffer.alloc(0)
-  }
+  },
+  timezone: 'Z'
 };
 
 console.log('Database configuration:', {
