@@ -1,19 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  TextInput,
-  ScrollView,
-  FlatList,
-  Dimensions,
-  Image
-} from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet,Modal,TextInput,ScrollView,Image} from 'react-native';
 import { useRouter } from 'expo-router';
 import CustomDropdown from '../../components/ui/select';
-import { useUser, Habit } from '../context/UserContext';
+import { useUser } from '../context/UserContext';
 
 export default function PickHabit() {
   const router = useRouter();
@@ -21,10 +10,9 @@ export default function PickHabit() {
   const [customHabit, setCustomHabit] = useState('');
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string>('Choose a category');
-  const [showDropdown, setShowDropdown] = useState(false);
   const [presets, setPresets] = useState<any[]>([]);
-  const { user } = useUser();
+  const { user, addHabit, loadHabits } = useUser();
+
   const userId = user?.id;
 
   useEffect(() => {
@@ -42,13 +30,6 @@ export default function PickHabit() {
     } catch (err) {
       console.error('Failed to fetch presets', err);
     }
-  };
-
-  const handleSelectCategory = (id: number, name: string) => {
-    setSelectedCategoryId(id);
-    setSelectedCategoryName(name);
-    setShowDropdown(false);
-    fetchPresets(id);
   };
 
   const handleSubmitHabit = async (habit: string, habitId?: number) => {
@@ -127,7 +108,8 @@ export default function PickHabit() {
       {/* Scrollable habit list with fixed height */}
       <ScrollView style={styles.habitList}>
         {presets.map((habit, idx) => (
-          <TouchableOpacity key={idx} style={styles.habitItem} onPress={() => handleSubmitHabit(habit.title, habit.id)}>
+          //only update the title to avoid distinguish customHabit or presetHabit
+          <TouchableOpacity key={idx} style={styles.habitItem} onPress={() => handleSubmitHabit(habit.title)}>
             <Text style={styles.habitText}>{habit.title}</Text>
           </TouchableOpacity>
         ))}

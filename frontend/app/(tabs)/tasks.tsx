@@ -4,6 +4,7 @@ import { useUser, Task } from '../context/UserContext';
 import TaskModal from '../../components/ui/TaskModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Tasks() {
   const { user, tasks, loadTasks, updateTask } = useUser();
@@ -19,6 +20,16 @@ export default function Tasks() {
   const [showEmptyPrompt, setShowEmptyPrompt] = useState(false);
   const [lastFilteredHabitId, setLastFilteredHabitId] = useState<number | null>(null);
 
+//When the page regains focus and there is no habitId parameter, clear the filter
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!habitId) {
+        setSearchText('');
+        setIsHabitFilterLocked(false);
+        setLastFilteredHabitId(null);
+      }
+    }, [habitId])
+  );
 
   useEffect(() => { loadTasks(); }, []);
 
@@ -173,8 +184,8 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 14, marginLeft: 6, color: '#000' },
   iconGroup: { flexDirection: 'column', alignItems: 'center', gap: 10 },
   pencil: { position: 'absolute', right: 0, top: 4 },
-  tickBox: { padding: 6, backgroundColor: '#f8f2fc', borderRadius: 6 },
-  tickBoxCompleted: { backgroundColor: '#e6e6e6' },
+  tickBox: { padding: 6, backgroundColor: '#fff', borderRadius: 6 },
+  tickBoxCompleted: { backgroundColor: '#fff' },
   generateBtn: { marginTop: 20, backgroundColor: '#DAB7FF', borderRadius: 40, paddingHorizontal: 40, paddingVertical: 12 },
   generateText: { fontWeight: 'bold', fontSize: 16, color: '#000' },
 });

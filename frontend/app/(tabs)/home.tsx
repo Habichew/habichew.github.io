@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   habitTitle: { fontSize: scale(16), fontWeight: 'bold', marginBottom: scale(8) },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: scale(6) },
   editIcon: { fontSize: scale(16), marginLeft: scale(6) },
-  card: { backgroundColor: '#e0e0e0', borderRadius: scale(16), padding: scale(16), marginBottom: scale(12), width: '100%' },
+  card: { backgroundColor: '#e0e0e0', borderRadius: 16, padding: 16, marginBottom: 12, width: '100%' },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   title: { fontSize: scale(18), fontWeight: 'bold', color: '#111' },
   progressBarBackground: { height: scale(16), backgroundColor: '#fff', borderRadius: scale(8), marginTop: scale(8), marginBottom: scale(12), overflow: 'hidden', width: '100%' },
