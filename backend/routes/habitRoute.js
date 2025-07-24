@@ -1,26 +1,23 @@
 import express from "express";
+const habitRouter = express.Router();
+
 import * as habitController from "../controllers/habitController.js";
 
-import { connect } from "../index.js";
+// Get a user's habit list
+habitRouter.get('/:userId', habitController.getHabitListByUser);
 
-export const habitRouter = express.Router();
+// Get a habit's detail
+habitRouter.get('/:userId/:userHabitId', habitController.getHabitByUser);
 
-habitRouter.get("/", (req, res) => {
-  connect((conn) => habitController.getAllHabits(conn, req, res));
-});
+// Create a habit
+habitRouter.post('/:userId', habitController.createHabitByUser);
 
-habitRouter.get("/recommend", (req, res) => {
-  connect((conn) => habitController.getTaskRecommendations(conn, req, res));
-})
+// Update a habit
+habitRouter.patch('/:userId/:userHabitId', habitController.updateHabitByUser);
 
-/*habitRouter.get("/:itineraryId", (req, res) => {
-  connect((conn) =>
-      habitController.findCollaboratorsByItineraryId(conn, req, res)
-  );
-});*/
+// Delete a habit
+habitRouter.delete('/:userId/:userHabitId', habitController.deleteUserHabit);
 
-// collaboratorRouter.get("/:userId", (req, res, next) => {
-//   connect((conn) =>
-//     collaboratorController.findItinerariesByCollaboratorUserId(conn, req, res)
-//   );
-// });
+
+
+export {habitRouter};

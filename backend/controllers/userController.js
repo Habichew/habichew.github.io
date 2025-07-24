@@ -42,9 +42,9 @@ export async function signUp(req, res) {
 export async function findUser(req, res) {
   try {
     const {email, password} = req.body;
-    await userService.findUserByEmail(email, (result) => {
-      console.log("###### /users/login: find user by email result ######", result);
-      if (result.length > 0) {
+    const result = await userService.findUserByEmail(email);
+    if(result.length > 0) {
+    console.log("###### /users/login: find user by email result ######", result);
         bcrypt.compare(
           password,
           result[0].password,
@@ -66,7 +66,6 @@ export async function findUser(req, res) {
         res.status(404);
         res.send({ error: "Incorrect user" });
       }
-    });
   } catch (code) {
     res.status(code);
     res.send();
@@ -91,10 +90,105 @@ export async function findUserById(req, res) {
   }
 }
 
+export async function updateEmailById(req, res) {
+  const { userId } = req.params;
+  const { newEmail } = req.body;
+  try {
+    // Check if the email is occupied
+    const existing = await userService.findUserByEmail(newEmail);
+    console.log(existing);
+
+    if (existing.length!==0 && existing.id !== parseInt(userId)) {
+      return res.status(409).json({ message: 'Email already registered.' });
+    }
+
+    const result = await userService.updateUserById(userId, 'email', newEmail);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findEmailById(req, res) {
+  const { userId } = req.params;
+  try {
+    const email = await userService.getUserById(userId, 'email');
+    res.status(200).send({ email });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function updatePasswordById(req, res) {
+  const { userId } = req.params;
+  const { oldPassword, newPassword } = req.body;
+  try {
+    const storedPassword = await userService.getUserById(userId, 'password');
+    bcrypt.compare(oldPassword, storedPassword, async function (err, verified) {
+      if (err) {
+        console.error('bcrypt error:', err);
+        return res.status(500).send({ message: 'Server error during password check' });
+      }
+
+      if (!verified) {
+        return res.status(401).send({ message: 'Old password does not match' });
+      }
+
+      // If verified
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      const result = await userService.updateUserById(userId, 'password', hashedNewPassword);
+      return res.status(200).send(result);
+      });
+    } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findPasswordById(req, res) {
+  const { userId } = req.params;
+  try {
+    const password = await userService.getUserById(userId, 'password');
+    res.status(200).send({ password });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function updateUsernameById(req, res) {
+  const { userId } = req.params;
+  const { newUsername } = req.body;
+  try {
+    const result = await userService.updateUserById(userId, 'username', newUsername);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findUsernameById(req, res) {
+  const { userId } = req.params;
+  try {
+    const username = await userService.getUserById(userId, 'username');
+    res.status(200).send({ username });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+export async function findProfileImageById(req, res) {
+  const { userId } = req.params;
+  try {
+    const profileImage = await userService.getUserById(userId, 'profileImage');
+    res.status(200).send({ profileImage });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
 export async function updateUser(req, res) {
   try {
     const { userId } = req.params;
-    const { newEmail, newPassword, newUsername } = req.body;
+    const { newEmail, newPassword, newUsername, newPetId } = req.body;
 
     // Get current user from DB, to update the changed fields only
     const currentUser = await userService.findUserById(userId);
@@ -108,11 +202,11 @@ export async function updateUser(req, res) {
       email: newEmail || existingUser.email,
       password: newPassword || existingUser.password,
       username: newUsername || existingUser.username,
+      petId: newPetId || existingUser.petId,
     };
 
     if (newPassword) {
-      const salt = await bcrypt.genSalt(10);
-      updatedFields.password = await bcrypt.hash(newPassword, salt);
+      updatedFields.password = await bcrypt.hash(newPassword, 10);
     }
 
     const result = await userService.updateUser(userId, updatedFields);
@@ -127,117 +221,6 @@ export async function updateUser(req, res) {
   } catch (err) {
     console.error('Update error:', err);
     return res.status(500).json({ error: 'Internal server error' });
-  }
-}
-
-
-/*
-export async function findUserByUsername(conn, req, res) {
-  try {
-    await userService.findUserByUsername(
-      conn,
-      req.params.profileName,
-      (result) => {
-        if (result.length === 1) {
-          res.status(200);
-        } else if (result.length === 0) {
-          res.status(404);
-        }
-        res.send(result);
-      }
-    );
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}*/
-
-
-/*export async function createUser(conn, req, res) {
-  try {
-    const user = new User(
-      req.body.email,
-      req.body.password,
-      req.body.profileName,
-      req.body.profileImage
-    );
-    await userService.findUserByEmail(conn, user.email, (result) => {
-      if (result.length > 0) {
-        res.status(400);
-        res.send({ error: "user already exists" });
-      } else {
-        userService.createUser(conn, user, (result) => {
-          if (result) {
-            res.status(200);
-            res.send({ success: "registered new user" });
-          } else {
-            res.status(500);
-            res.send({ error: "failed to register new user" });
-          }
-        });
-      }
-    });
-  } catch (err) {
-    res.status(500);
-    res.send(err);
-  }
-}*/
-
-/*export async function subscribeUserToNewsletter(conn, req, res) {
-  try {
-    const id = req.params.userId;
-
-    await userService.subscribeUserToNewsletter(conn, id, (result) => {
-        if (result) {
-          res.status(200).send({ success: "subscribed user to newsletter" });
-        } else {
-          res.status(500).send({ error: "failed to subscribe user to newsletter" });
-        }
-    });
-
-  } catch (code) {
-    res.status(code);
-    res.send();
-  }
-}*/
-
-export async function updateProfileName(conn, req, res) {
-  try {
-    const userId = req.params.userId;
-    const newProfileName = req.body.newProfileName;
-    console.log("userId", userId);
-    console.log("profileName", newProfileName);
-
-    await userService.updateProfileName(
-      conn,
-      userId,
-      newProfileName,
-      (result) => {
-        if (result) {
-          res.status(204).send({ success: "updated user profile name" });
-        }
-      }
-    );
-  } catch (code) {
-    res.status(code).send();
-  }
-}
-
-export async function updateProfileImage(conn, req, res) {
-  try {
-    const userId = req.params.userId;
-    const newProfileImage = req.body.newProfileImage;
-    console.log("userId", userId);
-    console.log("profileImage", newProfileImage);
-
-    await userService.updateProfileName(conn, userId, newProfileName, () => {
-      res.status(204);
-      res.send();
-    });
-  } catch (code) {
-    res.status(code);
-  } finally {
-    res.send();
   }
 }
 

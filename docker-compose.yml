@@ -46,28 +46,6 @@ services:
     stdin_open: true
     tty: true
 
-  # Frontend (Optional - for Metro bundler)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: habichew-frontend
-    restart: unless-stopped
-    environment:
-      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-      - REACT_NATIVE_PACKAGER_HOSTNAME=localhost
-    ports:
-      - "8081:8081"
-      - "19000:19000"
-      - "19001:19001"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    networks:
-      - app-network
-    stdin_open: true
-    tty: true
-
   # Database Admin Tool (PHPMyAdmin alternative)
   adminer:
     image: adminer

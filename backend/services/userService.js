@@ -1,6 +1,10 @@
-// import db from "../config/db_old.js";
 import bcrypt from "bcrypt";
-import { pool } from "../config/db.js";
+import {pool} from "../config/db.js";
+
+export async function updateUserTaskLastCompleted(userId) {
+  const [rows] = await pool.query('UPDATE `users` SET taskLastCompleted = current_timestamp WHERE id = ?', [userId]);
+  return rows;
+}
 
 export async function getAllUsers() {
   const [rows] = await pool.query('SELECT * FROM users');
@@ -29,28 +33,30 @@ export async function createUser(username, email, password) {
 }
 
 
-export async function findEmailPassword(email, password, callback) {
-
-  let result;
-  bcrypt.genSalt(10, function (err, salt) {
-    bcrypt.hash(password, salt, async function (err, hash) {
-      result = await conn.query(
-        `SELECT * FROM users WHERE email = ? AND password = ?`,
-        [email, hash]
-      );
-      callback(result);
-    });
-  });
-}
-
-export async function findUserByEmail(email, callback) {
+export async function findUserByEmail(email) {
   const [result] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
-  callback(result);
+  return result;
 }
 
 export async function findUserById(id) {
   const [result] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
-  return result;
+  return result[0];
+}
+
+export async function getUserById(id, field) {
+  const query = `SELECT ${field} FROM users WHERE id = ?`;
+  const [rows] = await pool.execute(query, [id]);
+  if (rows.length === 0) throw new Error('User not found');
+  return rows[0][field];
+}
+
+export async function updateUserById(id, field, value) {
+  const query = `UPDATE users SET ${field} = ? WHERE id = ?`;
+  await pool.execute(query, [value, id]);
+  return {
+    message: `${field} updated successfully`,
+    [field]: value
+  }
 }
 
 export async function updateUser(userId, updatedFields) {
@@ -67,26 +73,6 @@ export async function updateUser(userId, updatedFields) {
 
   const [result] = await pool.query(sql, values);
   return result;
-}
-
-/*export async function findUserByUsername(conn, profileName, callback) {
-  console.log(conn);
-  const result = await conn.query(
-    `SELECT * FROM users WHERE username LIKE ?`,
-    ["%" + profileName + "%"]
-  );
-  callback(result);
-}*/
-
-export async function updateProfileName(conn, userId, profileName, callback) {
-  console.log(conn);
-  const result = await conn.query(
-    `UPDATE users
-    SET profileName = ?
-    WHERE id = ?`,
-    [profileName, userId]
-  );
-  callback(result);
 }
 
 export async function updateProfileImage(conn, userId, profileImage, callback) {

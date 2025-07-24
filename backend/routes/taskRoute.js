@@ -1,18 +1,18 @@
 import express from "express";
-import * as itineraryTypeController from "../controllers/userHabitController.js";
-
-import { connect } from "../index.js";
+import * as taskController from "../controllers/taskController.js";
 
 export const taskRouter = express.Router();
 
-taskRouter.get("/", (req, res) => {
-  connect((conn) =>
-    itineraryTypeController.getAllItineraryTypes(conn, req, res)
-  );
-});
+// Find tasks by user id
+taskRouter.get("/:userId", taskController.getTaskListByUserId);
 
-taskRouter.get("/:id", (req, res) => {
-  connect((conn) =>
-    itineraryTypeController.findItineraryTypeById(conn, req, res)
-  );
-});
+// Get task by id
+
+// Create task
+taskRouter.post("/", taskController.createTask);
+
+// Update task by id
+taskRouter.put("/:taskId", taskController.updateTask);
+
+// Delete task
+taskRouter.delete("/:taskId", taskController.deleteTask);
