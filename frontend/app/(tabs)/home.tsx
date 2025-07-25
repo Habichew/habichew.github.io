@@ -2,11 +2,10 @@
 import React, { useState, useEffect } from 'react'; import { ScrollView, View, Text, TextInput, FlatList, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native'; import { useRouter } from 'expo-router'; import { Ionicons } from '@expo/vector-icons'; import { useUser, Habit } from '../context/UserContext'; import ItemModal from '@/components/ui/HabitModal';
 import BottomBar from "@/components/bottomBar";
 
-
 const screenWidth = Dimensions.get('window').width; const scale = (value: number) => (screenWidth / 375) * value;
 
 const Home = () => {
-  const { user, habits, loadHabits, addHabit, updateHabit, deleteHabit } = useUser();
+  const { user, habits, loadHabits, addHabit, updateHabit, deleteHabit, calculateHabitProgress } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredHabits, setFilteredHabits] = useState(habits);
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,25 +23,53 @@ const Home = () => {
     await loadHabits();
   };
   const handleEdit = (habit: any) => { setEditHabit(habit); setModalVisible(true); };
+
   const handlePressHabit = (habit: any) => { router.push({ pathname: './tasks', params: { habitId: habit.userHabitId, habitName: habit.habitTitle } }); };
+
+  //Add animation here
+  const handleTickHabit = async (habit: Habit) => {
+  if (!habit.userHabitId) return;
+  // await updateHabit({ ...habit, isCompleted: true });
+  await updateHabit({ ...habit });
+  console.log('trigger animation and complete habit');
+  };
 
   const formatDate = (dateStr: string) => { if (!dateStr) return ''; try { const d = new Date(dateStr); const day = d.getUTCDate(); const month = d.toLocaleString('default', { month: 'short' }); return `${day} ${month}`; } catch { return ''; } };
   const getPriorityLabel = (val: string | number) => val == 1 ? 'High Priority' : val == 2 ? 'Medium Priority' : val == 3 ? 'Low Priority' : 'Priority';
 
-  const renderHabit = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.8}>
-      <View style={styles.headerRow}><Text style={styles.title}>{item.habitTitle}</Text><TouchableOpacity onPress={() => handleEdit(item)}><Ionicons name="pencil-outline" size={20} color="black" /></TouchableOpacity></View>
-      <View style={styles.progressBarBackground}><View style={styles.progressBarFill} /></View>
-      <View style={styles.tagRow}>
-        <View style={styles.tag}><Ionicons name="calendar-outline" size={16} color="black" /><Text style={styles.tagText}> {formatDate(item.goalDate)}</Text></View>
-        <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black" /><Text style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View>
-        <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black" />
-          <Text style={[styles.tagText, !item.frequency && { color: '#000' }]}>{item.frequency || 'Frequency'}</Text>
-        </View>
-      </View>
+  const renderHabit = ({ item }: { item: any }) => {
+    const progressMap = calculateHabitProgress();
+    const percent = progressMap?.[item.userHabitId] ?? 0;
 
-    </TouchableOpacity>
-  );
+    return (
+      <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.8}>
+        <View style={styles.headerRow}>
+          <Text style={styles.title}>{item.habitTitle}</Text>
+          <TouchableOpacity onPress={() => handleEdit(item)}>
+            <Ionicons name="pencil-outline" size={20} color="black" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.progressBarBackground}>
+          <View style={[styles.progressBarFill, { width: `${percent}%` }]} />
+        </View>
+        <View style={styles.tagRow}>
+          <View style={styles.tag}><Ionicons name="calendar-outline" size={16} color="black" /><Text style={styles.tagText}> {formatDate(item.goalDate)}</Text></View>
+          <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black" /><Text style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View>
+          <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black" />
+            <Text style={[styles.tagText, !item.frequency && { color: '#000' }]}>{item.frequency || 'Frequency'}</Text>
+          </View>
+          {/* Add a ticking box here */}
+          {/* Add completed field in the backend */}
+          {/* {percent === 100 && !item.isCompleted && ( */}
+          {percent === 100 && (
+            <TouchableOpacity onPress={() => handleTickHabit(item)}>
+              <Ionicons name="checkmark-circle-outline" size={28} color="#1CC282" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff', padding: 20 }}>

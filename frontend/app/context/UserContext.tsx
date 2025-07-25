@@ -70,6 +70,9 @@ type UserDataContextType = {
 
   addTask: (t: Task) => Promise<void>;
   updateTask: (t: Task) => Promise<void>;
+
+  calculateHabitProgress: () => Record<number, number>;
+
   deleteTask: (userTaskId: number) => Promise<void>;
 
 };
@@ -207,6 +210,25 @@ const loadTasks = async () => {
   }
 };
 
+// return habitId → % map
+const calculateHabitProgress = (): Record<number, number> => {
+  const progressMap: Record<number, number> = {};
+  const grouped = tasks.reduce((acc, t) => {
+    if (!t.habitId) return acc;
+    if (!acc[t.habitId]) acc[t.habitId] = [];
+    acc[t.habitId].push(t);
+    return acc;
+  }, {} as Record<number, Task[]>);
+
+  for (const habitId in grouped) {
+    const all = grouped[habitId];
+    const done = all.filter(t => !!t.completed).length;
+    const percent = all.length === 0 ? 0 : Math.round((done / all.length) * 100);
+    progressMap[+habitId] = percent;
+  }
+  return progressMap;
+};
+
 const addTask = async (t: Task) => {
   if (!user) return;
 
@@ -329,6 +351,7 @@ const deleteTask = async (userTaskId: number) => {
         setPet,
         loadHabits,
         loadTasks,
+        calculateHabitProgress,
         loadPet,
         addHabit,
         updateHabit,
