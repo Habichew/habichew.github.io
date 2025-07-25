@@ -16,12 +16,12 @@ export type User = {
 };
 
 export type Habit = {
-  userHabitId: number| undefined;
+  userHabitId: number | undefined;
   habitTitle: string;
-  goalDate: string;
+  goalDate?: string | null;
   startDate: string;
-  priority: number;
-  frequency: string;
+  priority?: number | null;
+  frequency?: string | null;
   isArchived?: number;
 };
 
@@ -109,12 +109,11 @@ const addHabit = async (userId: string, habit: Habit) => {
   try {
     const payload = {
       customTitle: habit.habitTitle,
-      priority: habit.priority,
+      priority: habit.priority ?? null,
       startDate: habit.startDate,
-      goalDate: habit.goalDate,
-      frequency: habit.frequency,
+      goalDate: habit.goalDate ?? null,
+      frequency: habit.frequency ?? null,
     };
-
     const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/habits/${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -251,8 +250,8 @@ const updateTask = async (t: Task) => {
     task: {
       customTitle: t.title,
       description: t.description ?? '',
-      priority: t.priority ?? 'low',
-      dueAt: t.dueAt ?? new Date().toISOString(),
+      priority: t.priority || null,
+      dueAt: t.dueAt || null,
       credit: t.credit ?? 0,
       completed: t.completed ?? 0,
     },

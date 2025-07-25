@@ -72,7 +72,7 @@ export default function Tasks() {
     const updatedTask: Task = {
       ...task,
       completed: task.completed === 1 ? 0 : 1,
-      priority: task.priority ?? 'low',
+      priority: task.priority || null,
       credit: task.credit ?? 0,
       description: task.description ?? '',
       dueAt: task.dueAt ? formatDate(task.dueAt) : undefined,
@@ -135,7 +135,9 @@ export default function Tasks() {
                   <View style={styles.badge}>
                     <Ionicons name="flag-outline" size={16} color="#000" />
                     <Text style={styles.badgeText}>
-                      {(item.priority || '').charAt(0).toUpperCase() + (item.priority || '').slice(1)} Priority
+                      {item.priority
+                        ? `${item.priority.charAt(0).toUpperCase()}${item.priority.slice(1)} Priority`
+                        : 'No Priority'}
                     </Text>
                   </View>
                   <TouchableOpacity style={[styles.pencil]} onPress={() => handleEdit(item)}>

@@ -7,11 +7,22 @@ import { webDateInputWrapper, webDateInput } from './webDateStyles';
 
 type Props = {
   visible: boolean;
-  initialData?: { habitTitle?: string; goalDate?: string; priority?: number; frequency?: string };
+  initialData?: {
+    habitTitle?: string;
+    goalDate?: string | null;
+    priority?: number | null;
+    frequency?: string | null;
+  };
   onClose: () => void;
-  onSave: (data: { habitTitle: string; goalDate: string; startDate: string; priority: number; frequency: string }) => void;
-  onDelete?: (habitId: string) => void;
-  habitId?: string;
+  onSave: (data: {
+  habitTitle: string;
+  goalDate?: string | null;
+  startDate: string;
+  priority?: number | null;
+  frequency?: string | null;
+}) => void;
+  onDelete?: (habitId: number) => void | Promise<void>;
+  habitId?: number;
 };
 
 const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, onDelete, habitId }) => {
@@ -26,7 +37,7 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
       setFormData({
         habitTitle: initialData.habitTitle || '',
         goalDate: initialData.goalDate ? formatDate(initialData.goalDate) : '',
-        priority: reversePriorityMap[initialData.priority ?? 3] || '',
+        priority: initialData.priority != null ? reversePriorityMap[initialData.priority] : '',
         frequency: initialData.frequency || '',
       });
     } else {
@@ -42,10 +53,10 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
     const today = new Date().toISOString().split('T')[0];
     onSave({
       habitTitle: formData.habitTitle,
-      goalDate: formData.goalDate || today,
+      goalDate: formData.goalDate || null,
       startDate: today,
-      priority: priorityMap[formData.priority] || 3,
-      frequency: formData.frequency || 'Daily',
+      priority: formData.priority ? priorityMap[formData.priority] : null,
+      frequency: formData.frequency || null,
     });
     onClose();
   };

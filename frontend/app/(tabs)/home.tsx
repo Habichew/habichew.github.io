@@ -11,7 +11,7 @@ const Home = () => {
   const [filteredHabits, setFilteredHabits] = useState(habits);
   const [modalVisible, setModalVisible] = useState(false);
   const [editHabit, setEditHabit] = useState<Partial<Habit> | null>(null);
-  const habitId = editHabit?.userHabitId?.toString();
+  const habitId = editHabit?.userHabitId; // number 
   const router = useRouter();
 
   useEffect(() => { if (user) loadHabits(); }, [user]);
@@ -36,7 +36,9 @@ const Home = () => {
       <View style={styles.tagRow}>
         <View style={styles.tag}><Ionicons name="calendar-outline" size={16} color="black" /><Text style={styles.tagText}> {formatDate(item.goalDate)}</Text></View>
         <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black" /><Text style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View>
-        <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black" /><Text style={styles.tagText}> {item.frequency}</Text></View>
+        <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black" />
+          <Text style={[styles.tagText, !item.frequency && { color: '#000' }]}>{item.frequency || 'Frequency'}</Text>
+        </View>
       </View>
 
     </TouchableOpacity>

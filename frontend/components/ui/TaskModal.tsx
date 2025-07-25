@@ -14,6 +14,7 @@ import { useUser, Task } from '../../app/context/UserContext';
 import { webDateInputWrapper, webDateInput } from './webDateStyles';
 import CustomDropdown from './select';
 
+
 interface TaskModalProps {
   visible: boolean;
   onClose: () => void;
@@ -21,16 +22,16 @@ interface TaskModalProps {
   task?: Task | null;
   defaultHabitId?: number;
 }
-const formatDate = (dateStr: string | undefined) => {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
+
+const formatDate = (input: string | Date): string => {
+  const d = typeof input === 'string' ? new Date(`${input}T00:00:00`) : input;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   const hour = String(d.getHours()).padStart(2, '0');
-  const minute = String(d.getMinutes()).padStart(2, '0');
-  const second = String(d.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const sec = String(d.getSeconds()).padStart(2, '0');
+  return `${y}-${m}-${day} ${hour}:${min}:${sec}`;
 };
 
 export default function TaskModal({
@@ -41,39 +42,51 @@ export default function TaskModal({
   defaultHabitId,
 }: TaskModalProps) {
   const { addTask, updateTask, deleteTask, user } = useUser();
+
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState<string>(''); // yyyy-mm-dd
+  const [description, setDescription] = useState<string | null>(null);
+  const [dueDate, setDueDate] = useState<string | null>(null); // yyyy-mm-dd
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>('Medium');
+  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High' | null>(null);
 
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
-      setDescription(task.description || '');
-      setDueDate(task.dueAt?.substring(0, 10) || '');
-      const rawPriority = task.priority ?? '';
-      const capitalized =
-        rawPriority.charAt(0).toUpperCase() + rawPriority.slice(1).toLowerCase();
-      setPriority((capitalized as 'Low' | 'Medium' | 'High') || 'Low');
+      setDescription(task.description ?? null);
+      setDueDate(task.dueAt?.substring(0, 10) ?? null);
+      if (
+        task.priority &&
+        ['low', 'medium', 'high'].includes(task.priority.toLowerCase())
+      ) {
+        const capitalized =
+          task.priority.charAt(0).toUpperCase() +
+          task.priority.slice(1).toLowerCase();
+        setPriority(capitalized as 'Low' | 'Medium' | 'High');
+      } else {
+        setPriority(null);
+      }
     } else {
       setTitle('');
-      setDescription('');
-      setDueDate('');
-      setPriority('Low');
+      setDescription(null);
+      setDueDate(null);
+      setPriority(null);
     }
   }, [task, visible]);
 
   const handleSave = async () => {
     if (!user) return;
+    if (!title.trim()) {
+      alert('Please enter a task title.');
+      return;
+    }
 
     const formattedTask = {
       ...(task?.userTaskId ? { userTaskId: task.userTaskId } : {}),
       title,
-      description,
-      dueAt: dueDate ? formatDate(dueDate) : undefined,
-      priority: priority.toLowerCase() as 'low' | 'medium' | 'high',
-      habitId: task?.habitId ?? defaultHabitId,
+      description: description?.trim() || null,
+      dueAt: dueDate ? formatDate(dueDate) : null,
+      priority: priority ? (priority.toLowerCase() as 'low' | 'medium' | 'high') : null,
+      habitId: task?.habitId ?? defaultHabitId ?? null,
       credit: 50,
     };
 
@@ -99,7 +112,7 @@ export default function TaskModal({
         <View style={webDateInputWrapper}>
           <input
             type="date"
-            value={dueDate}
+            value={dueDate ?? ''}
             onChange={(e) => setDueDate(e.target.value)}
             style={{
               ...webDateInput,
@@ -111,9 +124,9 @@ export default function TaskModal({
     } else {
       return (
         <>
-          <TouchableOpacity style={styles.dateInput} onPress={() => setShowDatePicker(true)}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setShowDatePicker(true)}>
             <Ionicons name="calendar-outline" size={16} color="#666" />
-            <Text style={styles.dateText}>
+            <Text style={{ marginLeft: 6, color: '#666' }}>
               {dueDate ? new Date(dueDate).toDateString() : 'DDL'}
             </Text>
           </TouchableOpacity>
@@ -124,8 +137,10 @@ export default function TaskModal({
               onChange={(_, selected) => {
                 setShowDatePicker(false);
                 if (selected) {
-                  const formatted = selected.toISOString().split('T')[0];
-                  setDueDate(formatted);
+                  const y = selected.getFullYear();
+                  const m = String(selected.getMonth() + 1).padStart(2, '0');
+                  const d = String(selected.getDate()).padStart(2, '0');
+                  setDueDate(`${y}-${m}-${d}`);
                 }
               }}
             />
@@ -160,8 +175,8 @@ export default function TaskModal({
               placeholder="Description"
               placeholderTextColor="#bbbbbb"
               style={[styles.input, styles.textArea]}
-              value={description}
-              onChangeText={setDescription}
+              value={description ?? ''}
+              onChangeText={(val) => setDescription(val || null)}
               multiline
             />
           </View>
@@ -180,7 +195,7 @@ export default function TaskModal({
                 { label: 'High', value: 'High' },
               ]}
               value={priority}
-              setValue={(val) => val && setPriority(val as 'Low' | 'Medium' | 'High')}
+              setValue={(val) => setPriority(val as 'Low' | 'Medium' | 'High')}
               placeholder="Priority"
             />
           </View>
