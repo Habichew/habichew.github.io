@@ -196,7 +196,7 @@ const loadTasks = async () => {
         priority: t.priority,
         dueAt: t.dueAt,
         credit: t.credit,
-        completed: t.completed,
+        completed: !!Number(t.completed),//transfer to boolean
         habitTitle: habit?.habitTitle || '', 
       };
     });
@@ -253,7 +253,7 @@ const updateTask = async (t: Task) => {
       priority: t.priority || null,
       dueAt: t.dueAt || null,
       credit: t.credit ?? 0,
-      completed: t.completed ?? 0,
+      completed: t.completed === true,
     },
   };
 
