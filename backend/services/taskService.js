@@ -81,8 +81,7 @@ export async function updateTask(userTaskId, task, completeTask) {
     }
 
     if (completeTask) {
-        setClauses.push(`completedAt = ?`);
-        values.push(`NOW()`);
+        setClauses.push(`completedAt = NOW()`);
     }
 
     if (setClauses.length === 0) {
