@@ -36,6 +36,7 @@ export type Task = {
   //Habitid is used here because of the previous confusion,
   habitId?: number;
   createdAt?: string;
+  completedAt?: string;
 };
 
 export type Pet = {
@@ -48,6 +49,19 @@ export type Pet = {
   createdAt?: string;
 };
 
+export type Mood = {
+  userId: number;
+  moodTypeId: number;
+  note: string | null;
+  moodDate: string;
+}
+
+export type MoodType = {
+  id: number;
+  label: string;
+  colorCode: string;
+}
+
 type UserDataContextType = {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -56,13 +70,18 @@ type UserDataContextType = {
   habits: Habit[];
   tasks: Task[];
   pet: Pet | null;
+  moods: Mood[];
+  moodTypes: MoodType[];
   setHabits: (h: Habit[]) => void;
   setTasks: (t: Task[]) => void;
   setPet: (p: Pet) => void;
+  setMoods: (mood: Mood[]) => void;
 
   loadHabits: () => Promise<void>;
   loadTasks: () => Promise<void>;
   loadPet: () => Promise<void>;
+  loadMoods: () => Promise<void>;
+  loadMoodTypes: () => Promise<void>;
 
   addHabit: (userId: string, h: Habit) => Promise<void>;
   updateHabit: (h: Habit) => Promise<void>;
@@ -75,6 +94,9 @@ type UserDataContextType = {
 
   deleteTask: (userTaskId: number) => Promise<void>;
 
+  addMood: (m: Mood) => Promise<void>;
+
+
 };
 
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
@@ -84,6 +106,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [pet, setPet] = useState<Pet | null>(null);
+  const [moods, setMoods] = useState<Mood[]>([]);
+  const [moodTypes, setMoodTypes] = useState<MoodType[]>([]);
 
   const setUser = (user: User | null) => {
     setUserState(user);
@@ -93,8 +117,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUserState(null);
     setHabits([]);
     setTasks([]);
+    setPet(null);
+    setMoods([]);
+    setMoodTypes([]);
   };
-
   
   // ----------------- Habit Logic -----------------
 const loadHabits = async () => {
@@ -181,13 +207,12 @@ const deleteHabit = async (userHabitId: number) => {
   }
 };
 
-
-
 // ----------------- Task Logic -----------------
 const loadTasks = async () => {
   if (!user) return;
   try {
     const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/tasks`);
+    console.log("tasks", res);
     const data = await res.json();
     const mapped = data.map((t: any) => {
       const habit = habits.find(h => h.userHabitId === t.userHabitId);
@@ -200,7 +225,8 @@ const loadTasks = async () => {
         dueAt: t.dueAt,
         credit: t.credit,
         completed: !!Number(t.completed),//transfer to boolean
-        habitTitle: habit?.habitTitle || '', 
+        habitTitle: habit?.habitTitle || '',
+        completedAt: t.completedAt
       };
     });
 
@@ -337,6 +363,63 @@ const deleteTask = async (userTaskId: number) => {
     }
   }
 
+  // ----------------- Mood Logic -----------------
+  const loadMoods = async () => {
+    if (!user) return;
+    try {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/moods/${user.id}`);
+      const data = await res.json();
+      console.log("moods", data);
+      setMoods(data);
+    } catch (err) {
+      console.error('Failed to load moods:', err);
+    }
+  };
+
+  const addMood = async (m: Mood) => {
+    if (!user) return;
+
+    const payload = {
+      mood: {
+        userId: m.userId,
+        moodTypeId: m.moodTypeId,
+        note: m.note,
+        moodDate: m.moodDate,
+      },
+    };
+
+    console.log("Payload to send:", payload);
+
+    try {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/users/${user.id}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        await loadTasks();
+      } else {
+        const err = await res.json();
+        console.error('Failed to add task:', err);
+      }
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
+  };
+
+  const loadMoodTypes = async () => {
+    if (!user) return;
+    try {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/moods`);
+      const data = await res.json();
+      console.log("mood types", data);
+      setMoodTypes(data);
+    } catch (err) {
+      console.error('Failed to load mood types:', err);
+    }
+  };
+
   return (
     <UserDataContext.Provider
       value={{
@@ -346,19 +429,25 @@ const deleteTask = async (userTaskId: number) => {
         habits,
         tasks,
         pet,
+        moods,
+        moodTypes,
         setHabits,
         setTasks,
         setPet,
+        setMoods,
         loadHabits,
         loadTasks,
         calculateHabitProgress,
         loadPet,
+        loadMoods,
+        loadMoodTypes,
         addHabit,
         updateHabit,
         deleteHabit,
         addTask,
         updateTask,
-        deleteTask
+        deleteTask,
+        addMood
       }}
     >
       {children}

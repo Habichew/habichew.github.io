@@ -21,7 +21,8 @@ export async function getTaskListByUserId(userId) {
             ut.credit,
             ut.priority,
             ut.dueAt,
-            ut.createdAt
+            ut.createdAt, 
+            ut.completedAt
         FROM userTasks ut
                  JOIN userHabits uh ON ut.userHabitId = uh.id
                  LEFT JOIN tasks t ON ut.taskId = t.id
@@ -44,6 +45,7 @@ export async function findUserTaskById(userTaskId) {
         FROM userTasks ut
                  LEFT JOIN tasks t ON ut.taskId = t.id
         WHERE ut.id = ?`, [userTaskId]);
+    console.log("found userTask", row[0]);
     return row[0];
 }
 
