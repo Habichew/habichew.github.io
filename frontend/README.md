@@ -123,6 +123,8 @@ There are two main ways of creating a development build with Expo:
 - Build on EAS (easiest way, can be done remotely)
 - Build on your local machine (more set-up required)
 
+Both Expo Go and development builds require a development server to be running.
+
 ### Build on EAS
 Sources: 
 - https://docs.expo.dev/build/setup/
@@ -139,7 +141,8 @@ EAS Build is a service hosted by Expo for building app binaries for your Expo an
 This process will take a long time (up to an hour) because in the free plan of EAS, we will usually have to wait in a queue.
 
 #### Deploy the build
-Once the build has finished, the Expo page of the organisation will be updated and your terminal will show a QR code and link to the APK file. Now, you can download the apk and install the native app.
+Once the build has finished, the Expo page of the organisation will be updated and your terminal will show a QR code and link to the APK file. Now, you can download the apk and install the native app. Once you have downloaded this app, start a local development server with ```npx expo start``` and connect your Android device to the same local network.
+Once you have a development build installed, you do not need to reinstall it until you add a new library that is not already included in Expo Go.
 
 ### Build on your local machine
 This process takes more time to prepare but is much faster once it is set up (on my laptop, it takes up to 15 minutes). It requires installing Android Studio to get the Android SDK and Android Debug Bridge.
