@@ -29,7 +29,7 @@ export type Task = {
   userTaskId?: number;
   title: string;
   description?: string|null;
-  completed?: number;
+  completed?: boolean;
   credit?: number;
   priority?: 'low' | 'medium' | 'high'| null;
   dueAt?: string | null;

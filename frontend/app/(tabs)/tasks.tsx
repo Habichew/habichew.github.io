@@ -71,7 +71,7 @@ export default function Tasks() {
     if (!user || !task.userTaskId) return;
     const updatedTask: Task = {
       ...task,
-      completed: task.completed === 1 ? 0 : 1,
+      completed: !Boolean(task.completed),
       priority: task.priority || null,
       credit: task.credit ?? 0,
       description: task.description ?? '',
@@ -119,7 +119,7 @@ export default function Tasks() {
         keyExtractor={(item) => item.userTaskId?.toString() || Math.random().toString()}
         contentContainerStyle={{ paddingBottom: 100 }}
         renderItem={({ item }) => {
-          const isCompleted = item.completed === 1;
+          const isCompleted = item.completed === true;
           return (
             <View style={[styles.taskCard, { backgroundColor: isCompleted ? '#e6e6e6' : '#DAB7FF' }]}>
               <View style={styles.flexOne}>

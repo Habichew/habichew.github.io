@@ -65,7 +65,7 @@ export default function PickTasks() {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity style={styles.back} onPress={() => router.back()}>
+      <TouchableOpacity style={styles.back} onPress={() => router.replace('/onboarding/PickHabit')}>
         <View style={styles.roundBtn}><Text style={styles.roundText}>{'<'}</Text></View>
       </TouchableOpacity>
 
@@ -86,24 +86,43 @@ export default function PickTasks() {
       )}
       <FlatList
         data={taskList}
-        keyExtractor={(item, index) => `${item.title}-${index}`}
-        renderItem={({ item }) => (
-          <View style={styles.taskCard}>
-            <Text style={styles.taskTitle}>{item.title}</Text>
-            {item.description ? <Text style={styles.taskDescription}>{item.description}</Text> : null}
-            {(item.dueAt || item.priority) && (
-              <Text style={styles.taskMeta}>
-                {item.dueAt ? `Due: ${new Date(item.dueAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}` : ''}
-                {item.dueAt && item.priority ? '  •  ' : ''}
-                {item.priority ? `Priority: ${item.priority.charAt(0).toUpperCase() + item.priority.slice(1)}` : ''}
-              </Text>
-            )}
-          </View>
-        )}
+        keyExtractor={(item, index) => item.userTaskId?.toString() || `${item.title}-${index}`}
         contentContainerStyle={{ paddingBottom: 100 }}
-        style={{ marginTop: 24, width: '90%' }}
-      />
+        renderItem={({ item }) => {
+          const dueDate = item.dueAt
+            ? new Date(item.dueAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short' })
+            : '';
+          const priorityText = item.priority
+            ? `${item.priority.charAt(0).toUpperCase()}${item.priority.slice(1)} Priority`
+            : 'No Priority';
 
+          return (
+            <View style={styles.taskCard}>
+              <Text style={styles.taskTitle}>{item.title}</Text>
+              {item.description ? <Text style={styles.taskDescription}>{item.description}</Text> : null}
+              <View style={styles.metaRow}>
+                <View style={styles.badge}>
+                  <Ionicons name="calendar-outline" size={16} color="#000" />
+                  <Text style={styles.badgeText}>{dueDate}</Text>
+                </View>
+                <View style={styles.badge}>
+                  <Ionicons name="flag-outline" size={16} color="#000" />
+                  <Text style={styles.badgeText}>{priorityText}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.pencilBtn}
+                  onPress={() => {
+                    setEditingTask(item);
+                    setModalVisible(true);
+                  }}
+                >
+                  <Ionicons name="pencil" size={18} color="#000" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          );
+        }}
+      />
 
       <TouchableOpacity style={styles.nextBtn} onPress={() => router.push('/(tabs)/home')}>
         <View style={styles.roundBtn}><Text style={styles.roundText}>{'>'}</Text></View>
@@ -136,7 +155,40 @@ const styles = StyleSheet.create({
   generateText: { fontWeight: 'bold', fontSize: 16, color: '#000' },
   nextBtn: { position: 'absolute', bottom: 32, right: 32 },
   taskCard: { backgroundColor: '#DAB7FF', padding: 16, borderRadius: 16, marginBottom: 12 },
-  taskTitle: { fontSize: 18, fontWeight: 'bold', color: '#000' },
+  taskTitle: { fontSize: 16, fontWeight: 'bold', color: '#000' },
   taskDescription: { fontSize: 14, color: '#333', marginTop: 4 },
   taskMeta: { fontSize: 12, color: '#666', marginTop: 8 },
+
+metaRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: 8,
+},
+metaLeft: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 12,
+},
+badge: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#fff',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 20,
+  marginRight:6,
+},
+badgeText: {
+  fontSize: 14,
+  marginLeft: 6,
+  color: '#000',
+},
+pencilBtn: {
+  backgroundColor: '#fff',
+  padding: 6,
+  borderRadius: 6,
+  marginLeft: 'auto',
+},
+
 });
