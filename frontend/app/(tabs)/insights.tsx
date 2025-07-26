@@ -231,6 +231,7 @@ export default function InsightsScreen() {
                 {/*  ))}*/}
                 {/*</View>*/}
                 <View style={[styles.container, {}]}>
+                    {habitGroups.length === 0 ? (<Text style={styles.noTasksFound}>No completed tasks found.</Text>) : ''}
                     <Carousel
                         ref={ref}
                         width={width}
@@ -418,6 +419,10 @@ const styles = ScaledSheet.create({
     editText: {
         color: '#fff',
         fontWeight: 'bold'
+    },
+    noTasksFound: {
+      marginVertical: "auto",
+        marginHorizontal: "auto",
     },
     pagerView: {
         minHeight: 225,
