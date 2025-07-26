@@ -13,7 +13,7 @@ export async function findPetByUserId(req, res) {
             return res.status(404).send({error: "User does not exist."})
         }
 
-        const user = userResult[0];
+        const user = userResult;
         if (user.petId === null) {
             return res.status(404).send({error: "User does not have pet."});
         }
