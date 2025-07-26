@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, FlatList} from 'react-native';
 import { useRouter } from 'expo-router';
 import TopBar from '@/components/bottomBar';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,11 +7,24 @@ import {useUser} from "@/app/context/UserContext";
 import BottomBar from "@/components/bottomBar";
 import {ScaledSheet} from 'react-native-size-matters';
 import {Button} from "@react-navigation/elements";
+import {placeholder} from "@babel/types";
 
 export default function PetScreen() {
   const router = useRouter();
   const { pet, loadPet } = useUser(); // use user data
-
+  const [ petPostcards, setPetPostcards ] = useState([]);
+  const { user } = useUser(); // use user data
+  const postCardImgs = [
+    {unlockScore: 50, url: "https://picsum.photos/200/300"},
+    {unlockScore: 150, url: "https://picsum.photos/200/300"},
+    {unlockScore: 500, url: "https://picsum.photos/200/300"},
+    {unlockScore: 1000, url: "https://picsum.photos/200/300"},
+    {unlockScore: 2000, url: "https://picsum.photos/200/300"},
+    {unlockScore: 5000, url: "https://picsum.photos/200/300"},
+    {unlockScore: 10000, url: "https://picsum.photos/200/300"},
+    {unlockScore: 25000, url: "https://picsum.photos/200/300"},
+    {unlockScore: 50000, url: "https://picsum.photos/200/300"}
+  ]
   useState(() => {
     console.log("load user pet");
     loadPet();
@@ -78,6 +91,24 @@ export default function PetScreen() {
 
         <View style={styles.postcards}>
           <Text style={styles.postcardsTitle}>Postcards</Text>
+          <FlatList
+              data={postCardImgs}
+              renderItem={(item) => (
+                  <>
+                    {user?.credits !== undefined && user?.credits >= item.item.unlockScore ?
+                        (
+                            <Image style={styles.postcardsImg} source={{uri: item.item.url}} key={"postcard-"+item.index}></Image>
+                        )
+                        :
+                        (<Image style={styles.postcardsImg} source={require('@/assets/images/placeholder.png')} key={"postcard-"+item.index}></Image>)
+                    }
+                  </>
+                )
+              }
+              numColumns={3}
+              keyExtractor={(item) => item.unlockScore.toString()}
+          >
+          </FlatList>
           <Button style={styles.postcardsButton} color={"black"} ><Text style={{fontWeight: "700"}}>View Habits</Text></Button>
         </View>
       </ScrollView>
@@ -194,7 +225,7 @@ const styles = ScaledSheet.create({
     paddingHorizontal: "40@ms",
   },
   postcardsTitle: {
-    fontSize: 24, fontWeight: 'bold', fontFamily: "Poppins", alignSelf: "flex-start"
+    fontSize: 24, fontWeight: 'bold', fontFamily: "Poppins", alignSelf: "flex-start", marginBottom: 15
   },
   postcardsButton: {
     backgroundColor: '#1CC282',
@@ -202,5 +233,20 @@ const styles = ScaledSheet.create({
     minWidth: '175@ms',
     marginHorizontal: "auto",
     marginVertical: 30
+  },
+  postcardsImgs: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: '16@ms',
+    gap: 12,
+    marginHorizontal: "auto",
+  },
+  postcardsImg: {
+    alignContent: 'center',
+    maxWidth: "30%",
+    margin: 8,
+    marginHorizontal: "auto",
+    maxHeight: 100,
+    borderRadius: 12,
   }
 });
