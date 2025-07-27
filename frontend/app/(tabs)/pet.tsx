@@ -11,9 +11,8 @@ import {placeholder} from "@babel/types";
 
 export default function PetScreen() {
   const router = useRouter();
-  const { pet, loadPet } = useUser(); // use user data
+  const { pet, loadPet, user } = useUser(); // use user data
   const [ petPostcards, setPetPostcards ] = useState([]);
-  const { user } = useUser(); // use user data
   const postCardImgs = [
     {unlockScore: 50, url: "https://picsum.photos/200/300"},
     {unlockScore: 150, url: "https://picsum.photos/200/300"},
@@ -37,7 +36,7 @@ export default function PetScreen() {
         <Text style={styles.title}>Pet Postcards</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.scrollContainer}>
         {/* Pet Info */}
         <View style={styles.petInfoContainer}>
           <View style={styles.petInfo}>
@@ -111,7 +110,7 @@ export default function PetScreen() {
           </FlatList>
           <Button style={styles.postcardsButton} color={"black"} ><Text style={{fontWeight: "700"}}>View Habits</Text></Button>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
