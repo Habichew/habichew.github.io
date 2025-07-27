@@ -1,6 +1,12 @@
-
-import React, { useState, useEffect } from 'react'; import { ScrollView, View, Text, TextInput, FlatList, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native'; import { useRouter } from 'expo-router'; import { Ionicons } from '@expo/vector-icons'; import { useUser, Habit } from '../context/UserContext'; import ItemModal from '@/components/ui/HabitModal';
-import BottomBar from "@/components/bottomBar";
+import React, {useEffect, useState} from 'react';
+import {Dimensions, FlatList, Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {useRouter} from 'expo-router';
+import {Ionicons} from '@expo/vector-icons';
+import {Habit, useUser} from '../context/UserContext';
+import ItemModal from '@/components/ui/HabitModal';
+import Rive, {Alignment} from "rive-react-native";
+import {ScaledSheet} from "react-native-size-matters";
+import {Button} from "@react-navigation/elements";
 
 const screenWidth = Dimensions.get('window').width; const scale = (value: number) => (screenWidth / 375) * value;
 
@@ -13,7 +19,7 @@ const Home = () => {
   const habitId = editHabit?.userHabitId; // number 
   const router = useRouter();
 
-  useEffect(() => { if (user) loadHabits(); }, [user]);
+  useEffect(() => { if (user) loadHabits(); console.log("user", user) }, [user]);
   useEffect(() => { setFilteredHabits(habits.filter(h => h.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase()))); }, [searchTerm, habits]);
 
   const handleAdd = () => { setEditHabit(null); setModalVisible(true); };
@@ -35,14 +41,14 @@ const Home = () => {
   };
 
   const formatDate = (dateStr: string) => { if (!dateStr) return ''; try { const d = new Date(dateStr); const day = d.getUTCDate(); const month = d.toLocaleString('default', { month: 'short' }); return `${day} ${month}`; } catch { return ''; } };
-  const getPriorityLabel = (val: string | number) => val == 1 ? 'High Priority' : val == 2 ? 'Medium Priority' : val == 3 ? 'Low Priority' : 'Priority';
+  const getPriorityLabel = (val: string | number) => val == 1 ? 'High' : val == 2 ? 'Medium' : val == 3 ? 'Low' : 'Priority';
 
   const renderHabit = ({ item }: { item: any }) => {
     const progressMap = calculateHabitProgress();
     const percent = progressMap?.[item.userHabitId] ?? 0;
 
     return (
-      <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.5}>
         <View style={styles.headerRow}>
           <Text style={styles.title}>{item.habitTitle}</Text>
           <TouchableOpacity onPress={() => handleEdit(item)}>
@@ -72,42 +78,63 @@ const Home = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff', padding: 20 }}>
-      <Image source={require('@/assets/images/previouscat4.png')} style={styles.catImage} resizeMode="contain" />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>To-Do</Text>
-        <TouchableOpacity onPress={handleAdd}>
-          <Text style={{ backgroundColor: '#1CC282', padding: 10, borderRadius: 20, fontWeight: 'bold', color: '#000' }}>Add Habit</Text>
-        </TouchableOpacity>
+    <View style={{ flex: 1, backgroundColor: '#DAB7FF' }}>
+      <Rive
+          artboardName={'Pet'}
+          stateMachineName={'Pet'}
+          resourceName='pet'
+          style={styles.pet}
+          autoplay={true}
+          onPlay={(animationName, isStateMachine) => console.log("playing")}
+      >
+        <View style={{marginTop: "auto", flexDirection: "row", justifyContent: 'space-between', flexShrink: "auto", marginHorizontal: 20, height: "auto"}}>
+          <TouchableOpacity activeOpacity={0.8} style={{ marginBottom: 20, maxWidth: 125, zIndex: 1, flex:1 }}>
+            <Text onPress={handleAdd} style={{ textAlign: "center", backgroundColor: '#1CC282', padding: 10, borderRadius: 20, fontSize: 16, fontWeight: 'bold', color: '#000', bottom: 15, fontFamily: "Poppins", zIndex: 1, marginBottom: -15, width: "100%"}}>Add Habit</Text>
+          </TouchableOpacity>
+          <View style={{ flexDirection: "row", marginTop: -10, marginRight: 10}}>
+            <Image style={{}} source={require('@/assets/images/credit.png')}/>
+            <Text style={{margin: 3, fontFamily: "Poppins", fontSize: 20 }}>{user?.credits ? user.credits : 0}</Text>
+          </View>
+        </View>
+
+      </Rive>;
+      {/*<Image source={require('@/assets/images/previouscat4.png')} style={styles.catImage} resizeMode="contain" />*/}
+      <View style={styles.habitContainer}>
+        <View style={styles.habitRow}>
+          <Text style={styles.today}>Today</Text>
+
+        </View>
+        <TextInput placeholder="Search Habit" placeholderTextColor="#888" style={{ backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, marginBottom: 12 }} value={searchTerm} onChangeText={setSearchTerm} />
+        <FlatList style={{ paddingBottom: 10}} data={filteredHabits} keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)} renderItem={renderHabit} />
+        <ItemModal visible={modalVisible} initialData={editHabit ?? undefined} onClose={() => setModalVisible(false)} onSave={handleSave} onDelete={deleteHabit} habitId={habitId} />
       </View>
-      <TextInput placeholder="Search Habit" placeholderTextColor="#888" style={{ backgroundColor: '#eee', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, marginBottom: 12 }} value={searchTerm} onChangeText={setSearchTerm} />
-      <ScrollView style={{ paddingBottom: 100 }}>
-        <FlatList data={filteredHabits} keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)} renderItem={renderHabit} />
-      </ScrollView>
-      <ItemModal visible={modalVisible} initialData={editHabit ?? undefined} onClose={() => setModalVisible(false)} onSave={handleSave} onDelete={deleteHabit} habitId={habitId} />
     </View>
   );
 
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: { flex: 1, paddingHorizontal: screenWidth > 400 ? 24 : 16, paddingTop: scale(60), backgroundColor: '#fff' },
   catImage: { width: '100%', height: 180, marginBottom: 10, zIndex: 0, position: 'relative' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: scale(12) },
   addButton: { backgroundColor: '#1CC282', color: 'white', paddingHorizontal: scale(20), paddingVertical: scale(8), borderRadius: scale(24), fontWeight: 'bold' },
   searchInput: { backgroundColor: '#f0f0f0', borderRadius: scale(12), paddingHorizontal: scale(16), paddingVertical: scale(10), fontSize: scale(14), marginBottom: scale(12) },
   habitCard: { backgroundColor: '#F6F6F6', borderRadius: scale(16), padding: scale(14), marginBottom: scale(12) },
-  habitTitle: { fontSize: scale(16), fontWeight: 'bold', marginBottom: scale(8) },
+  habitContainer: {flex: 1, marginBottom: 80, paddingHorizontal: 15, marginTop: 15},
+  habitTitle: { fontSize: "10@s", fontWeight: 'bold', marginBottom: scale(8) },
+  habitRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, marginHorizontal: "5@ms" },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: scale(6) },
   editIcon: { fontSize: scale(16), marginLeft: scale(6) },
-  card: { backgroundColor: '#e0e0e0', borderRadius: 16, padding: 16, marginBottom: 12, width: '100%' },
+  card: { backgroundColor: '#ffffff', borderRadius: 16, padding: 16, marginBottom: 12, width: '100%' },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: scale(18), fontWeight: 'bold', color: '#111' },
-  progressBarBackground: { height: scale(16), backgroundColor: '#fff', borderRadius: scale(8), marginTop: scale(8), marginBottom: scale(12), overflow: 'hidden', width: '100%' },
-  progressBarFill: { height: '100%', width: screenWidth * 0.6, backgroundColor: '#dab7ff', borderRadius: scale(8) },
+  title: { fontSize: '15@ms', fontWeight: 'bold', color: '#111' },
+  pet: {width: '100%', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, backgroundColor: 'white'},
+  progressBarBackground: { height: scale(16), backgroundColor: '#DCDCDC', borderRadius: scale(8), marginTop: scale(8), marginBottom: scale(12), overflow: 'hidden', width: '100%' },
+  progressBarFill: { height: '100%', width: screenWidth * 0.6, backgroundColor: '#1CC282', borderRadius: scale(8) },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: scale(8) },
-  tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', paddingHorizontal: scale(12), paddingVertical: scale(6), borderRadius: scale(20), marginBottom: scale(4) },
-  tagText: { fontSize: scale(11), color: '#000', marginLeft: scale(4) },
+  tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#DCDCDC', paddingHorizontal: scale(12), paddingVertical: scale(6), borderRadius: scale(20), marginBottom: scale(4) },
+  tagText: { fontSize: '11@ms', color: '#000', marginLeft: scale(4) },
+  today: { fontSize: "18@ms", fontWeight: 'bold', alignSelf: 'center' },
 });
 
 export default Home;
