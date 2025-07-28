@@ -1,4 +1,4 @@
-// import db from "../config/db_old.js";
+
 import bcrypt from "bcrypt";
 import {pool} from "../config/db.js";
 
