@@ -2,7 +2,7 @@ import {pool} from "../config/db.js";
 
 export async function getAllMoodTypes() {
     const [result] = await pool.query('SELECT * FROM moodTypes');
-    return result[0];
+    return result;
 }
 
 // Get all mood logs for a given user
