@@ -4,9 +4,8 @@ import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {Habit, useUser} from '../context/UserContext';
 import ItemModal from '@/components/ui/HabitModal';
-import Rive, {Alignment} from "rive-react-native";
+import Rive, {Fit} from "rive-react-native";
 import {ScaledSheet} from "react-native-size-matters";
-import {Button} from "@react-navigation/elements";
 
 const screenWidth = Dimensions.get('window').width; const scale = (value: number) => (screenWidth / 375) * value;
 
@@ -81,22 +80,19 @@ const Home = () => {
     <View style={{ flex: 1, backgroundColor: '#DAB7FF' }}>
       <Rive
           artboardName={'Pet'}
-          stateMachineName={'Pet'}
           resourceName='pet'
           style={styles.pet}
-          autoplay={true}
           onPlay={(animationName, isStateMachine) => console.log("playing")}
       >
-        <View style={{marginTop: "auto", flexDirection: "row", justifyContent: 'space-between', flexShrink: "auto", marginHorizontal: 20, height: "auto"}}>
-          <TouchableOpacity activeOpacity={0.8} style={{ marginBottom: 20, maxWidth: 125, zIndex: 1, flex:1 }}>
-            <Text onPress={handleAdd} style={{ textAlign: "center", backgroundColor: '#1CC282', padding: 10, borderRadius: 20, fontSize: 16, fontWeight: 'bold', color: '#000', bottom: 15, fontFamily: "Poppins", zIndex: 1, marginBottom: -15, width: "100%"}}>Add Habit</Text>
-          </TouchableOpacity>
-          <View style={{ flexDirection: "row", marginTop: -10, marginRight: 10}}>
-            <Image style={{}} source={require('@/assets/images/credit.png')}/>
-            <Text style={{margin: 3, fontFamily: "Poppins", fontSize: 20 }}>{user?.credits ? user.credits : 0}</Text>
+          <View style={{marginTop: "auto", flexDirection: "row", justifyContent: 'space-between', flexShrink: "auto", marginHorizontal: 20, height: "auto"}}>
+            <TouchableOpacity activeOpacity={0.8} style={{ marginBottom: 20, maxWidth: 125, zIndex: 1, flex:1 }}>
+              <Text onPress={handleAdd} style={{ textAlign: "center", backgroundColor: '#1CC282', padding: 10, borderRadius: 20, fontSize: 16, fontWeight: 'bold', color: '#000', bottom: 15, fontFamily: "Poppins", zIndex: 1, marginBottom: -15, width: "100%"}}>Add Habit</Text>
+            </TouchableOpacity>
+            <View style={{ flexDirection: "row", marginTop: -10, marginRight: 10}}>
+              <Image style={{}} source={require('@/assets/images/credit.png')}/>
+              <Text style={{margin: 3, fontFamily: "Poppins", fontSize: 20 }}>{user?.credits ? user.credits : 0}</Text>
+            </View>
           </View>
-        </View>
-
       </Rive>;
       {/*<Image source={require('@/assets/images/previouscat4.png')} style={styles.catImage} resizeMode="contain" />*/}
       <View style={styles.habitContainer}>
@@ -105,7 +101,7 @@ const Home = () => {
 
         </View>
         <TextInput placeholder="Search Habit" placeholderTextColor="#888" style={{ backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, marginBottom: 12 }} value={searchTerm} onChangeText={setSearchTerm} />
-        <FlatList style={{ paddingBottom: 10}} data={filteredHabits} keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)} renderItem={renderHabit} />
+        <FlatList style={{ paddingBottom: 10, paddingHorizontal: 10, marginHorizontal: -10}} data={filteredHabits} keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)} renderItem={renderHabit} />
         <ItemModal visible={modalVisible} initialData={editHabit ?? undefined} onClose={() => setModalVisible(false)} onSave={handleSave} onDelete={deleteHabit} habitId={habitId} />
       </View>
     </View>
