@@ -104,27 +104,19 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
         .then((response) => response.json())
         .then((result) => {
           console.log(result);
-          let newTasks = result.choices[0].message.content?.split("\n");
-          setGeneratedTasks(newTasks);
-          console.log("set generated tasks", newTasks, "length", newTasks.length);
+          let newTasks = result.choices[0].message.content;
+          setGeneratedTasks(newTasks.split("\n"));
+          console.log("set generated tasks", newTasks, "length", newTasks.size);
         })
         .catch((error) => console.error(error));
   }
 
-  const renderTask = ({ item, index }: { item: any, index: any }) => {
+  const renderTask = ({ item }: { item: any }) => {
 
     return (
        <View style={styles.task}>
-         <TextInput placeholder={item} placeholderTextColor="#bbb" style={styles.input} value={formData.tasks[index]} onChangeText={text => {
-           let newTasks = formData.tasks.map((t:any, i:any) => {
-             if (i === index) {
-               return item;
-             }
-             return t;
-           });
-
-           setFormData({ ...formData, tasks: newTasks })
-         }} />
+         <TextInput placeholder={item} placeholderTextColor="#bbb" style={styles.input}>
+         </TextInput>
        </View>
 
     );
@@ -178,20 +170,17 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
               (generatedTasks.length === 0 ? (
                           <>
                             <Text style={{marginHorizontal: "auto"}}>No tasks created.</Text>
-                            <TouchableOpacity style={styles.generateTextBtn} onPress={handleGenerateText}><Text
-                                style={styles.generateText}>Generate Tasks</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.saveBtn} onPress={handleGenerateText}><Text
+                                style={styles.saveText}>Generate Text</Text></TouchableOpacity>
                           </>
                       ) :
-                      (<FlatList data={generatedTasks} keyExtractor={(item, index) => index} renderItem={({item, index}) => renderTask(item, index)}
+                      (<FlatList data={generatedTasks} keyExtractor={(item, index) => index} renderItem={renderTask}
                                  style={{maxHeight: "35%"}}></FlatList>)
               )
           }
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-              {savingOrCreating ? <ActivityIndicator size={"large"}/> :
-                  <Text style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>}
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.saveBtn} onPress={handleSave}><Text style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text></TouchableOpacity>
           </View>
         </View>
         {showConfirmDelete && (
@@ -223,8 +212,7 @@ const styles = StyleSheet.create({
   cancelText: { fontSize: 20, color: '#dab7ff', fontWeight: 'bold' },
   saveBtn: { backgroundColor: '#1CC282', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24 },
   saveText: { fontSize: 20, color: '#000', fontWeight: 'bold' },
-  generateTextBtn: { backgroundColor: '#1CC282', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, maxWidth: "50%", marginHorizontal: "auto", fontWeight: "normal", marginVertical: 12 },
-  generateText: { fontSize: 20, color: '#000', fontWeight: 'bold', marginHorizontal: "auto"},
+  generateText: { fontSize: 20, color: '#000', fontWeight: 'bold', marginHorizontal: "auto", maxWidth: "75%"},
   deleteIcon: { position: 'absolute', top: 16, right: 16 },
   confirmOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000088', justifyContent: 'center', alignItems: 'center' },
   confirmBox: { backgroundColor: '#fff', padding: 24, borderRadius: 24, width: '80%', alignItems: 'center' },
