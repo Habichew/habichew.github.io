@@ -1,9 +1,10 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useState } from 'react';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
+import {useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomInput from '@/components/ui/input';
 import { useUser } from '../context/UserContext';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -11,12 +12,25 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const { setUser } = useUser();
   const [focusedInput, setFocusedInput] = useState<'email' | 'password' | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    async function checkLocalUser() {
+      const email = await AsyncStorage.getItem('email');
+      console.log("local email", email);
+      const password = await AsyncStorage.getItem('password');
+      if (email != null && password != null) {
+        router.replace('../(tabs)/home');
+      }
+    }
+    checkLocalUser();
+  })//
 
 const handleSignIn = async () => {
   // router.replace('../(tabs)/home');
   if (email && password) {
     try {
+      setLoading(true)
       const response = await fetch(process.env.EXPO_PUBLIC_BACKEND_URL +'/users/login', {
         method: 'POST',
         headers: {
@@ -28,14 +42,20 @@ const handleSignIn = async () => {
       const data = await response.json();
 
       if (response.ok) {
-        setUser(data[0]);//save user data for global use
-        alert('Sign in successful!');
+        const loggedInUser = data[0];
+        setUser(loggedInUser);//save user data for global use
+        console.log("check signed in user", loggedInUser.email);
+        // alert('Sign in successful!');
+        AsyncStorage.setItem('email', loggedInUser.email);
+        AsyncStorage.setItem('password', loggedInUser.password);
         router.replace('../(tabs)/home');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }
+      setLoading(false);
     } catch (error) {
       Alert.alert('Error', 'Failed to connect to the server');
+      setLoading(false);
     }
   } else {
     Alert.alert('Missing input', 'Please enter email and password');
@@ -63,8 +83,8 @@ const handleSignIn = async () => {
       </TouchableOpacity> */}
       </View>
 
-      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
-        <Text style={styles.signInText}>Sign In</Text>
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+        { loading ? <ActivityIndicator size={"small"}/> : <Text style={styles.signInText}>Sign In</Text>}
       </TouchableOpacity>
 
       <Text style={styles.orText}>OR LOG IN WITH</Text>

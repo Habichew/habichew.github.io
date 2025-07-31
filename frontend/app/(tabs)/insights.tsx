@@ -51,10 +51,7 @@ export default function InsightsScreen() {
 
         })();
     }, [user]);
-    console.log("tasks", tasks);
-    console.log("habits", habits);
-    console.log("moods", moods);
-    console.log("moodTypes", moodTypes);
+    console.log("insights loading");
     useEffect(() => {
         if (moodTypes.length > 0) {
             setPieData(moodTypes.map((moodType) => {

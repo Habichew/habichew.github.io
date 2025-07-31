@@ -153,6 +153,7 @@ const addHabit = async (userId: string, habit: Habit) => {
     const data = await response.json();
     console.log('Habit added:', data);
     await loadHabits();
+    return data;
   } catch (error) {
     console.error('Add habit failed:', error);
   }

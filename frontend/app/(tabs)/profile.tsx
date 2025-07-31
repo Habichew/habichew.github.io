@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'rea
 import { useRouter } from 'expo-router';
 import { useUser } from '@/app/context/UserContext';
 import BottomBar from "@/components/bottomBar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -13,7 +14,8 @@ export default function ProfileScreen() {
     router.push(`./profile-sub/${screen}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
     router.replace('../auth/sign-in');
   };
 

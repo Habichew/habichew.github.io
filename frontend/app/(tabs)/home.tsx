@@ -2,15 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {Dimensions, FlatList, Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
-import {Habit, useUser} from '../context/UserContext';
+import {Habit, Task, useUser} from '../context/UserContext';
 import ItemModal from '@/components/ui/HabitModal';
 import Rive, {Fit} from "rive-react-native";
 import {ScaledSheet} from "react-native-size-matters";
+import {SystemBars} from "react-native-edge-to-edge";
 
 const screenWidth = Dimensions.get('window').width; const scale = (value: number) => (screenWidth / 375) * value;
 
 const Home = () => {
-  const { user, habits, loadHabits, addHabit, updateHabit, deleteHabit, calculateHabitProgress } = useUser();
+  const { user, habits, loadHabits, addHabit, updateHabit, deleteHabit, calculateHabitProgress, addTask } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredHabits, setFilteredHabits] = useState(habits);
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,7 +25,17 @@ const Home = () => {
   const handleAdd = () => { setEditHabit(null); setModalVisible(true); };
   const handleSave = async (data: any) => {
     if (editHabit) { await updateHabit({ ...data, userHabitId: editHabit.userHabitId }); } 
-    else { await addHabit(user!.id.toString(), data); } 
+    else {
+      const addedHabit:any = await addHabit(user!.id.toString(), data);
+      const userHabitId = addedHabit.userHabitId
+      if (data.tasks && data.tasks.length > 0) {
+        for (let task of data.tasks) {
+          let newTask: Task = {title: task, dueAt: data.dueAt || null, habitId: userHabitId}
+          await addTask(newTask);
+          console.log("added new task", newTask,"for habit with id", userHabitId);
+        }
+      }
+    }
     await loadHabits();
   };
   const handleEdit = (habit: any) => { setEditHabit(habit); setModalVisible(true); };
@@ -78,6 +89,7 @@ const Home = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#DAB7FF' }}>
+      <SystemBars style={'dark'}/>
       <Rive
           artboardName={'Pet'}
           resourceName='pet'
@@ -98,7 +110,6 @@ const Home = () => {
       <View style={styles.habitContainer}>
         <View style={styles.habitRow}>
           <Text style={styles.today}>Today</Text>
-
         </View>
         <TextInput placeholder="Search Habit" placeholderTextColor="#888" style={{ backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, marginBottom: 12 }} value={searchTerm} onChangeText={setSearchTerm} />
         <FlatList style={{ paddingBottom: 10, paddingHorizontal: 10, marginHorizontal: -10}} data={filteredHabits} keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)} renderItem={renderHabit} />
