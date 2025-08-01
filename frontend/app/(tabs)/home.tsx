@@ -27,7 +27,7 @@ const Home = () => {
     if (editHabit) { await updateHabit({ ...data, userHabitId: editHabit.userHabitId }); } 
     else {
       const addedHabit:any = await addHabit(user!.id.toString(), data);
-      const userHabitId = addedHabit.userHabitId
+      const userHabitId = addedHabit.habit.userHabitId;
       if (data.tasks && data.tasks.length > 0) {
         for (let task of data.tasks) {
           let newTask: Task = {title: task, dueAt: data.dueAt || null, habitId: userHabitId}
