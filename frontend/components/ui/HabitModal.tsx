@@ -68,6 +68,7 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
       tasks: generatedTasks || null
     });
     setSavingOrCreating(false);
+    setGeneratedTasks([]);
     onClose();
   };
 
@@ -99,23 +100,29 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
     };
 
     // setGeneratedTasks(["Find a private or comfortable space", "Acknowledge your emotions", "Allow your feelings to flow without holding back", "Breathe deeply and steadily", "Use tissues or a cloth if needed", "Take time afterwards to rest or reflect"]);
-
+    setLoadingTasks(true);
     fetch("https://api.openai.com/v1/chat/completions", requestOptions)
         .then((response) => response.json())
         .then((result) => {
           console.log(result);
           let newTasks = result.choices[0].message.content;
-          setGeneratedTasks(newTasks.split("\n"));
+          setGeneratedTasks(newTasks.split("\n").map((t:string) => {
+            if (t.startsWith("- ")) {
+              return t.slice(2);
+            }
+            return t;
+          }));
           console.log("set generated tasks", newTasks, "length", newTasks.size);
+          setLoadingTasks(false);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {console.error(error); setLoadingTasks(false); });
   }
 
   const renderTask = ({ item }: { item: any }) => {
 
     return (
        <View style={styles.task}>
-         <TextInput placeholder={item} placeholderTextColor="#bbb" style={styles.input}>
+         <TextInput placeholder={"Task name"} placeholderTextColor="black" style={{backgroundColor: 'white', padding: 4}} defaultValue={item}>
          </TextInput>
        </View>
 
@@ -170,8 +177,8 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
               (generatedTasks.length === 0 ? (
                           <>
                             <Text style={{marginHorizontal: "auto"}}>No tasks created.</Text>
-                            <TouchableOpacity style={styles.saveBtn} onPress={handleGenerateText}><Text
-                                style={styles.saveText}>Generate Text</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.generateTextBtn} onPress={handleGenerateText}><Text
+                                style={styles.generateText}>Generate Tasks</Text></TouchableOpacity>
                           </>
                       ) :
                       (<FlatList data={generatedTasks} keyExtractor={(item, index) => index} renderItem={renderTask}
@@ -179,7 +186,7 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
               )
           }
           <View style={styles.buttons}>
-            <TouchableOpacity style={styles.cancelBtn} onPress={onClose}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => {onClose(); setGeneratedTasks([])}}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave}><Text style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text></TouchableOpacity>
           </View>
         </View>
@@ -212,7 +219,8 @@ const styles = StyleSheet.create({
   cancelText: { fontSize: 20, color: '#dab7ff', fontWeight: 'bold' },
   saveBtn: { backgroundColor: '#1CC282', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24 },
   saveText: { fontSize: 20, color: '#000', fontWeight: 'bold' },
-  generateText: { fontSize: 20, color: '#000', fontWeight: 'bold', marginHorizontal: "auto", maxWidth: "75%"},
+  generateTextBtn: { backgroundColor: '#1CC282', paddingHorizontal: 16, paddingVertical: 12, marginHorizontal: "auto",borderRadius: 24 },
+  generateText: { fontSize: 16, color: '#000', fontWeight: 'bold',  maxWidth: "75%"},
   deleteIcon: { position: 'absolute', top: 16, right: 16 },
   confirmOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000088', justifyContent: 'center', alignItems: 'center' },
   confirmBox: { backgroundColor: '#fff', padding: 24, borderRadius: 24, width: '80%', alignItems: 'center' },
@@ -220,5 +228,5 @@ const styles = StyleSheet.create({
   confirmButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   taskTitle: {marginBottom: 16, marginTop: 24, fontWeight: 'bold', fontSize: 18},
-  task: { backgroundColor: '#fff', padding: 16, paddingVertical: 12, borderRadius: 24, fontWeight: 'bold', fontSize: 16, color: '#000', marginBottom: 6 }
+  task: { backgroundColor: '#fff', padding: 16, paddingVertical: 6, borderRadius: 24, fontWeight: 'bold', fontSize: 16, color: '#000', marginBottom: 6 }
 });
