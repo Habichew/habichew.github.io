@@ -76,7 +76,19 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
     setGeneratedTasks([...generatedTasks, "Task name"]);
   }
 
-  function handleGenerateText() {
+  function handleChangeTask(text: string, i: number) {
+    console.log("changing text at index", i, " to ", text);
+    let newTasks = generatedTasks;
+    newTasks = newTasks.map((value, index, array) => {
+      if (index === i) {
+        return text;
+      }
+      return value;
+    });
+    setGeneratedTasks(newTasks);
+  }
+
+  function handleGenerateTasks() {
     if (!formData.habitTitle) return alert('Please enter a habit name.');
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -106,23 +118,25 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
         .then((result) => {
           console.log(result);
           let newTasks = result.choices[0].message.content;
-          setGeneratedTasks(newTasks.split("\n").map((t:string) => {
+          newTasks = newTasks.split("\n").map((t:string) => {
             if (t.startsWith("- ")) {
               return t.slice(2);
             }
             return t;
-          }));
-          console.log("set generated tasks", newTasks, "length", newTasks.size);
+          })
+          setGeneratedTasks(newTasks);
+          console.log("set generated tasks", newTasks, "length", newTasks.length);
           setLoadingTasks(false);
         })
         .catch((error) => {console.error(error); setLoadingTasks(false); });
   }
 
-  const renderTask = ({ item }: { item: any }) => {
+  const renderTask = (item: any, index: number) => {
+    console.log("task index", index, "item", item);
 
     return (
        <View style={styles.task}>
-         <TextInput placeholder={"Task name"} placeholderTextColor="black" style={{backgroundColor: 'white', padding: 4}} defaultValue={item}>
+         <TextInput placeholderTextColor="black" style={{backgroundColor: 'white', padding: 4, color: 'black'}} value={item} onChangeText={text => handleChangeTask(text ,index)}>
          </TextInput>
        </View>
 
@@ -177,11 +191,11 @@ const HabitModal: React.FC<Props> = ({ visible, initialData, onClose, onSave, on
               (generatedTasks.length === 0 ? (
                           <>
                             <Text style={{marginHorizontal: "auto"}}>No tasks created.</Text>
-                            <TouchableOpacity style={styles.generateTextBtn} onPress={handleGenerateText}><Text
+                            <TouchableOpacity style={styles.generateTextBtn} onPress={handleGenerateTasks}><Text
                                 style={styles.generateText}>Generate Tasks</Text></TouchableOpacity>
                           </>
                       ) :
-                      (<FlatList data={generatedTasks} keyExtractor={(item, index) => index} renderItem={renderTask}
+                      (<FlatList data={generatedTasks} keyExtractor={(item, index) => index} renderItem={({item, index, separators}) => renderTask(item, index)}
                                  style={{maxHeight: "35%"}}></FlatList>)
               )
           }
