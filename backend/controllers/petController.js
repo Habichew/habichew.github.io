@@ -6,7 +6,6 @@ export async function findPetByUserId(req, res) {
     try {
         const {userId} = req.params;
         const userResult = await userService.findUserById(userId);
-        console.log("find user by ID ######", userResult[0]);
 
         if (userResult.length === 0) {
             res.status(404);
@@ -19,9 +18,8 @@ export async function findPetByUserId(req, res) {
         }
 
         const petId = user.petId;
-        console.log("found pet with pet ID", petId);
+
         const petResult = await petService.findPetById(petId);
-        console.log("###### /users/" + userId + "/pet: find pet by user ID ######", petResult);
 
         if (petResult.length === 1) {
             return res.status(200).send(petResult);
@@ -82,7 +80,6 @@ export async function updatePet(req, res) {
         // Check if user already has pet
         const {userId} = req.params;
         const userResult = await userService.findUserById(userId);
-        console.log("find user by ID ######", userResult[0]);
 
         if (userResult.length === 0) {
             res.status(404);
@@ -138,7 +135,6 @@ export async function deletePet(req, res) {
         // TODO: Update user
         const updatedUserResult = await userService.updateUser(userId, {petId: null});
         const result = await petService.deletePet(existingPet.id);
-        console.log(result);
 
         return res.status(200).send({
             message: 'Pet deleted successfully',

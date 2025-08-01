@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 
 export async function getAllUsers(req, res) {
   try {
-    console.log("###### /users: Getting all users ######");
     const users = await userService.getAllUsers();
     if (!users || users.length === 0) {
       return res.status(404).json({ message: 'No users found.' });
@@ -44,19 +43,14 @@ export async function findUser(req, res) {
     const {email, password} = req.body;
     const result = await userService.findUserByEmail(email);
     if(result.length > 0) {
-    console.log("###### /users/login: find user by email result ######", result);
         bcrypt.compare(
           password,
           result[0].password,
           function (err, compResult) {
             if (compResult) {
-              console.log("Password match");
               res.status(200);
               res.send(result);
             } else {
-              console.log("Password does not match");
-              console.log("password", password);
-              console.log("hash", result[0].password);
               res.status(401);
               res.send({ error: "Incorrect password" });
             }
@@ -76,7 +70,6 @@ export async function findUserById(req, res) {
   try {
     const {userId} = req.params;
     const result = await userService.findUserById(userId);
-    console.log("###### /users/", userId, ": find user by ID ######", result);
     if (result.length === 1) {
       res.status(200);
     } else if (result.length === 0) {
@@ -96,7 +89,6 @@ export async function updateEmailById(req, res) {
   try {
     // Check if the email is occupied
     const existing = await userService.findUserByEmail(newEmail);
-    console.log(existing);
 
     if (existing.length!==0 && existing.id !== parseInt(userId)) {
       return res.status(409).json({ message: 'Email already registered.' });
