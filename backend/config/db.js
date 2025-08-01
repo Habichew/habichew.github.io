@@ -14,7 +14,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const dbConfig = {
   host: process.env.DB_HOST || 'db', // 'localhost for local test, db for docker test'
-  port: parseInt(process.env.DB_PORT) || 3307,
+  port: parseInt(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER || 'appuser',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'habichew_db',
