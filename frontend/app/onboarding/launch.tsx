@@ -29,7 +29,7 @@ export default function LaunchScreen() {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require('@/assets/images/previouscat.png')}
+          source={require('@/assets/images/cat.png')}
           style={styles.image}
           resizeMode="cover"
         />
@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   image: {
-    width: 350,
-    height: 170,
+    width: "80%"
   },
   bottomSection: {
     flex: 1,

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useUser, Task } from '../context/UserContext';
 import TaskModal from '../../components/ui/TaskModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
+import {RiveRef} from "rive-react-native";
 
 export default function Tasks() {
   const { user, tasks, loadTasks, updateTask } = useUser();
@@ -19,6 +20,7 @@ export default function Tasks() {
   const [hasEverEnteredHabit, setHasEverEnteredHabit] = useState(false);
   const [showEmptyPrompt, setShowEmptyPrompt] = useState(false);
   const [lastFilteredHabitId, setLastFilteredHabitId] = useState<number | null>(null);
+  const riveRef = useRef<RiveRef>(null);
 
 //When the page regains focus and there is no habitId parameter, clear the filter
   useFocusEffect(
@@ -78,6 +80,7 @@ export default function Tasks() {
       dueAt: task.dueAt ? formatDate(task.dueAt) : undefined,
     };
     await updateTask(updatedTask);
+    console.log("updating input state");
   };
 
   return (
@@ -126,20 +129,25 @@ export default function Tasks() {
                 <Text style={styles.taskTitle}>{item.title}</Text>
                 {item.description ? <Text style={styles.taskDescription}>{item.description}</Text> : null}
                 <View style={styles.metaRow}>
+                  { item.dueAt ?
                   <View style={styles.badge}>
                     <Ionicons name="calendar-outline" size={16} color="#000" />
                     <Text style={styles.badgeText}>
                       {item.dueAt ? new Date(item.dueAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short' }) : ''}
                     </Text>
-                  </View>
-                  <View style={styles.badge}>
-                    <Ionicons name="flag-outline" size={16} color="#000" />
-                    <Text style={styles.badgeText}>
-                      {item.priority
-                        ? `${item.priority.charAt(0).toUpperCase()}${item.priority.slice(1)} Priority`
-                        : 'No Priority'}
-                    </Text>
-                  </View>
+                  </View> : ""
+                  }
+                  { item.priority ?
+                    <View style={styles.badge}>
+                      <Ionicons name="flag-outline" size={16} color="#000"/>
+                      <Text style={styles.badgeText}>
+                        {item.priority
+                            ? `${item.priority.charAt(0).toUpperCase()}${item.priority.slice(1)} Priority`
+                            : 'No Priority'}
+                      </Text>
+                    </View>
+                      : ""
+                  }
                   <TouchableOpacity style={[styles.pencil]} onPress={() => handleEdit(item)}>
                     <Ionicons name="pencil" size={20} color="#333" />
                   </TouchableOpacity>

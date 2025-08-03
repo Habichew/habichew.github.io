@@ -14,20 +14,8 @@ export default function SignInScreen() {
   const [focusedInput, setFocusedInput] = useState<'email' | 'password' | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    async function checkLocalUser() {
-      const email = await AsyncStorage.getItem('email');
-      console.log("local email", email);
-      const password = await AsyncStorage.getItem('password');
-      if (email != null && password != null) {
-        router.replace('../(tabs)/home');
-      }
-    }
-    checkLocalUser();
-  })//
-
 const handleSignIn = async () => {
-  // router.replace('../(tabs)/home');
+  router.replace('../(tabs)/home');
   if (email && password) {
     try {
       setLoading(true)
@@ -40,21 +28,20 @@ const handleSignIn = async () => {
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (response.ok) {
         const loggedInUser = data[0];
         setUser(loggedInUser);//save user data for global use
         console.log("check signed in user", loggedInUser.email);
         // alert('Sign in successful!');
-        AsyncStorage.setItem('email', loggedInUser.email);
-        AsyncStorage.setItem('password', loggedInUser.password);
         router.replace('../(tabs)/home');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }
       setLoading(false);
     } catch (error) {
-      Alert.alert('Error', 'Failed to connect to the server');
+      Alert.alert('Error', 'Failed to connect to the server ' + process.env.EXPO_PUBLIC_BACKEND_URL + " " + error);
       setLoading(false);
     }
   } else {

@@ -67,7 +67,8 @@
     "rive-rnw": "^0.2.0",
     "save": "^2.9.0",
     "undefined": "@/utils/render-item",
-    "utils": "^0.3.1"
+    "utils": "^0.3.1",
+    "@expo/ui": "~0.1.1-alpha.10"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

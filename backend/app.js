@@ -169,8 +169,8 @@ app.post("/create-post", upload.array("postImages", 5), (req, res) => {
 });
  */
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server running at http://${HOST}:${PORT}/`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running at http://10.22.198.190:${PORT}/`);
 });
 
 export function sendNotImplementedError(response) {

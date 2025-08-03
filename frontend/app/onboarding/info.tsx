@@ -47,10 +47,10 @@ export default function InfoScreen1() {
         style={styles.backgroundImage}
         resizeMode="contain"
       />
+      <View style={{marginVertical: "auto"}}>
+        <Text style={styles.heading}>Let’s get to know you!</Text>
 
-      <Text style={styles.heading}>Let’s get to know you!</Text>
-
-      {/* <CustomDropdown
+        {/* <CustomDropdown
         items={pronounOptions}
         value={pronoun}
         setValue={setPronoun}
@@ -58,27 +58,29 @@ export default function InfoScreen1() {
         zIndex={4}
         zIndexInverse={3}
       /> */}
-      <CustomDropdown
-        items={paceOptions}
-        value={pace}
-        setValue={setPace}
-        placeholder="Select your pace of work"
-        zIndex={2}
-        zIndexInverse={1}
-      />
-      <CustomInput
-        placeholder="Enter Pet Name"
-        value={name}
-        onChangeText={setName}
-      />
+        <CustomDropdown
+            items={paceOptions}
+            value={pace}
+            setValue={setPace}
+            placeholder="Select your pace of work"
+            zIndex={2}
+            zIndexInverse={1}
+        />
+        <CustomInput
+            placeholder="Enter Pet Name"
+            value={name}
+            onChangeText={setName}
+        />
 
-      <TouchableOpacity
-        style={[styles.button, { opacity: isFormValid ? 1 : 0.6 }]}
-        onPress={handleContinue}
-        disabled={!isFormValid}
-      >
-        <Text style={styles.buttonText}>Continue</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+            style={[styles.button, { opacity: isFormValid ? 1 : 0.6 }]}
+            onPress={handleContinue}
+            disabled={!isFormValid}
+        >
+          <Text style={styles.buttonText}>Continue</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 }
@@ -91,11 +93,10 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     position: 'absolute',
-    width: '90%',
-    height: '90%',
-    top: -150,
-    right: -120,
-    zIndex: -1,
+    width: '100%',
+    height: '100%',
+    top: '-8%',
+    right: '-25%',
   },
   heading: {
     alignSelf:'center',

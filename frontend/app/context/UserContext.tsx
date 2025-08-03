@@ -23,6 +23,7 @@ export type Habit = {
   priority?: number | null;
   frequency?: string | null;
   isArchived?: number;
+  isCompleted?: number;
 };
 
 export type Task = {
@@ -169,8 +170,8 @@ const updateHabit = async (habit: Habit) => {
       body: JSON.stringify({
         customTitle: habit.habitTitle,
         priority: habit.priority,
-        startDate: habit.startDate,
-        goalDate: habit.goalDate,
+        startDate: habit.startDate.slice(0, 10),
+        goalDate: habit.goalDate?.slice(0, 10),
         frequency: habit.frequency,
       }),
     });
