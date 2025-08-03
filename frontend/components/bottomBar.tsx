@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     height: 60,
+    width: 60
   },
   icon: {
     width: 24,
