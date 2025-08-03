@@ -60,9 +60,8 @@ export async function findUser(req, res) {
         res.status(404);
         res.send({ error: "Incorrect user" });
       }
-  } catch (code) {
-    res.status(code);
-    res.send();
+  } catch (err) {
+    res.status(500).send({message:"Internal Server Error", error: err.message});
   }
 }
 
@@ -77,9 +76,9 @@ export async function findUserById(req, res) {
       res.status(404);
     }
     res.send(result);
-  } catch (code) {
-    res.status(code);
-    res.send();
+  } catch (err) {
+    res.status(500);
+    res.send({message: "Internal Server Error", error: err.message});
   }
 }
 
