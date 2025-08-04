@@ -32,7 +32,15 @@ const Home = () => {
     if (user) {
       loadHabits();
       loadTasks();
-      console.log("user", user)
+      console.log("user", user);
+      const ONE_MINUTE =  60 * 1000;
+
+      if (user.taskLastCompleted && (Date.now() - new Date(user.taskLastCompleted).getTime()) > 5 * ONE_MINUTE) {
+        riveRef.current?.setInputState('State Machine 1', 'Overdue', true);
+      } else {
+        riveRef.current?.setInputState('State Machine 1', 'Overdue', false);
+        riveRef.current?.setInputState('State Machine 1', 'HappyTime', 45);
+      }
     }
     ;
   }, [user]);
@@ -68,6 +76,8 @@ const Home = () => {
     console.log('trigger animation and complete habit');
     // riveRef.current?.play("Eating");
     riveRef.current?.setInputState('State Machine 1', 'HabitTicked', true);
+    riveRef.current?.setInputState('State Machine 1', 'WaitingTime', 45);
+    riveRef.current?.setInputState('State Machine 1', 'Overdue', false);
   };
 
   const formatDate = (dateStr: string) => { if (!dateStr) return ''; try { const d = new Date(dateStr); const day = d.getUTCDate(); const month = d.toLocaleString('default', { month: 'short' }); return `${day} ${month}`; } catch { return ''; } };

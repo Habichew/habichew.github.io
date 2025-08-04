@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { StyleSheet, View, ViewStyle, TextStyle } from 'react-native';
+import {ScaledSheet} from "react-native-size-matters";
 
 type Option = {
   label: string;
@@ -8,24 +9,24 @@ type Option = {
 };
 
 export default function CustomDropdown({
-  items,
-  value,
-  setValue,
-  placeholder,
-  zIndex = 1000,
-  zIndexInverse = 500,   
-  style = {},
-}: {
-  items: Option[];
-  value: string | null;
-  setValue: (val: string | null) => void;
-  placeholder?: string;
-  zIndex?: number;
-  zIndexInverse?: number;
-  backgroundColor?: string;
-  textColor?: string;
-  placeholderColor?: string;
-  style?: ViewStyle;
+                                         items,
+                                         value,
+                                         setValue,
+                                         placeholder,
+                                         zIndex = 1000,
+                                         zIndexInverse = 500,
+                                         style = {},
+                                       }: {
+  items: Option[],
+  value: string | null,
+  setValue: (val: string | null) => void,
+  placeholder?: string,
+  zIndex?: number,
+  zIndexInverse?: number,
+  backgroundColor?: string,
+  textColor?: string,
+  placeholderColor?: string,
+  style?: ViewStyle,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -53,40 +54,40 @@ export default function CustomDropdown({
         showArrowIcon={true}
         zIndex={zIndex}
         zIndexInverse={zIndexInverse}
+
       />
     </View>
   );
 }
 
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   wrapper: {
-    marginBottom: 16,
   },
   dropdown: {
     borderRadius: 24,
     borderWidth: 0,              
-    backgroundColor: '#ffffff',
-    height: 48,
-    shadowColor: 'transparent', 
+    backgroundColor: '#F8F0F0',
+    shadowColor: 'transparent',
+      minHeight: 50,
   },
   dropdownContainer: {
     borderRadius: 16,
-    borderWidth: 0,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F8F0F0',
     shadowColor: 'transparent',
+      borderWidth: 0
   },
   text: {
-    fontWeight:'bold',
-    fontSize: 16,
+    fontSize: "13@ms",
+      fontWeight: "normal",
     color: '#000',
   },
   placeholder: {
     // textAlign:'center',
-    fontWeight:'bold',
-    color: '#bbbbbb',
+    fontWeight:'normal',
+    color: '#000',
   },
   arrow: {
-    tintColor: '#DAB7FF', 
+    tintColor: '#DAB7FF',
   },
 });

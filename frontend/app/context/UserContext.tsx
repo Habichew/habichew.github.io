@@ -13,6 +13,7 @@ export type User = {
   petId?: number | null;
   credits?: number;
   tasksNum?: number;
+  taskLastCompleted?: string | null;
 };
 
 export type Habit = {
