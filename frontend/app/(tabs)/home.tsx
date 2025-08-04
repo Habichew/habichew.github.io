@@ -14,6 +14,7 @@ import Animated, {
   useAnimatedStyle,
   Easing,
 } from 'react-native-reanimated';
+import ReanimatedSwipeable from "react-native-gesture-handler/src/components/ReanimatedSwipeable";
 
 const screenWidth = Dimensions.get('window').width; const scale = (value: number) => (screenWidth / 375) * value;
 
@@ -23,6 +24,7 @@ const Home = () => {
   const [filteredHabits, setFilteredHabits] = useState(habits);
   const [modalVisible, setModalVisible] = useState(false);
   const [editHabit, setEditHabit] = useState<Partial<Habit> | null>(null);
+  const [showArchivedHabits, setShowArchivedHabits] = useState<boolean>(false);
   const habitId = editHabit?.userHabitId; // number 
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -45,7 +47,9 @@ const Home = () => {
     ;
   }, [user]);
   useEffect(() => {
-    setFilteredHabits(habits.filter(h => h.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase())));
+    const newHabits = habits.filter(h => h.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase()));
+    console.log("newHabits", newHabits);
+    setFilteredHabits(newHabits);
   }, [searchTerm, habits]);
 
   const handleAdd = () => { setEditHabit(null); setModalVisible(true); };
@@ -72,12 +76,14 @@ const Home = () => {
   const handleTickHabit = async (habit: Habit) => {
     if (!habit.userHabitId) return;
     // await updateHabit({ ...habit, isCompleted: true });
+    habit.isArchived = 1;
     await updateHabit({...habit});
     console.log('trigger animation and complete habit');
     // riveRef.current?.play("Eating");
     riveRef.current?.setInputState('State Machine 1', 'HabitTicked', true);
     riveRef.current?.setInputState('State Machine 1', 'WaitingTime', 45);
     riveRef.current?.setInputState('State Machine 1', 'Overdue', false);
+    await loadHabits();
   };
 
   const formatDate = (dateStr: string) => { if (!dateStr) return ''; try { const d = new Date(dateStr); const day = d.getUTCDate(); const month = d.toLocaleString('default', { month: 'short' }); return `${day} ${month}`; } catch { return ''; } };
@@ -88,32 +94,43 @@ const Home = () => {
     const percent = progressMap?.[item.userHabitId] ?? 0;
 
     return (
-      <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.5}>
-        <View style={styles.headerRow}>
-          <Text style={styles.title}>{item.habitTitle}</Text>
-          <TouchableOpacity onPress={() => handleEdit(item)}>
-            <Ionicons name="pencil-outline" size={20} color="black" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: `${percent}%` }]} />
-        </View>
-        <View style={styles.tagRow}>
-          {item.goalDate ? <View style={styles.tag}><Ionicons name="calendar-outline" size={16} color="black" /><Text style={styles.tagText}> {formatDate(item.goalDate)}</Text></View> : null}
-          {item.priority ? <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black" /><Text style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View> : null}
-          { item.frequency ? <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black" />
-            <Text style={[styles.tagText, !item.frequency && { color: '#000' }]}>{item.frequency || 'Frequency'}</Text>
-          </View> : null }
-          {/* Add a ticking box here */}
-          {/* Add completed field in the backend */}
-          {/* {percent === 100 && !item.isCompleted && ( */}
-          {percent === 100 && (
-            <TouchableOpacity onPress={() => handleTickHabit(item)}>
-              <Ionicons name="checkmark-circle-outline" size={28} color="#1CC282" />
+        <>
+          {showArchivedHabits || item.isArchived === 0 ?
+      // <ReanimatedSwipeable>
+        <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.8}>
+          <View style={styles.headerRow}>
+            <Text style={styles.title}>{item.habitTitle}</Text>
+            {percent === 100 && (
+                <TouchableOpacity disabled={!!item.isArchived} onPress={() => handleTickHabit(item)}>
+                  <Ionicons name={!item.isArchived ? "ellipse-outline" : "checkmark-circle-outline"} size={28} color= {!item.isArchived ? "gray" : "#1CC282"} />
+                </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.progressBarBackground}>
+            <View style={[styles.progressBarFill, {width: `${percent}%`}]}/>
+          </View>
+          <View style={styles.tagRow}>
+            <TouchableOpacity onPress={() => handleEdit(item)}>
+              <Ionicons name="pencil-outline" size={20} color="black"/>
             </TouchableOpacity>
-          )}
-        </View>
-      </TouchableOpacity>
+            {item.goalDate ? <View style={styles.tag}><Ionicons name="calendar-outline" size={16} color="black"/><Text
+                style={styles.tagText}> {formatDate(item.goalDate)}</Text></View> : null}
+            {item.priority ? <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black"/><Text
+                style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View> : null}
+            {item.frequency ? <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black"/>
+              <Text
+                  style={[styles.tagText, !item.frequency && {color: '#000'}]}>{item.frequency || 'Frequency'}</Text>
+            </View> : null}
+            {/* Add a ticking box here */}
+            {/* Add completed field in the backend */}
+            {/* {percent === 100 && !item.isCompleted && ( */}
+
+          </View>
+        </TouchableOpacity>
+      // </ReanimatedSwipeable>
+        : null }
+          </>
+
     );
   };
 
@@ -159,7 +176,16 @@ const Home = () => {
         {/*<View style={styles.habitRow}>*/}
         {/*  <Text style={styles.today}>Today</Text>*/}
         {/*</View>*/}
-        <TextInput placeholder="Search Habit" placeholderTextColor="#888" style={{ backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, marginBottom: 12 }} value={searchTerm} onChangeText={setSearchTerm} />
+        <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: 12}}>
+          <View style={{ flexDirection: 'row', backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 16, flexBasis: 200, flexGrow: 1}}>
+            <Ionicons name='search-outline' size={20} style={{alignSelf: 'center'}}></Ionicons>
+            <TextInput placeholder="Search Habit" placeholderTextColor="#888" value={searchTerm} onChangeText={setSearchTerm} />
+          </View>
+          <TouchableOpacity onPress={() => {console.log("set showArchivedHabits to", !showArchivedHabits); setShowArchivedHabits(!showArchivedHabits)}} activeOpacity={0.8} >
+            { showArchivedHabits ? <Ionicons name='archive' size={20} style={{alignSelf: 'center', paddingHorizontal: 12}}/>
+            : <Ionicons name='archive-outline' size={20} style={{alignSelf: 'center', paddingHorizontal: 12}}/>}
+          </TouchableOpacity>
+        </View>
         <FlatList style={{ paddingBottom: 10, paddingHorizontal: 10, marginHorizontal: -10}} data={filteredHabits} keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)} renderItem={renderHabit} />
       </View>
       <ItemModal visible={modalVisible} initialData={editHabit ?? undefined} onClose={() => setModalVisible(false)}  onSave={handleSave} onDelete={deleteHabit} habitId={habitId}/>

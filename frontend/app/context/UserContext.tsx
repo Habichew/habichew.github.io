@@ -24,7 +24,6 @@ export type Habit = {
   priority?: number | null;
   frequency?: string | null;
   isArchived?: number;
-  isCompleted?: number;
 };
 
 export type Task = {
@@ -174,6 +173,7 @@ const updateHabit = async (habit: Habit) => {
         startDate: habit.startDate.slice(0, 10),
         goalDate: habit.goalDate?.slice(0, 10),
         frequency: habit.frequency,
+        isArchived: habit.isArchived
       }),
     });
 
