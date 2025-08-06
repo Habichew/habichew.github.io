@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator} from 'react-native';
 import { useUser, Task } from '../context/UserContext';
 import TaskModal from '../../components/ui/TaskModal';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +20,8 @@ export default function Tasks() {
   const [hasEverEnteredHabit, setHasEverEnteredHabit] = useState(false);
   const [showEmptyPrompt, setShowEmptyPrompt] = useState(false);
   const [lastFilteredHabitId, setLastFilteredHabitId] = useState<number | null>(null);
+  const [loadingTasks, setLoadingTasks] = useState<boolean>(false);
+
   const riveRef = useRef<RiveRef>(null);
 
 //When the page regains focus and there is no habitId parameter, clear the filter
@@ -83,6 +85,53 @@ export default function Tasks() {
     console.log("updating input state");
   };
 
+  function handleGenerateTasks() {
+    if (!habitName) return alert('Please enter a habit name.');
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + process.env.EXPO_PUBLIC_OPENAI_API_KEY);
+
+    const raw = JSON.stringify({
+      "model": "gpt-4.1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In short sentences, break down this habit into a bulleted list of max. 6 tasks that are directly executable: '" + habitName + "'. Only respond with a bulleted list"
+        }
+      ]
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    // setGeneratedTasks(["Find a private or comfortable space", "Acknowledge your emotions", "Allow your feelings to flow without holding back", "Breathe deeply and steadily", "Use tissues or a cloth if needed", "Take time afterwards to rest or reflect"]);
+    setLoadingTasks(true);
+    fetch("https://api.openai.com/v1/chat/completions", requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+          let newTasks = result.choices[0].message.content;
+          newTasks = newTasks.split("\n").map((t: string) => {
+            if (t.startsWith("- ")) {
+              return t.slice(2);
+            }
+            return t;
+          })
+          setFilteredTasks(newTasks);
+          console.log("set generated tasks", newTasks, "length", newTasks.length);
+          setLoadingTasks(false);
+          setShowEmptyPrompt(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoadingTasks(false);
+        });
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -106,15 +155,16 @@ export default function Tasks() {
       </View>
 
       {showEmptyPrompt && (
-        <View style={{ alignItems: 'center', marginTop: 40 }}>
-          <Text style={{ textAlign: 'center', fontSize: 14, marginBottom: 20 }}>
-            You don’t have any task for the habit{"\n"}
-            Generate tasks with just a click or use + to add your own !
-          </Text>
-          <TouchableOpacity style={styles.generateBtn} onPress={() => setModalVisible(true)}>
-            <Text style={styles.generateText}>Generate Tasks</Text>
-          </TouchableOpacity>
-        </View>
+          loadingTasks ? <ActivityIndicator size={"large"}/> :
+              <View style={{alignItems: 'center', marginTop: 40}}>
+                <Text style={{textAlign: 'center', fontSize: 14, marginBottom: 20}}>
+                  You don’t have any task for the habit{"\n"}
+                  Generate tasks with just a click or use + to add your own !
+                </Text>
+                <TouchableOpacity style={styles.generateBtn} onPress={() => setModalVisible(true)}>
+                  <Text style={styles.generateText}>Generate Tasks</Text>
+                </TouchableOpacity>
+              </View>
       )}
 
       <FlatList
