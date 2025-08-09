@@ -1,5 +1,15 @@
-import React, {useContext, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, FlatList} from 'react-native';
+import React, {useContext, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  FlatList,
+  Animated,
+  PanResponder, Dimensions
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import TopBar from '@/components/bottomBar';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,22 +18,62 @@ import BottomBar from "@/components/bottomBar";
 import {ScaledSheet} from 'react-native-size-matters';
 import {Button} from "@react-navigation/elements";
 import {placeholder} from "@babel/types";
+import Value = Animated.Value;
+import FlipCard from 'react-native-flip-card'
+import Postcard from '@/components/ui/Postcard';
 
-export default function PetScreen() {
+export default function PetScreen(this: any) {
   const router = useRouter();
   const { pet, loadPet, user } = useUser(); // use user data
   const [ petPostcards, setPetPostcards ] = useState([]);
   const postCardImgs = [
-    {unlockScore: 50, url: "https://picsum.photos/200/300"},
-    {unlockScore: 150, url: "https://picsum.photos/200/300"},
-    {unlockScore: 500, url: "https://picsum.photos/200/300"},
-    {unlockScore: 1000, url: "https://picsum.photos/200/300"},
-    {unlockScore: 2000, url: "https://picsum.photos/200/300"},
-    {unlockScore: 5000, url: "https://picsum.photos/200/300"},
-    {unlockScore: 10000, url: "https://picsum.photos/200/300"},
-    {unlockScore: 25000, url: "https://picsum.photos/200/300"},
-    {unlockScore: 50000, url: "https://picsum.photos/200/300"}
+    {unlockScore: 50, frontUrl: require("@/assets/images/postcard 1.png"), backUrl: require("@/assets/images/postcard 1 back.png")},
+    {unlockScore: 150, frontUrl: require("@/assets/images/postcard 2.png"), backUrl: require("@/assets/images/postcard 2 back.png")},
+    {unlockScore: 500, frontUrl: require("@/assets/images/postcard 3.png"), backUrl: require("@/assets/images/postcard 3 back.png")},
+    {unlockScore: 1000, frontUrl: require("@/assets/images/postcard 4.png"), backUrl: require("@/assets/images/postcard 4 back.png")},
+    {unlockScore: 2000, frontUrl: require("@/assets/images/postcard 5.png"), backUrl: require("@/assets/images/postcard 5 back.png")},
+    {unlockScore: 5000, frontUrl: require("@/assets/images/postcard 6.png"), backUrl: require("@/assets/images/postcard 6 back.png")},
+    {unlockScore: 10000, frontUrl: require("@/assets/images/postcard 7.png"), backUrl: require("@/assets/images/postcard 7 back.png")},
+    {unlockScore: 25000, frontUrl: require("@/assets/images/postcard 8.png"), backUrl: require("@/assets/images/postcard 8 back.png")},
+    {unlockScore: 50000, frontUrl: require("@/assets/images/postcard 9.png"), backUrl: require("@/assets/images/postcard 9 back.png")}
   ]
+  const rotateAnim: Value = useRef(new Animated.Value(0)).current;
+  const cardsPan = useRef(new Animated.ValueXY()).current;
+  const cardsStackedAnim = useRef(new Animated.Value(0)).current;
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const cardsPanResponder = PanResponder.create( {
+    onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponderCapture: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponderCapture: () => true,
+    onPanResponderMove: ( event, gestureState ) => {
+          cardsPan
+          .setValue(
+              { x: gestureState.dx, y: Number(cardsPan.y) }
+          );
+    },
+    onPanResponderTerminationRequest: () => false,
+    onPanResponderRelease: ( event, gestureState ) => {
+      // bring the translationX back to 0
+      Animated.timing( cardsPan, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false
+      } ).start();    // will be used to interpolate values in each view
+      Animated.timing( cardsStackedAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false
+      } ).start( () => {
+        // reset cardsStackedAnim's value to 0 when animation ends
+          cardsStackedAnim.setValue( 0 );      // increment card position when animation ends
+          setCurrentIndex((currentIndex + 1) % 3);
+          console.log("currentIndex", currentIndex);
+      } );
+    },
+  } )
+
   useState(() => {
     console.log("load user pet");
     loadPet();
@@ -93,22 +143,23 @@ export default function PetScreen() {
           <FlatList
               data={postCardImgs}
               renderItem={(item) => (
-                  <>
-                    {user?.credits !== undefined && user?.credits >= item.item.unlockScore ?
-                        (
-                            <Image style={styles.postcardsImg} source={{uri: item.item.url}} key={"postcard-"+item.index}></Image>
-                        )
-                        :
-                        (<Image style={styles.postcardsImg} source={require('@/assets/images/placeholder.png')} key={"postcard-"+item.index}></Image>)
-                    }
-                  </>
-                )
+                    <FlipCard style={{flexDirection: 'row'}} flipHorizontal={true} flipVertical={false} friction={8} perspective={1000} useNativeDriver={true}>
+                      {/* Face Side */}
+                      <View style={{width: '100%'}}>
+                        <Image style={styles.faceImg} source={item.item.frontUrl} key={"postcard-"+item.index}></Image>
+                      </View>
+                      {/* Back Side */}
+                      <View style={styles.back}>
+                        <Image style={styles.backImg} source={item.item.backUrl} key={"postcard-"+item.index}/>
+                        </View>
+                    </FlipCard>
+                  )
               }
-              numColumns={3}
+              numColumns={1}
               keyExtractor={(item) => item.unlockScore.toString()}
+              style={{margin: 10}}
           >
           </FlatList>
-          <Button style={styles.postcardsButton} color={"black"} ><Text style={{fontWeight: "700"}}>View Habits</Text></Button>
         </View>
       </View>
     </View>
@@ -221,10 +272,11 @@ const styles = ScaledSheet.create({
   },
   postcards: {
     paddingTop: 50,
-    paddingHorizontal: "40@ms",
   },
   postcardsTitle: {
-    fontSize: 24, fontWeight: 'bold', fontFamily: "Poppins", alignSelf: "flex-start", marginBottom: 15
+    fontSize: 24, fontWeight: 'bold', fontFamily: "Poppins", alignSelf: "flex-start", marginBottom: 15,
+    paddingHorizontal: "40@ms",
+
   },
   postcardsButton: {
     backgroundColor: '#1CC282',
@@ -240,12 +292,29 @@ const styles = ScaledSheet.create({
     gap: 12,
     marginHorizontal: "auto",
   },
-  postcardsImg: {
-    alignContent: 'center',
-    maxWidth: "30%",
-    margin: 8,
-    marginHorizontal: "auto",
-    maxHeight: 100,
-    borderRadius: 12,
+  postcard: {
+    flex: 1,
+  },
+  face: {
+    objectFit: 'cover',
+
+  },
+  back: {
+
+  },
+  faceImg: {
+    alignSelf: 'center',
+    marginVertical: 8,
+    backgroundColor: 'white',
+    aspectRatio: 3/2,
+    height: Dimensions.get("window").height * 0.3,
+  },
+  backImg: {
+    alignSelf: 'center',
+    marginVertical: 8,
+    backgroundColor: 'white',
+    aspectRatio: 3/2,
+    height: Dimensions.get("window").height * 0.3,
+
   }
 });

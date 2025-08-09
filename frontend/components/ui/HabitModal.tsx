@@ -4,21 +4,26 @@ import {
     Text,
     TextInput,
     Modal,
-    TouchableOpacity,
     StyleSheet,
     Platform,
     FlatList,
     ActivityIndicator,
     TouchableWithoutFeedback,
+    TouchableOpacity,
     ScrollView, Dimensions
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomDropdown from './select';
 import {webDateInputWrapper, webDateInput} from './webDateStyles';
-import {Button} from "@react-navigation/elements";
 import {useFocusEffect} from "@react-navigation/native";
 import {ScaledSheet} from "react-native-size-matters";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, {
+    SharedValue,
+    useAnimatedStyle,
+} from 'react-native-reanimated';
 
 type Props = {
     visible: boolean;
@@ -61,9 +66,9 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
     const inputRef = useRef(null); // Attach a ref to the TextInput
 
     useFocusEffect(() => {
-        setTimeout(() => {
-            inputRef.current?.focus()
-        }, 500)  // Delay the focus by 50ms to allow modal to complete its render
+        // setTimeout(() => {
+        //     inputRef.current?.focus()
+        // }, 50)  // Delay the focus by 50ms to allow modal to complete its render
     })
 
     useEffect(() => {
@@ -102,7 +107,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
     };
 
     function addTaskInput() {
-        setGeneratedTasks([...generatedTasks, "Task name"]);
+        setGeneratedTasks([...generatedTasks, ""]);
     }
 
     function handleChangeTask(text: string, i: number) {
@@ -163,15 +168,48 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
             });
     }
 
+
+
     const renderTask = (item: any, index: number) => {
         console.log("task index", index, "item", item);
 
+        function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+            const styleAnimation = useAnimatedStyle(() => {
+                console.log('showRightProgress:', prog.value);
+                console.log('appliedTranslation:', drag.value);
+
+                return {
+                    transform: [{ translateX: drag.value + 50 }],
+                };
+            });
+
+            return (
+                <Reanimated.View style={styleAnimation}>
+                    <Text>Text</Text>
+                </Reanimated.View>
+            );
+        }
+
         return (
-            <View style={styles.task}>
-                <TextInput placeholderTextColor="black" style={{backgroundColor: 'white', padding: 4, color: 'black'}}
-                           value={item} onChangeText={text => handleChangeTask(text, index)}>
-                </TextInput>
-            </View>
+            // <ReanimatedSwipeable>
+                <View style={styles.task}>
+                    <TextInput placeholderTextColor="gray" style={{backgroundColor: 'white', padding: 4, color: 'black'}}
+                               placeholder={"Task name"} value={item} onChangeText={text => handleChangeTask(text, index)}>
+                    </TextInput>
+                </View>
+            // </ReanimatedSwipeable>
+            // <GestureHandlerRootView>
+            //     <ReanimatedSwipeable
+            //         friction={1}
+            //         enableTrackpadTwoFingerGesture
+            //         rightThreshold={40}
+            //         renderRightActions={RightAction}
+            //         containerStyle={styles.task}
+            //     >
+            //         <Text>Swipe me!</Text>
+            //     </ReanimatedSwipeable>
+            // </GestureHandlerRootView>
+
 
         );
     };
@@ -197,12 +235,12 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                    placeholderTextColor="#1C1A1F" style={styles.title}
                                                    value={formData.habitTitle}
                                                    onChangeText={text => setFormData({...formData, habitTitle: text})}/>
-                                        <TextInput ref={inputRef} autoFocus={true} placeholder="Habit description"
-                                                   placeholderTextColor="#1C1A1F" style={styles.description}
-                                                   value={formData.habitDescription} onChangeText={text => setFormData({
-                                            ...formData,
-                                            habitDescription: text
-                                        })}/>
+                                        {/*<TextInput ref={inputRef} autoFocus={true} placeholder="Habit description"*/}
+                                        {/*           placeholderTextColor="#1C1A1F" style={styles.description}*/}
+                                        {/*           value={formData.habitDescription} onChangeText={text => setFormData({*/}
+                                        {/*    ...formData,*/}
+                                        {/*    habitDescription: text*/}
+                                        {/*})}/>*/}
                                         {isEdit ? (
                                             <TouchableOpacity onPress={() => setShowConfirmDelete(true)}>
                                                 <Ionicons name="trash-outline" size={24} color="#555"/>
@@ -287,7 +325,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                         {/*<TouchableOpacity style={{marginLeft: "auto", marginVertical: "auto"}} onPress={() => setGeneratedTasks([])}>*/}
                                         {/*  <Ionicons name="trash-outline" size={24} color="#000"/>*/}
                                         {/*</TouchableOpacity>*/}
-                                        <TouchableOpacity style={{marginLeft: "auto", marginVertical: "auto"}}
+                                        <TouchableOpacity style={{marginLeft: "auto", marginVertical: "auto", width: 30, height: 30}}
                                                           onPress={() => addTaskInput()}>
                                             <Ionicons name="add" size={24} color="#000"/>
                                         </TouchableOpacity>
@@ -411,11 +449,11 @@ const styles = ScaledSheet.create({
     confirmText: {fontSize: 16, color: '#000', marginBottom: 16, textAlign: 'center'},
     confirmButtons: {flexDirection: 'row', justifyContent: 'space-between', width: '100%'},
     titleRow: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap'},
-    taskTitle: {fontWeight: 'bold', fontSize: 18},
+    taskTitle: {fontWeight: 'bold', fontSize: 18, height: 30},
     task: {
         backgroundColor: '#fff',
         padding: 16,
-        paddingVertical: 6,
+        paddingVertical: 12,
         borderRadius: 24,
         fontWeight: 'bold',
         fontSize: 16,

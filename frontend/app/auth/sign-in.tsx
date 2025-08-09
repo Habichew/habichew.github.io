@@ -14,8 +14,45 @@ export default function SignInScreen() {
   const [focusedInput, setFocusedInput] = useState<'email' | 'password' | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    async function login () {
+      const response = await fetch(process.env.EXPO_PUBLIC_BACKEND_URL +'/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (response.ok) {
+        const loggedInUser = data[0];
+        setUser(loggedInUser);//save user data for global use
+        console.log("check signed in user", loggedInUser.email);
+        // alert('Sign in successful!');
+        // AsyncStorage.setItem('userId', loggedInUser.id);
+        router.replace('../(tabs)/home');
+      } else {
+        Alert.alert('Login Failed', data.message || 'Invalid credentials');
+      }
+    }
+
+    async function tryCachedUserLogin() {
+      const cachedUser = await AsyncStorage.getItem('user');
+      if (cachedUser !== null) {
+        console.log('logging in with cached user', cachedUser);
+        await login();
+      }
+    }
+
+    tryCachedUserLogin();
+
+  }, []);
+
 const handleSignIn = async () => {
-  router.replace('../(tabs)/home');
+  // router.replace('../(tabs)/home');
   if (email && password) {
     try {
       setLoading(true)
@@ -35,6 +72,7 @@ const handleSignIn = async () => {
         setUser(loggedInUser);//save user data for global use
         console.log("check signed in user", loggedInUser.email);
         // alert('Sign in successful!');
+        AsyncStorage.setItem('user', loggedInUser);
         router.replace('../(tabs)/home');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');

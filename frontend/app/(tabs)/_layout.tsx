@@ -4,13 +4,14 @@ import React from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import BottomBar from "@/components/bottomBar";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 export default function TabLayout() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
   return (
-      <>
+      <GestureHandlerRootView>
           <View style={[styles.container, {paddingTop: insets.top, marginBottom: insets.bottom, backgroundColor: 'white'}]}>
               <Tabs
                   screenOptions={{
@@ -26,7 +27,7 @@ export default function TabLayout() {
               </Tabs>
               <BottomBar></BottomBar>
           </View>
-      </>
+      </GestureHandlerRootView>
   );
 }
 
