@@ -48,6 +48,7 @@
     "react-native-calendar-picker": "^8.0.5",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-expo-pie-chart": "^1.0.0",
+    "react-native-flip-card": "^3.5.7",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-pager-view": "6.7.1",
     "react-native-paper": "^5.14.5",
@@ -67,8 +68,7 @@
     "rive-rnw": "^0.2.0",
     "save": "^2.9.0",
     "undefined": "@/utils/render-item",
-    "utils": "^0.3.1",
-    "@expo/ui": "~0.1.1-alpha.10"
+    "utils": "^0.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

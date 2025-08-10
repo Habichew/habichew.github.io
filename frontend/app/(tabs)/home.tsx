@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, FlatList, Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Dimensions, FlatList, Image, Text, TextInput, TouchableOpacity, Vibration, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {Habit, Task, useUser} from '../context/UserContext';
@@ -8,13 +8,12 @@ import Rive, {Fit, RiveRef} from "rive-react-native";
 import {ScaledSheet} from "react-native-size-matters";
 import {SystemBars} from "react-native-edge-to-edge";
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Animated, {
-    useSharedValue,
-    withTiming,
-    useAnimatedStyle,
-    Easing,
-} from 'react-native-reanimated';
+import Animated, {Easing, SharedValue, useAnimatedStyle, withTiming,} from 'react-native-reanimated';
 import ReanimatedSwipeable from "react-native-gesture-handler/src/components/ReanimatedSwipeable";
+import * as Haptics from 'expo-haptics';
+import {AndroidHaptics} from 'expo-haptics';
+import {SwipeDirectionTypes} from "react-native-screens";
+import {SwipeableRef} from "react-native-gesture-handler/ReanimatedSwipeable";
 
 const screenWidth = Dimensions.get('window').width;
 const scale = (value: number) => (screenWidth / 375) * value;
@@ -35,11 +34,17 @@ const Home = () => {
     const [filteredHabits, setFilteredHabits] = useState(habits);
     const [modalVisible, setModalVisible] = useState(false);
     const [editHabit, setEditHabit] = useState<Partial<Habit> | null>(null);
+    const [toDeleteHabit, setToDeleteHabit] = useState<Partial<Habit> | null>(null);
     const [showArchivedHabits, setShowArchivedHabits] = useState<boolean>(false);
     const habitId = editHabit?.userHabitId; // number
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const riveRef = useRef<RiveRef>(null);
+    const swipeRef = useRef<any>(null);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+
+    let row: Array<any> = [];
+    let prevOpenedRow: any;
 
     useEffect(() => {
         if (user) {
@@ -90,6 +95,11 @@ const Home = () => {
         setModalVisible(true);
     };
 
+    function handleShowConfirmDelete(habit: any) {
+        setToDeleteHabit(habit);
+        setShowConfirmDelete(true);
+    }
+
     const handlePressHabit = (habit: any) => {
         router.push({pathname: './tasks', params: {habitId: habit.userHabitId, habitName: habit.habitTitle}});
     };
@@ -124,15 +134,87 @@ const Home = () => {
     };
     const getPriorityLabel = (val: string | number) => val == 1 ? 'High' : val == 2 ? 'Medium' : val == 3 ? 'Low' : 'Priority';
 
-    const renderHabit = ({item}: { item: any }) => {
+    const renderHabit = ({item, index}) => {
         const progressMap = calculateHabitProgress();
         const percent = progressMap?.[item.userHabitId] ?? 0;
-        console.log("percent", progressMap?.[item.userHabitId]);
+        // console.log("percent", progressMap?.[item.userHabitId]);
+        console.log('habit', index);
+
+        function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+            const styleAnimation = useAnimatedStyle(() => {
+
+                return {
+                    transform: [{ translateX: 0 }],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 90,
+                    borderRadius: 20,
+                    backgroundColor: 'black',
+                    marginRight: 10,
+                    paddingRight: 10,
+                    paddingLeft: 40,
+                    marginLeft: -50,
+                    marginBottom: 12
+                };
+            });
+
+            return (
+                <Animated.View style={styleAnimation}>
+                    <TouchableOpacity>
+                        <Ionicons name="pencil-outline" size={20} color="#F8F0F0"/>
+                    </TouchableOpacity>
+                </Animated.View>
+            );
+        }
+
+        function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+            const styleAnimation = useAnimatedStyle(() => {
+                // console.log('showLeftProgress:', prog.value);
+                // console.log('appliedTranslation:', drag.value);
+
+                return {
+                    transform: [{ translateX: 0 }],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 90,
+                    marginLeft: 10,
+                    backgroundColor: 'black',
+                    borderRadius: 20,
+                    paddingLeft: 10,
+                    paddingRight: 40,
+                    marginRight: -50,
+                    marginBottom: 12
+                };
+            });
+
+            return (
+                <Animated.View style={styleAnimation}>
+                    <Ionicons name="trash-outline" size={20} color="#F8F0F0"/>
+                </Animated.View>
+            );
+        }
+
+        function handleSwipe( direction: any) {
+            if (direction === 'left') {
+                handleEdit(item);
+            } else if (direction === 'right') {
+                handleShowConfirmDelete(item);
+                setShowConfirmDelete(true);
+            }
+        }
 
         return (
             <>
                 {showArchivedHabits || item.isArchived === 0 ?
-                    // <ReanimatedSwipeable>
+                    <ReanimatedSwipeable
+                    friction={2}
+                    overshootFriction={8}
+                    renderRightActions={RightAction}
+                    renderLeftActions={LeftAction}
+                    onSwipeableWillOpen={handleSwipe}
+                    ref={swipeRef => row[index] = swipeRef}
+                    containerStyle={{ width: "100%", alignSelf: 'center', paddingHorizontal: 10}}
+                    >
                     <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.8}>
                         <View style={styles.headerRow}>
                             <Text style={styles.title}>{item.habitTitle}</Text>
@@ -160,9 +242,6 @@ const Home = () => {
                                 </View> : null
                         }
                         <View style={styles.tagRow}>
-                            <TouchableOpacity onPress={() => handleEdit(item)}>
-                                <Ionicons name="pencil-outline" size={20} color="black"/>
-                            </TouchableOpacity>
                             {item.goalDate ? <View style={styles.tag}><Ionicons name="calendar-outline" size={16}
                                                                                 color="black"/><Text
                                 style={styles.tagText}> {formatDate(item.goalDate)}</Text></View> : null}
@@ -179,7 +258,7 @@ const Home = () => {
                             {/* {percent === 100 && !item.isCompleted && ( */}
                         </View>
                     </TouchableOpacity>
-                    // </ReanimatedSwipeable>
+                    </ReanimatedSwipeable>
                     : null}
             </>
 
@@ -208,9 +287,42 @@ const Home = () => {
         }
     }
 
+    function closeHabits() {
+        console.log('close all habits', row);
+        for(let h of row) {
+            h?.close();
+        }
+        // console.log('current', swipeRef.current);
+        // if (prevOpenedRow && prevOpenedRow !== row[index]) {
+        //     prevOpenedRow.close();
+        // }
+        // prevOpenedRow = row[index];
+        // swipeRef.current?.close();
+    }
+
     return (
         <View style={{flex: 1, backgroundColor: '#DAB7FF', marginTop: -insets.top}}>
             {modalVisible ? <Animated.View style={[styles.overlay, style]}/> : null}
+            {showConfirmDelete && (
+                <View style={styles.confirmOverlay}>
+                    <View style={styles.confirmBox}>
+                        <Text style={styles.confirmText}>Are you sure you want to delete this
+                            habit?{'\n'}All related tasks will be deleted.</Text>
+                        <View style={styles.confirmButtons}>
+                            <TouchableOpacity style={styles.cancelBtn}
+                                              onPress={() => {setShowConfirmDelete(false); console.log('close delete', swipeRef.current); closeHabits();}}><Text
+                                style={styles.cancelText}>Cancel</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.saveBtn} onPress={() => {
+                                console.log('test delete habit', toDeleteHabit?.userHabitId);
+                                if (deleteHabit && toDeleteHabit?.userHabitId) {
+                                    deleteHabit(toDeleteHabit?.userHabitId);
+                                    setShowConfirmDelete(false);
+                                }
+                            }}><Text style={styles.saveText}>Delete</Text></TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            )}
             <SystemBars style={'dark'}/>
               {/*<TouchableOpacity onPress={() => handlePetInteraction()}>*/}
                 <Rive
@@ -265,7 +377,7 @@ const Home = () => {
                 {/*<View style={styles.habitRow}>*/}
                 {/*  <Text style={styles.today}>Today</Text>*/}
                 {/*</View>*/}
-                <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: 12}}>
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: 12, marginHorizontal: 15}}>
                     <View style={{
                         flexDirection: 'row',
                         backgroundColor: '#fff',
@@ -280,7 +392,8 @@ const Home = () => {
                     </View>
                     <TouchableOpacity onPress={() => {
                         console.log("set showArchivedHabits to", !showArchivedHabits);
-                        setShowArchivedHabits(!showArchivedHabits)
+                        Haptics.performAndroidHapticsAsync(AndroidHaptics.Confirm).then(r => setShowArchivedHabits(!showArchivedHabits)
+                        );
                     }} style={{padding: 2, paddingVertical: 8, marginHorizontal: 4, borderRadius: 20}}>
                         {showArchivedHabits ?
                             <Ionicons name='archive' size={20} style={{alignSelf: 'center', paddingHorizontal: 12}}/>
@@ -288,13 +401,13 @@ const Home = () => {
                                         style={{alignSelf: 'center', paddingHorizontal: 12}}/>}
                     </TouchableOpacity>
                 </View>
-                <FlatList style={{paddingBottom: 10, paddingHorizontal: 10, marginHorizontal: -10}}
+                <FlatList style={{paddingBottom: 10, width: "100%", alignSelf: 'center'}}
                           data={filteredHabits}
                           keyExtractor={(item, index) => item.userHabitId ? String(item.userHabitId) : String(index)}
                           renderItem={renderHabit}/>
             </View>
             <ItemModal visible={modalVisible} initialData={editHabit ?? undefined}
-                       onClose={() => setModalVisible(false)} onSave={handleSave} onDelete={deleteHabit}
+                       onClose={() => {setModalVisible(false); closeHabits()}} onSave={handleSave} onDelete={deleteHabit}
                        habitId={habitId}/>
 
         </View>
@@ -338,7 +451,7 @@ const styles = ScaledSheet.create({
         marginBottom: scale(12)
     },
     habitCard: {backgroundColor: '#F6F6F6', borderRadius: scale(16), padding: scale(14), marginBottom: scale(12)},
-    habitContainer: {flex: 1, marginBottom: 80, paddingHorizontal: 15, marginTop: 15},
+    habitContainer: {flex: 1, marginBottom: 80, marginTop: 15},
     habitTitle: {fontSize: "10@s", fontWeight: 'bold', marginBottom: scale(8)},
     habitRow: {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, marginHorizontal: "5@ms"},
     tagsRow: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: scale(6)},
@@ -369,6 +482,25 @@ const styles = ScaledSheet.create({
     },
     tagText: {fontSize: '11@ms', color: '#000', marginLeft: scale(4)},
     today: {fontSize: "18@ms", fontWeight: 'bold', alignSelf: 'center'},
+    confirmOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#00000088',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 5
+    },
+    confirmBox: {backgroundColor: '#fff', padding: 24, borderRadius: 24, width: '80%', alignItems: 'center'},
+    confirmText: {fontSize: 16, color: '#000', marginBottom: 16, textAlign: 'center'},
+    confirmButtons: {flexDirection: 'row', justifyContent: 'space-between', width: '100%'},
+    cancelBtn: {backgroundColor: '#000', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24},
+    cancelText: {fontSize: 20, color: '#dab7ff', fontWeight: 'bold'},
+    saveBtn: {backgroundColor: '#1CC282', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24},
+    saveText: {fontSize: 20, color: '#000', fontWeight: 'bold', marginRight: 5},
+
 });
 
 export default Home;

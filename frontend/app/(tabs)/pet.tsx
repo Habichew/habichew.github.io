@@ -157,7 +157,7 @@ export default function PetScreen(this: any) {
               }
               numColumns={1}
               keyExtractor={(item) => item.unlockScore.toString()}
-              style={{margin: 10}}
+              style={{margin: 10, marginBottom: Dimensions.get('window').height * 0.6}}
           >
           </FlatList>
         </View>

@@ -401,7 +401,7 @@ export default HabitModal;
 const styles = ScaledSheet.create({
     overlay: {flexDirection: 'row', flex: 1, alignItems: 'flex-end', overflow: 'hidden', marginTop: "auto"},
     modal: {backgroundColor: '#dab7ff', borderTopLeftRadius: 24, borderTopRightRadius: 24, position: 'relative'},
-    title: {fontSize: "20@ms", fontWeight: 'bold', marginBottom: 0, width: "100%"},
+    title: {fontSize: "20@ms", fontWeight: 'bold', marginBottom: 0, marginRight: 20},
     input: {
         backgroundColor: '#fff',
         paddingHorizontal: 16,
@@ -443,7 +443,8 @@ const styles = ScaledSheet.create({
         bottom: 0,
         backgroundColor: '#00000088',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: 5
     },
     confirmBox: {backgroundColor: '#fff', padding: 24, borderRadius: 24, width: '80%', alignItems: 'center'},
     confirmText: {fontSize: 16, color: '#000', marginBottom: 16, textAlign: 'center'},

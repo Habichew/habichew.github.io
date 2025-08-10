@@ -13,8 +13,8 @@ export default function CustomDropdown({
                                          value,
                                          setValue,
                                          placeholder,
-                                         zIndex = 1000,
-                                         zIndexInverse = 500,
+                                         zIndex = 2,
+                                         zIndexInverse = 1,
                                          style = {},
                                        }: {
   items: Option[],
