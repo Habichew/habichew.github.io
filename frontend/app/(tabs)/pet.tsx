@@ -12,15 +12,19 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import TopBar from '@/components/bottomBar';
-import { Ionicons } from '@expo/vector-icons';
 import {useUser} from "@/app/context/UserContext";
 import BottomBar from "@/components/bottomBar";
 import {ScaledSheet} from 'react-native-size-matters';
 import {Button} from "@react-navigation/elements";
 import {placeholder} from "@babel/types";
 import Value = Animated.Value;
-import FlipCard from 'react-native-flip-card'
+import FlipCard from 'react-native-flip-card';
 import Postcard from '@/components/ui/Postcard';
+import Carousel, {
+  ICarouselInstance,
+  Pagination,
+} from "react-native-reanimated-carousel";
+import {useSharedValue} from "react-native-reanimated";
 
 export default function PetScreen(this: any) {
   const router = useRouter();
@@ -79,6 +83,10 @@ export default function PetScreen(this: any) {
     loadPet();
     console.log('PetScreen', pet);
   });
+
+  const ref = React.useRef<ICarouselInstance>(null);
+  const width = Dimensions.get("window").width;
+  const progress = useSharedValue<number>(0);
 
   return (
     <View style={styles.container}>
@@ -140,26 +148,61 @@ export default function PetScreen(this: any) {
 
         <View style={styles.postcards}>
           <Text style={styles.postcardsTitle}>Postcards</Text>
-          <FlatList
+          <Carousel
+              ref={ref}
+              width={width - 20}
               data={postCardImgs}
-              renderItem={(item) => (
-                    <FlipCard style={{flexDirection: 'row'}} flipHorizontal={true} flipVertical={false} friction={8} perspective={1000} useNativeDriver={true}>
-                      {/* Face Side */}
-                      <View style={{width: '100%'}}>
-                        <Image style={styles.faceImg} source={item.item.frontUrl} key={"postcard-"+item.index}></Image>
-                      </View>
-                      {/* Back Side */}
-                      <View style={styles.back}>
-                        <Image style={styles.backImg} source={item.item.backUrl} key={"postcard-"+item.index}/>
-                        </View>
-                    </FlipCard>
-                  )
-              }
-              numColumns={1}
-              keyExtractor={(item) => item.unlockScore.toString()}
-              style={{margin: 10, marginBottom: Dimensions.get('window').height * 0.6}}
-          >
-          </FlatList>
+              autoPlayInterval={2000}
+              pagingEnabled={true}
+              snapEnabled={true}
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: 240,
+              }}
+              mode={"vertical-stack"}
+              modeConfig={{
+                snapDirection: "left",
+                stackInterval: 18,
+                opacityInterval: 0
+              }}
+              customConfig={() => ({ type: "positive", viewCount: 5 })}
+              renderItem={({index, item}) => (
+                  <FlipCard style={{flexDirection: 'row'}} flipHorizontal={true} flipVertical={false} friction={8} perspective={1000} useNativeDriver={true}>
+                    {/* Face Side */}
+                    <View style={styles.face}>
+                      <Image style={styles.faceImg} source={item.frontUrl} key={"postcard-"+index}></Image>
+                    </View>
+                    {/* Back Side */}
+                    <View style={styles.back}>
+                      <Image style={styles.backImg} source={item.backUrl} key={"postcard-"+index}/>
+                    </View>
+                  </FlipCard>
+              )}
+              style={{minHeight: "100%", marginBottom: 10, margin: 10, marginHorizontal: 'auto'}}
+              loop={false}
+          />
+          {/*<FlatList*/}
+          {/*    data={postCardImgs}*/}
+          {/*    renderItem={(item) => (*/}
+          {/*          <FlipCard style={{flexDirection: 'row'}} flipHorizontal={true} flipVertical={false} friction={8} perspective={1000} useNativeDriver={true}>*/}
+          {/*            /!* Face Side *!/*/}
+          {/*            <View style={{width: '100%'}}>*/}
+          {/*              <Image style={styles.faceImg} source={item.item.frontUrl} key={"postcard-"+item.index}></Image>*/}
+          {/*            </View>*/}
+          {/*            /!* Back Side *!/*/}
+          {/*            <View style={styles.back}>*/}
+          {/*              <Image style={styles.backImg} source={item.item.backUrl} key={"postcard-"+item.index}/>*/}
+          {/*              </View>*/}
+          {/*          </FlipCard>*/}
+          {/*        )*/}
+          {/*    }*/}
+          {/*    numColumns={1}*/}
+          {/*    keyExtractor={(item) => item.unlockScore.toString()}*/}
+          {/*    style={{margin: 10, marginBottom: Dimensions.get('window').height * 0.6}}*/}
+          {/*>*/}
+          {/*</FlatList>*/}
         </View>
       </View>
     </View>
@@ -296,25 +339,27 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   face: {
-    objectFit: 'cover',
-
+    width: 'auto',
   },
   back: {
-
   },
   faceImg: {
     alignSelf: 'center',
     marginVertical: 8,
     backgroundColor: 'white',
     aspectRatio: 3/2,
-    height: Dimensions.get("window").height * 0.3,
+    height: Dimensions.get("window").height * 0.25,
+    borderWidth: 1,
+    borderColor: '#00000069'
+
   },
   backImg: {
     alignSelf: 'center',
     marginVertical: 8,
     backgroundColor: 'white',
     aspectRatio: 3/2,
-    height: Dimensions.get("window").height * 0.3,
-
+    height: Dimensions.get("window").height * 0.25,
+    borderWidth: 1,
+    borderColor: '#00000069'
   }
 });
