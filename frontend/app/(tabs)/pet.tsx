@@ -159,12 +159,12 @@ export default function PetScreen(this: any) {
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
-                height: 240,
+                paddingTop: 100
               }}
               mode={"vertical-stack"}
               modeConfig={{
                 snapDirection: "left",
-                stackInterval: 18,
+                stackInterval: -35,
                 opacityInterval: 0
               }}
               customConfig={() => ({ type: "positive", viewCount: 5 })}
@@ -180,7 +180,6 @@ export default function PetScreen(this: any) {
                     </View>
                   </FlipCard>
               )}
-              style={{minHeight: "100%", marginBottom: 10, margin: 10, marginHorizontal: 'auto'}}
               loop={false}
           />
           {/*<FlatList*/}
