@@ -17,22 +17,6 @@ export async function getAllUsers(req, res) {
   }
 }
 
-
-export async function signUp(req, res) {
-export async function getAllUsers(req, res) {
-  try {
-    const users = await userService.getAllUsers();
-    if (!users || users.length === 0) {
-      return res.status(404).json({ message: 'No users found.' });
-    }
-    res.status(200).json(users);
-  } catch (err) {
-    console.error('getAllUsers failed:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-}
-
-
 export async function signUp(req, res) {
   try {
     const { username, email, password } = req.body;
