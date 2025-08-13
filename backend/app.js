@@ -63,11 +63,11 @@ const HOST = process.env.HOST || 'localhost'; // Important for Docker
 const testDbConnection = async () => {
   try {
     const conn = await pool.getConnection();
-    console.log('MySQL database connected successfully');
+    console.log('MariaDB database connected successfully');
     // Release the connection to MySQL
     conn.release();
   } catch (err) {
-    console.error('MySQL connection failed:', err.message);
+    console.error('MariaDB connection failed:', err.message);
     // Don't exit in development, retry connection
     if (process.env.NODE_ENV === 'production') {
       process.exit(1);
@@ -135,39 +135,6 @@ app.use("/presets", presetsRouter);
 
 // Moods
 app.use('/moods', moodRouter);
-
-/*
-
-// Pets
-app.use("/pets", petRouter);
-
-// Planets
-app.use("/planets", planetRouter);
-
-// User Habits
-app.use("/userHabits", userHabitRouter);
-
-// Images
-app.get("/uploads/:image", function (req, res) {
-  res.sendFile(path.join(__dirname, "/uploads/", req.params.image)); // find out the filePath based on given fileName
-});*/
-
-/*
-app.post("/create-post", upload.array("postImages", 5), (req, res) => {
-  console.log("req.body", req.body);
-  console.log("req.files", req.files);
-  if (req.file) console.log("req.file", req.file);
-
-  if (req.files ) { // && req.file.path
-    connect((conn) => postController.createPost(conn, req, res));
-    // res.status(200).send(req.files);
-  } else {
-    res
-        .status(400)
-        .send({ error: "no file was uploaded", "request-body": req.body });
-  }
-});
- */
 
 app.listen(PORT, HOST, () => {
   console.log(`Server running at http://${HOST}:${PORT}/`);
