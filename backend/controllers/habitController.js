@@ -70,7 +70,7 @@ export async function createHabitByUser(req, res) {
 export async function updateHabitByUser(req, res) {
     try {
         const { userId, userHabitId } = req.params;
-        const { customTitle, priority, startDate, goalDate, frequency } = req.body;
+        const { customTitle, priority, startDate, goalDate, frequency, isArchived } = req.body;
 
 
         // Basic validation
@@ -82,7 +82,7 @@ export async function updateHabitByUser(req, res) {
             return res.status(400).json({ message: 'Habit Id is required for this user' });
         }
 
-        const habit = await habitService.updateHabitByUser(userId, userHabitId, customTitle, priority, startDate, goalDate, frequency);
+        const habit = await habitService.updateHabitByUser(userId, userHabitId, customTitle, priority, startDate, goalDate, frequency, isArchived);
         res.status(200).json({ message: 'User habit updated successfully' , habit });
     } catch (err) {
         res.status(500).json({ message: 'Failed to update habit', error: err.message });

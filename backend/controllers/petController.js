@@ -80,6 +80,7 @@ export async function updatePet(req, res) {
         // Check if user already has pet
         const {userId} = req.params;
         const userResult = await userService.findUserById(userId);
+        console.log("find user by ID ######", userResult[0]);
 
         if (userResult.length === 0) {
             res.status(404);
@@ -111,7 +112,7 @@ export async function updatePet(req, res) {
         });
     } catch (err) {
         console.error('Create error:', err);
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({message: 'Internal server error', error: err.message});
     }
 }
 

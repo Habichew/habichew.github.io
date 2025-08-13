@@ -5,6 +5,22 @@ import bcrypt from "bcrypt";
 
 export async function getAllUsers(req, res) {
   try {
+    console.log("###### /users: Getting all users ######");
+    const users = await userService.getAllUsers();
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No users found.' });
+    }
+    res.status(200).json(users);
+  } catch (err) {
+    console.error('getAllUsers failed:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+
+export async function signUp(req, res) {
+export async function getAllUsers(req, res) {
+  try {
     const users = await userService.getAllUsers();
     if (!users || users.length === 0) {
       return res.status(404).json({ message: 'No users found.' });

@@ -1,0 +1,45 @@
+Mannat
+- iconography 
+- mockup
+- write document framework for user testing (internally)
+- write document 
+
+next sprint:
+- user testing
+- will be back in dublin
+- support graphics + development w/ meetings
+
+Yang
+- focus on backend and database
+- postcards design
+- tasks done
+- deployment done
+- linux server
+- preset task system, same as habit
+
+Martin 
+- moved to frontend, after deciding that slm was not performance w/ Yang's help
+- helped with UI for insights screen
+- general UI revisions, contacted Mannat
+- set up deployment pipeline for frontend
+- set up website on github pages
+- tested rive animation integration on android w/ Wendis help
+- implementing insights module
+
+Issy 
+- preset tasks implemented
+- implemented all api to backend
+- problems left to fix: datepicker, search
+
+Wendi
+- banner design
+- animations
+	- default, waiting, half of eating
+- finished intro story illustration
+- refine illustration and banner
+- work on rive animation
+
+- backend deployment (done in one day)
+- user testing w/ mannat and martin
+- prints w/ yang and mannat; postcards
+- frontend implementation

@@ -80,7 +80,7 @@ export async function createHabitByUser(userId, habitId, customTitle, priority, 
 
 }
 
-export async function updateHabitByUser(userId, userHabitId, customTitle, priority, startDate, goalDate,frequency){
+export async function updateHabitByUser(userId, userHabitId, customTitle, priority, startDate, goalDate,frequency, isArchived){
 
   const [[existing]] = await pool.query(`
     SELECT startDate, goalDate
@@ -112,9 +112,10 @@ export async function updateHabitByUser(userId, userHabitId, customTitle, priori
       priority = COALESCE(?, priority),
       startDate = COALESCE(?, startDate),
       goalDate = COALESCE(?, goalDate),
-      frequency = COALESCE(?, frequency)
+      frequency = COALESCE(?, frequency),
+      isArchived = COALESCE(?, isArchived)
   WHERE id = ? AND userId = ?`,
-    [customTitle, priority, startDate, goalDate, frequency, userHabitId, userId]
+    [customTitle, priority, startDate, goalDate, frequency, isArchived, userHabitId, userId]
   );
 
   // Return inserted record
