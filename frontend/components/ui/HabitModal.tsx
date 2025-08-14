@@ -212,14 +212,19 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
         );
     };
 
+    const flatListRef = useRef(null);
+
+
     return (
         <Modal onRequestClose={() => {
             onClose();
-            setGeneratedTasks([])
+            setGeneratedTasks([]);
+            setFormData({habitTitle: '', goalDate: '', priority: '', frequency: ''});
         }} visible={visible} transparent animationType="slide">
             <TouchableOpacity activeOpacity={1} style={styles.overlay} onPressOut={() => {
                 onClose();
                 setGeneratedTasks([]);
+                setFormData({habitTitle: '', goalDate: '', priority: '', frequency: ''});
             }}>
                 <View
                 >
@@ -230,7 +235,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                 <View style={styles.modalHeader}>
                                     <View style={styles.titleRow}>
                                         <TextInput ref={inputRef} autoFocus={true} placeholder="Habit title"
-                                                   placeholderTextColor="#1C1A1F" style={styles.title}
+                                                   placeholderTextColor="#5E5E5E" style={[styles.title,{fontWeight: formData.habitTitle ? 'bold' : 'normal'}]}
                                                    value={formData.habitTitle}
                                                    onChangeText={text => setFormData({...formData, habitTitle: text})}/>
                                         {/*<TextInput ref={inputRef} autoFocus={true} placeholder="Habit description"*/}
@@ -341,6 +346,8 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                     </>
                                                 ) :
                                                 (<FlatList data={generatedTasks} keyExtractor={(item, index) => index}
+                                                           onContentSizeChange={() => flatListRef?.current.scrollToEnd({ animated: true })}
+                                                           ref={flatListRef}
                                                            renderItem={({
                                                                             item,
                                                                             index,
