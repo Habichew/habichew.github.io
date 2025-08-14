@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Platform,
+  Platform, TouchableWithoutFeedback,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -151,8 +151,11 @@ export default function TaskModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.overlay}>
+    <Modal visible={visible} transparent animationType="slide">
+      <TouchableOpacity activeOpacity={1} style={styles.overlay} onPressOut={() => {
+        onClose();
+      }}>
+        <TouchableWithoutFeedback>
         <View style={styles.container}>
           <View style={styles.rowEnd}>
             {task && (
@@ -210,7 +213,8 @@ export default function TaskModal({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </TouchableOpacity>
     </Modal>
   );
 }

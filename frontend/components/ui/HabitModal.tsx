@@ -4,13 +4,12 @@ import {
     Text,
     TextInput,
     Modal,
-    StyleSheet,
     Platform,
     FlatList,
     ActivityIndicator,
     TouchableWithoutFeedback,
     TouchableOpacity,
-    ScrollView, Dimensions
+    Dimensions
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -18,8 +17,6 @@ import CustomDropdown from './select';
 import {webDateInputWrapper, webDateInput} from './webDateStyles';
 import {useFocusEffect} from "@react-navigation/native";
 import {ScaledSheet} from "react-native-size-matters";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
     SharedValue,
     useAnimatedStyle,
@@ -138,7 +135,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
             ]
         });
 
-        const requestOptions = {
+        const requestOptions: RequestInit = {
             method: "POST",
             headers: myHeaders,
             body: raw,
@@ -221,7 +218,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
         }} visible={visible} transparent animationType="slide">
             <TouchableOpacity activeOpacity={1} style={styles.overlay} onPressOut={() => {
                 onClose();
-                setGeneratedTasks([])
+                setGeneratedTasks([]);
             }}>
                 <View
                 >

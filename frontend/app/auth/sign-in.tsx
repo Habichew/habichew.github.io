@@ -1,10 +1,10 @@
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
 import {useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomInput from '@/components/ui/input';
 import { useUser } from '../context/UserContext';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -15,39 +15,39 @@ export default function SignInScreen() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    async function login () {
-      const response = await fetch(process.env.EXPO_PUBLIC_BACKEND_URL +'/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-      console.log(data);
-
-      if (response.ok) {
-        const loggedInUser = data[0];
-        setUser(loggedInUser);//save user data for global use
-        console.log("check signed in user", loggedInUser.email);
-        // alert('Sign in successful!');
-        // AsyncStorage.setItem('userId', loggedInUser.id);
-        router.replace('../(tabs)/home');
-      } else {
-        Alert.alert('Login Failed', data.message || 'Invalid credentials');
-      }
-    }
-
-    async function tryCachedUserLogin() {
-      const cachedUser = await AsyncStorage.getItem('user');
-      if (cachedUser !== null) {
-        console.log('logging in with cached user', cachedUser);
-        await login();
-      }
-    }
-
-    tryCachedUserLogin();
+    // async function login () {
+    //   const response = await fetch(process.env.EXPO_PUBLIC_BACKEND_URL +'/users/login', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({ email, password }),
+    //   });
+    //
+    //   const data = await response.json();
+    //   console.log(data);
+    //
+    //   if (response.ok) {
+    //     const loggedInUser = data[0];
+    //     setUser(loggedInUser);//save user data for global use
+    //     console.log("check signed in user", loggedInUser.email);
+    //     // alert('Sign in successful!');
+    //     // AsyncStorage.setItem('userId', loggedInUser.id);
+    //     router.replace('../(tabs)/home');
+    //   } else {
+    //     Alert.alert('Login Failed', data.message || 'Invalid credentials');
+    //   }
+    // }
+    //
+    // async function tryCachedUserLogin() {
+    //   const cachedUser = await AsyncStorage.getItem('user');
+    //   if (cachedUser !== null) {
+    //     console.log('logging in with cached user', cachedUser);
+    //     await login();
+    //   }
+    // }
+    //
+    // tryCachedUserLogin();
 
   }, []);
 
@@ -55,7 +55,8 @@ const handleSignIn = async () => {
   // router.replace('../(tabs)/home');
   if (email && password) {
     try {
-      setLoading(true)
+      setLoading(true);
+      console.log("signing in", process.env.EXPO_PUBLIC_BACKEND_URL);
       const response = await fetch(process.env.EXPO_PUBLIC_BACKEND_URL +'/users/login', {
         method: 'POST',
         headers: {
@@ -70,9 +71,9 @@ const handleSignIn = async () => {
       if (response.ok) {
         const loggedInUser = data[0];
         setUser(loggedInUser);//save user data for global use
-        console.log("check signed in user", loggedInUser.email);
+        console.log("check signed in user", loggedInUser.email );
         // alert('Sign in successful!');
-        AsyncStorage.setItem('user', loggedInUser);
+        // AsyncStorage.setItem('user', loggedInUser);
         router.replace('../(tabs)/home');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');

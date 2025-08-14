@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, FlatList, Image, Text, TextInput, TouchableOpacity, Vibration, View} from 'react-native';
+import {Dimensions, FlatList, Image, Pressable, Text, TextInput, TouchableOpacity, Vibration, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {Habit, Task, useUser} from '../context/UserContext';
@@ -104,6 +104,10 @@ const Home = () => {
         router.push({pathname: './tasks', params: {habitId: habit.userHabitId, habitName: habit.habitTitle}});
     };
 
+    const handleSelectHabit = (habit: any) => {
+
+    };
+
     //Add animation here
     const handleTickHabit = async (habit: Habit) => {
         if (!habit.userHabitId) return;
@@ -140,124 +144,128 @@ const Home = () => {
         // console.log("percent", progressMap?.[item.userHabitId]);
         console.log('habit', index);
 
-        function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
-            const styleAnimation = useAnimatedStyle(() => {
-
-                return {
-                    transform: [{ translateX: 0 }],
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 90,
-                    borderRadius: 20,
-                    backgroundColor: 'black',
-                    marginRight: 10,
-                    paddingRight: 10,
-                    paddingLeft: 40,
-                    marginLeft: -50,
-                    marginBottom: 12
-                };
-            });
-
-            return (
-                <Animated.View style={styleAnimation}>
-                    <TouchableOpacity>
-                        <Ionicons name="pencil-outline" size={20} color="#F8F0F0"/>
-                    </TouchableOpacity>
-                </Animated.View>
-            );
-        }
+        // function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+        //     const styleAnimation = useAnimatedStyle(() => {
+        //
+        //         return {
+        //             transform: [{ translateX: 0 }],
+        //             alignItems: 'center',
+        //             justifyContent: 'center',
+        //             width: 90,
+        //             borderRadius: 20,
+        //             backgroundColor: 'black',
+        //             marginRight: 10,
+        //             paddingRight: 10,
+        //             paddingLeft: 40,
+        //             marginLeft: -50,
+        //             marginBottom: 12
+        //         };
+        //     });
+        //
+        //     return (
+        //         <Animated.View style={styleAnimation}>
+        //             <TouchableOpacity>
+        //                 <Ionicons name="pencil-outline" size={20} color="#F8F0F0"/>
+        //             </TouchableOpacity>
+        //         </Animated.View>
+        //     );
+        // }
 
         function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
             const styleAnimation = useAnimatedStyle(() => {
                 // console.log('showLeftProgress:', prog.value);
                 // console.log('appliedTranslation:', drag.value);
+                // console.log('click', prog.value < 0.5 ? 10 : 0);
 
                 return {
                     transform: [{ translateX: 0 }],
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'center',
-                    width: 90,
+                    backgroundColor: '#1CC282',
+                    width: screenWidth - (prog.value < 0.045 ? 20 : 0),
                     marginLeft: 10,
-                    backgroundColor: 'black',
-                    borderRadius: 20,
-                    paddingLeft: 10,
-                    paddingRight: 40,
-                    marginRight: -50,
-                    marginBottom: 12
+                    borderRadius: 16,
+                    paddingLeft: 20
                 };
             });
 
             return (
                 <Animated.View style={styleAnimation}>
-                    <Ionicons name="trash-outline" size={20} color="#F8F0F0"/>
+                    <Ionicons name="checkmark-done-outline" size={24} color="black"/>
                 </Animated.View>
             );
         }
 
         function handleSwipe( direction: any) {
             if (direction === 'left') {
-                handleEdit(item);
+                // handleEdit(item);
+                handleTickHabit(item);
             } else if (direction === 'right') {
-                handleShowConfirmDelete(item);
-                setShowConfirmDelete(true);
+                // handleShowConfirmDelete(item);
+                // setShowConfirmDelete(true);
+                handleTickHabit(item);
             }
         }
 
         return (
             <>
-                {showArchivedHabits || item.isArchived === 0 ?
+                {(showArchivedHabits && item.isArchived) || (!showArchivedHabits && item.isArchived === 0) ?
                     <ReanimatedSwipeable
                     friction={2}
                     overshootFriction={8}
-                    renderRightActions={RightAction}
-                    renderLeftActions={LeftAction}
+                    leftThreshold={screenWidth*0.3}
+                    // renderRightActions={RightAction}
+                    renderLeftActions={!item.isArchived ? LeftAction : null}
                     onSwipeableWillOpen={handleSwipe}
                     ref={swipeRef => row[index] = swipeRef}
-                    containerStyle={{ width: "100%", alignSelf: 'center', paddingHorizontal: 10}}
+                    containerStyle={{ width: "100%", alignSelf: 'center', marginBottom: 12}}
                     >
-                    <TouchableOpacity style={styles.card} onPress={() => handlePressHabit(item)} activeOpacity={0.8}>
-                        <View style={styles.headerRow}>
-                            <Text style={styles.title}>{item.habitTitle}</Text>
-                            {progressMap?.[item.userHabitId] || progressMap?.[item.userHabitId] === 0 ? (
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={{
-                                        marginLeft: 'auto',
-                                        marginVertical: 'auto',
-                                        marginRight: 5
-                                    }}>{percent + '%'}</Text>
-                                    {percent === 100 &&
-                                        <TouchableOpacity disabled={!!item.isArchived}
-                                                          onPress={() => handleTickHabit(item)}>
-                                            <Ionicons
-                                                name={!item.isArchived ? "ellipse-outline" : "checkmark-circle-outline"}
-                                                size={28} color="#1CC282"/>
-                                        </TouchableOpacity>}
+                        <View style={{borderRadius: 16, backgroundColor: 'white', zIndex: 3, marginHorizontal: 10}}>
+                            <Pressable style={styles.card} onPress={() => handlePressHabit(item)} onLongPress={() => handleEdit(item)} android_ripple={{color: '#00000010', borderless: true, radius: 300}}>
+                                <View style={styles.headerRow}>
+                                    <Text style={styles.title}>{item.habitTitle}</Text>
+                                    {progressMap?.[item.userHabitId] || progressMap?.[item.userHabitId] === 0 ? (
+                                        <View style={{flexDirection: 'row'}}>
+                                            <Text style={{
+                                                marginLeft: 'auto',
+                                                marginVertical: 'auto',
+                                                marginRight: 5
+                                            }}>{percent + '%'}</Text>
+                                            {percent === 100 &&
+                                                <TouchableOpacity disabled={!!item.isArchived}
+                                                                  onPress={() => handleTickHabit(item)}>
+                                                    <Ionicons
+                                                        name={!item.isArchived ? "ellipse-outline" : "checkmark-circle-outline"}
+                                                        size={28} color="#1CC282"/>
+                                                </TouchableOpacity>}
+                                        </View>
+                                    ) : null}
                                 </View>
-                            ) : null}
+                                {
+                                    progressMap?.[item.userHabitId] || progressMap?.[item.userHabitId] === 0 ?
+                                        <View style={styles.progressBarBackground}>
+                                            <View style={[styles.progressBarFill, {width: `${percent}%`}]}/>
+                                        </View> : null
+                                }
+                                <View style={styles.tagRow}>
+                                    {item.goalDate ? <View style={styles.tag}><Ionicons name="calendar-outline" size={16}
+                                                                                        color="black"/><Text
+                                        style={styles.tagText}> {formatDate(item.goalDate)}</Text></View> : null}
+                                    {item.priority ?
+                                        <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black"/><Text
+                                            style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View> : null}
+                                    {item.frequency ?
+                                        <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black"/>
+                                            <Text
+                                                style={[styles.tagText, !item.frequency && {color: '#000'}]}>{item.frequency || 'Frequency'}</Text>
+                                        </View> : null}
+                                    {/* Add a ticking box here */}
+                                    {/* Add completed field in the backend */}
+                                    {/* {percent === 100 && !item.isCompleted && ( */}
+                                </View>
+                            </Pressable>
                         </View>
-                        {
-                            progressMap?.[item.userHabitId] || progressMap?.[item.userHabitId] === 0 ?
-                                <View style={styles.progressBarBackground}>
-                                    <View style={[styles.progressBarFill, {width: `${percent}%`}]}/>
-                                </View> : null
-                        }
-                        <View style={styles.tagRow}>
-                            {item.goalDate ? <View style={styles.tag}><Ionicons name="calendar-outline" size={16}
-                                                                                color="black"/><Text
-                                style={styles.tagText}> {formatDate(item.goalDate)}</Text></View> : null}
-                            {item.priority ?
-                                <View style={styles.tag}><Ionicons name="flag-outline" size={16} color="black"/><Text
-                                    style={styles.tagText}> {getPriorityLabel(item.priority)}</Text></View> : null}
-                            {item.frequency ?
-                                <View style={styles.tag}><Ionicons name="time-outline" size={16} color="black"/>
-                                    <Text
-                                        style={[styles.tagText, !item.frequency && {color: '#000'}]}>{item.frequency || 'Frequency'}</Text>
-                                </View> : null}
-                            {/* Add a ticking box here */}
-                            {/* Add completed field in the backend */}
-                            {/* {percent === 100 && !item.isCompleted && ( */}
-                        </View>
-                    </TouchableOpacity>
+
                     </ReanimatedSwipeable>
                     : null}
             </>
@@ -306,7 +314,7 @@ const Home = () => {
             {showConfirmDelete && (
                 <View style={styles.confirmOverlay}>
                     <View style={styles.confirmBox}>
-                        <Text style={styles.confirmText}>Are you sure you want to delete this
+                        <Text style={styles.confirmText}>Areasda you sure you want to delete this
                             habit?{'\n'}All related tasks will be deleted.</Text>
                         <View style={styles.confirmButtons}>
                             <TouchableOpacity style={styles.cancelBtn}
@@ -456,7 +464,7 @@ const styles = ScaledSheet.create({
     habitRow: {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, marginHorizontal: "5@ms"},
     tagsRow: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: scale(6)},
     editIcon: {fontSize: scale(16), marginLeft: scale(6)},
-    card: {backgroundColor: '#ffffff', borderRadius: 16, padding: 16, marginBottom: 12, width: '100%'},
+    card: {padding: 16, width: '100%'},
     headerRow: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
     title: {fontSize: '15@ms', fontWeight: 'bold', color: '#111'},
     pet: {width: '100%', borderRadius: 20, backgroundColor: 'white', overflow: 'hidden'},

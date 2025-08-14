@@ -101,7 +101,7 @@ export default function Tasks() {
       ]
     });
 
-    const requestOptions = {
+    const requestOptions: RequestInit = {
       method: "POST",
       headers: myHeaders,
       body: raw,
