@@ -21,6 +21,7 @@ import Reanimated, {
     SharedValue,
     useAnimatedStyle,
 } from 'react-native-reanimated';
+import {Button} from "@react-navigation/elements";
 
 type Props = {
     visible: boolean;
@@ -350,18 +351,19 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                     }
                                     <View style={styles.buttons}>
                                         {/*<TouchableOpacity style={styles.cancelBtn} onPress={() => {onClose(); setGeneratedTasks([])}}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>*/}
-                                        <TouchableOpacity onPress={handleSave} style={{
+                                        <Button onPress={handleSave} disabled={!formData.habitTitle} style={{
                                             flexDirection: 'row',
                                             alignItems: 'center',
                                             borderWidth: 1,
-                                            padding: 10,
-                                            borderRadius: 24
+                                            padding: 30,
+                                            borderRadius: 24,
+                                            backgroundColor: 'transparent'
                                         }}>
                                             <Text
                                                 style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>
                                             <Ionicons name="return-down-forward-outline" size={24} color="#555"
                                                       style={{marginTop: 4}}/>
-                                        </TouchableOpacity>
+                                        </Button>
                                     </View>
                                 </View>
                                 {showConfirmDelete && (
@@ -422,7 +424,7 @@ const styles = ScaledSheet.create({
     cancelBtn: {backgroundColor: '#000', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24},
     cancelText: {fontSize: 20, color: '#dab7ff', fontWeight: 'bold'},
     saveBtn: {backgroundColor: '#1CC282', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24},
-    saveText: {fontSize: 20, color: '#000', fontWeight: 'bold', marginRight: 5},
+    saveText: {fontSize: 20, color: '#000', fontWeight: 'bold', marginRight: 5, marginVertical: 10},
     generateTextBtn: {
         backgroundColor: '#1CC282',
         paddingHorizontal: 16,
@@ -460,5 +462,5 @@ const styles = ScaledSheet.create({
     },
     description: {fontWeight: 'normal', fontSize: "13@ms"},
     modalHeader: {padding: 24, paddingBottom: 12},
-    modalBody: {padding: 24, paddingTop: 12, borderTopWidth: 1}
+    modalBody: {padding: 24, paddingTop: 12, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor:'white'}
 });
