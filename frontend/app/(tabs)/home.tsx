@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, FlatList, Image, Pressable, Text, TextInput, TouchableOpacity, Vibration, View} from 'react-native';
+import {Dimensions, FlatList, Image, Pressable, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {Habit, Task, useUser} from '../context/UserContext';
@@ -12,8 +12,6 @@ import Animated, {Easing, SharedValue, useAnimatedStyle, withTiming,} from 'reac
 import ReanimatedSwipeable from "react-native-gesture-handler/src/components/ReanimatedSwipeable";
 import * as Haptics from 'expo-haptics';
 import {AndroidHaptics} from 'expo-haptics';
-import {SwipeDirectionTypes} from "react-native-screens";
-import {SwipeableRef} from "react-native-gesture-handler/ReanimatedSwipeable";
 
 const screenWidth = Dimensions.get('window').width;
 const scale = (value: number) => (screenWidth / 375) * value;
@@ -197,6 +195,8 @@ const Home = () => {
         }
 
         function handleSwipe( direction: any) {
+            console.log("vibrate");
+            Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_Start);
             if (direction === 'left') {
                 // handleEdit(item);
                 handleTickHabit(item);
@@ -209,7 +209,7 @@ const Home = () => {
 
         return (
             <>
-                {(showArchivedHabits && item.isArchived) || (!showArchivedHabits && item.isArchived === 0) ?
+                {(showArchivedHabits && item.isArchived) || (!showArchivedHabits && ((item.isArchived === 0) || item.isArchived == null)) ?
                     <ReanimatedSwipeable
                     friction={2}
                     overshootFriction={8}
@@ -217,11 +217,12 @@ const Home = () => {
                     // renderRightActions={RightAction}
                     renderLeftActions={!item.isArchived ? LeftAction : null}
                     onSwipeableWillOpen={handleSwipe}
+                    onSwipeableOpenStartDrag={() => Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_End)}
                     ref={swipeRef => row[index] = swipeRef}
                     containerStyle={{ width: "100%", alignSelf: 'center', marginBottom: 12}}
                     >
                         <View style={{borderRadius: 16, backgroundColor: 'white', zIndex: 3, marginHorizontal: 10}}>
-                            <Pressable style={styles.card} onPress={() => handlePressHabit(item)} onLongPress={() => handleEdit(item)} android_ripple={{color: '#00000010', borderless: true, radius: 300}}>
+                            <Pressable style={styles.card} onPress={() => handlePressHabit(item)} onLongPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); handleEdit(item);}} android_ripple={{color: '#00000010', borderless: true, radius: 300}}>
                                 <View style={styles.headerRow}>
                                     <Text style={styles.title}>{item.habitTitle}</Text>
                                     {progressMap?.[item.userHabitId] || progressMap?.[item.userHabitId] === 0 ? (
@@ -400,7 +401,7 @@ const Home = () => {
                     </View>
                     <TouchableOpacity onPress={() => {
                         console.log("set showArchivedHabits to", !showArchivedHabits);
-                        Haptics.performAndroidHapticsAsync(AndroidHaptics.Confirm).then(r => setShowArchivedHabits(!showArchivedHabits)
+                        Haptics.performAndroidHapticsAsync(showArchivedHabits ? AndroidHaptics.Toggle_On : AndroidHaptics.Toggle_Off).then(r => setShowArchivedHabits(!showArchivedHabits)
                         );
                     }} style={{padding: 2, paddingVertical: 8, marginHorizontal: 4, borderRadius: 20}}>
                         {showArchivedHabits ?
