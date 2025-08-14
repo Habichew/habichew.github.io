@@ -52,7 +52,7 @@ export default function SignInScreen() {
   }, []);
 
 const handleSignIn = async () => {
-  // router.replace('../(tabs)/home');
+   router.replace('../(tabs)/home');
   if (email && password) {
     try {
       setLoading(true);

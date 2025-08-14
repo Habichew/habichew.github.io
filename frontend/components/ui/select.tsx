@@ -79,7 +79,7 @@ const styles = ScaledSheet.create({
   },
   text: {
     fontSize: "13@ms",
-      fontWeight: "normal",
+      fontWeight: "bold",
     color: '#000',
   },
   placeholder: {

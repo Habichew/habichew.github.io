@@ -182,6 +182,40 @@ export default function PetScreen(this: any) {
               )}
               loop={false}
           />
+          <Carousel
+              ref={ref}
+              width={width - 20}
+              data={postCardImgs}
+              autoPlayInterval={2000}
+              pagingEnabled={true}
+              snapEnabled={true}
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                paddingTop: 100
+              }}
+              mode={"vertical-stack"}
+              modeConfig={{
+                snapDirection: "left",
+                stackInterval: -35,
+                opacityInterval: 0
+              }}
+              customConfig={() => ({ type: "positive", viewCount: 5 })}
+              renderItem={({index, item}) => (
+                  <FlipCard style={{flexDirection: 'row'}} flipHorizontal={true} flipVertical={false} friction={8} perspective={1000} useNativeDriver={true}>
+                    {/* Face Side */}
+                    <View style={styles.face}>
+                      <Image style={styles.faceImg} source={item.frontUrl} key={"postcard-"+index}></Image>
+                    </View>
+                    {/* Back Side */}
+                    <View style={styles.back}>
+                      <Image style={styles.backImg} source={item.backUrl} key={"postcard-"+index}/>
+                    </View>
+                  </FlipCard>
+              )}
+              loop={false}
+          />
           {/*<FlatList*/}
           {/*    data={postCardImgs}*/}
           {/*    renderItem={(item) => (*/}

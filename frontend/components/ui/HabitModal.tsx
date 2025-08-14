@@ -275,7 +275,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                 }]} onPress={() => setShowDatePicker(true)}>
                                                     <Ionicons name="calendar-outline" size={24} color="#555"
                                                               style={{marginRight: 5}}/>
-                                                    <Text>{formData.goalDate ? new Date(formData.goalDate).toLocaleDateString() : 'Due Date'}</Text></TouchableOpacity>
+                                                    <Text style={{ fontWeight: formData.goalDate ? 'bold' : 'normal'}}>{formData.goalDate ? new Date(formData.goalDate).toLocaleDateString() : 'Due Date'}</Text></TouchableOpacity>
                                                 {showDatePicker && (
                                                     <DateTimePicker
                                                         value={formData.goalDate ? new Date(formData.goalDate) : new Date()}
@@ -334,7 +334,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                     <>
                                                         <Text style={{marginHorizontal: "auto", marginVertical: 20}}>No
                                                             tasks created.</Text>
-                                                        <TouchableOpacity style={styles.generateTextBtn}
+                                                        <TouchableOpacity disabled={!formData.habitTitle} style={[styles.generateTextBtn, {backgroundColor: !formData.habitTitle ? '#1CC28290' : '#1CC282'}]}
                                                                           onPress={handleGenerateTasks}><Text
                                                             style={styles.generateText}>Generate
                                                             Tasks</Text></TouchableOpacity>
@@ -349,22 +349,22 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                            style={{maxHeight: windowHeight / 3}}></FlatList>)
                                         )
                                     }
-                                    <View style={styles.buttons}>
-                                        {/*<TouchableOpacity style={styles.cancelBtn} onPress={() => {onClose(); setGeneratedTasks([])}}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>*/}
-                                        <Button onPress={handleSave} disabled={!formData.habitTitle} style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            borderWidth: 1,
-                                            padding: 30,
-                                            borderRadius: 24,
-                                            backgroundColor: 'transparent'
-                                        }}>
-                                            <Text
-                                                style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>
-                                            <Ionicons name="return-down-forward-outline" size={24} color="#555"
-                                                      style={{marginTop: 4}}/>
-                                        </Button>
-                                    </View>
+                                    {/*<TouchableOpacity style={styles.cancelBtn} onPress={() => {onClose(); setGeneratedTasks([])}}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>*/}
+                                    <Button onPress={handleSave} disabled={!formData.habitTitle} style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderWidth: 1,
+                                        padding: 30,
+                                        borderRadius: 24,
+                                        backgroundColor: 'transparent',
+                                        marginLeft: 'auto'
+                                    }}>
+                                        <Text
+                                            style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>
+                                        <Ionicons name="return-down-forward-outline" size={24} color="#555"
+                                                  style={{marginTop: 10, }}/>
+                                    </Button>
                                 </View>
                                 {showConfirmDelete && (
                                     <View style={styles.confirmOverlay}>
@@ -462,5 +462,5 @@ const styles = ScaledSheet.create({
     },
     description: {fontWeight: 'normal', fontSize: "13@ms"},
     modalHeader: {padding: 24, paddingBottom: 12},
-    modalBody: {padding: 24, paddingTop: 12, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor:'white'}
+    modalBody: {padding: 24, paddingTop: 12, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor:'#F8F0F0'}
 });

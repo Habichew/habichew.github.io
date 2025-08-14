@@ -48,9 +48,9 @@ const Home = () => {
 
     useEffect(() => {
         if (user) {
-            setRefreshing(true);
             loadHabits();
             loadTasks();
+            setRefreshing(true);
             console.log("user", user);
             const ONE_MINUTE = 60 * 1000;
 
@@ -66,12 +66,10 @@ const Home = () => {
         ;
     }, [user]);
     useEffect(() => {
-        setFilteredHabits(habits.filter(h => showArchivedHabits && h.isArchived));
-        const newHabits = habits.filter(h => h.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase()) && ((showArchivedHabits && h.isArchived) || !showArchivedHabits && !h.isArchived));
+        const newHabits = habits.filter(h => h.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase()));
         // console.log("newHabits", newHabits);
         setFilteredHabits(newHabits);
-        console.log('showing habits', newHabits);
-    }, [searchTerm, showArchivedHabits, habits]);
+    }, [searchTerm, habits]);
 
     const handleAdd = () => {
         setEditHabit(null);
@@ -146,7 +144,7 @@ const Home = () => {
         const percent = progressMap?.[item.userHabitId] ?? 0;
         // console.log("percent", progressMap?.[item.userHabitId]);
         // console.log('filtered test habits', filteredHabits);
-        console.log('habit', index, 'show archived habits', showArchivedHabits, 'item archived', item.isArchived);
+        // console.log('habit', index, 'show archived habits', showArchivedHabits, 'item archived', item.isArchived);
 
         // function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
         //     const styleAnimation = useAnimatedStyle(() => {
@@ -217,6 +215,7 @@ const Home = () => {
 
         return (
             <>
+                {(showArchivedHabits && item.isArchived) || (!showArchivedHabits && ((item.isArchived === 0) || item.isArchived === null)) ?
                     <ReanimatedSwipeable
                     friction={2}
                     overshootFriction={8}
@@ -275,6 +274,7 @@ const Home = () => {
                         </View>
 
                     </ReanimatedSwipeable>
+                    : null}
             </>
 
         );
@@ -407,7 +407,6 @@ const Home = () => {
                     </View>
                     <TouchableOpacity onPress={() => {
                         console.log("set showArchivedHabits to", !showArchivedHabits);
-                        setFilteredHabits(filteredHabits.filter(h => showArchivedHabits ? h.isArchived : (!h.isArchived || false)));
                         Haptics.performAndroidHapticsAsync(showArchivedHabits ? AndroidHaptics.Toggle_On : AndroidHaptics.Toggle_Off).then(r => setShowArchivedHabits(!showArchivedHabits)
                         );
                     }} style={{padding: 2, paddingVertical: 8, marginHorizontal: 4, borderRadius: 20}}>
@@ -418,6 +417,7 @@ const Home = () => {
                     </TouchableOpacity>
                 </View>
                 <FlatList style={{paddingBottom: 10, width: "100%", alignSelf: 'center'}}
+                          initialNumToRender={50}
                           data={filteredHabits}
                           refreshControl={
                               <RefreshControl refreshing={refreshing} onRefresh={async () => { console.log("refresh"); await loadHabits()}} />
