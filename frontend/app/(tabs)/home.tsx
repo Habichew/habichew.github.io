@@ -340,51 +340,51 @@ const Home = () => {
             )}
             <SystemBars style={'dark'}/>
               {/*<TouchableOpacity onPress={() => handlePetInteraction()}>*/}
-                <Rive
-                    artboardName={'Pet'}
-                    resourceName='pet'
-                    fit={Fit.FitWidth}
-                    ref={riveRef}
-                    stateMachineName={"State Machine 1"}
-                    style={styles.pet}
-                >
-                  <TouchableOpacity onPress={handlePetInteraction} style={{width: "100%", height: "100%", zIndex: 1}} activeOpacity={0.8}>
-                    <View style={{
-                      marginTop: "auto",
-                      flexDirection: "row",
-                      justifyContent: 'space-between',
-                      flexShrink: "auto",
-                      marginHorizontal: 20,
-                      height: "auto"
-                    }}>
-                      <TouchableOpacity activeOpacity={0.8}
-                                        style={{marginBottom: 20, maxWidth: 125, zIndex: 2, flex: 1}}>
-                        <Text onPress={handleAdd} style={{
-                          textAlign: "center",
-                          backgroundColor: '#1CC282',
-                          zIndex: 1,
-                          padding: 10,
-                          borderRadius: 20,
-                          fontSize: 16,
-                          fontWeight: 'bold',
-                          color: '#000',
-                          bottom: 15,
-                          fontFamily: "Poppins",
-                          marginBottom: -15,
-                          width: "100%"
-                        }}>Add Habit</Text>
-                      </TouchableOpacity>
-                      <View style={{flexDirection: "row", marginTop: -10, marginRight: 10, zIndex: 1}}>
-                        <Image style={{}} source={require('@/assets/images/credit.png')}/>
-                        <Text style={{
-                          margin: 3,
-                          fontFamily: "Poppins",
-                          fontSize: 20
-                        }}>{user?.credits ? user.credits : 0}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                </Rive>
+              {/*  <Rive*/}
+              {/*      artboardName={'Pet'}*/}
+              {/*      resourceName='pet'*/}
+              {/*      fit={Fit.FitWidth}*/}
+              {/*      ref={riveRef}*/}
+              {/*      stateMachineName={"State Machine 1"}*/}
+              {/*      style={styles.pet}*/}
+              {/*  >*/}
+              {/*    <TouchableOpacity onPress={handlePetInteraction} style={{width: "100%", height: "100%", zIndex: 1}} activeOpacity={0.8}>*/}
+              {/*      <View style={{*/}
+              {/*        marginTop: "auto",*/}
+              {/*        flexDirection: "row",*/}
+              {/*        justifyContent: 'space-between',*/}
+              {/*        flexShrink: "auto",*/}
+              {/*        marginHorizontal: 20,*/}
+              {/*        height: "auto"*/}
+              {/*      }}>*/}
+              {/*        <TouchableOpacity activeOpacity={0.8}*/}
+              {/*                          style={{marginBottom: 20, maxWidth: 125, zIndex: 2, flex: 1}}>*/}
+              {/*          <Text onPress={handleAdd} style={{*/}
+              {/*            textAlign: "center",*/}
+              {/*            backgroundColor: '#1CC282',*/}
+              {/*            zIndex: 1,*/}
+              {/*            padding: 10,*/}
+              {/*            borderRadius: 20,*/}
+              {/*            fontSize: 16,*/}
+              {/*            fontWeight: 'bold',*/}
+              {/*            color: '#000',*/}
+              {/*            bottom: 15,*/}
+              {/*            fontFamily: "Poppins",*/}
+              {/*            marginBottom: -15,*/}
+              {/*            width: "100%"*/}
+              {/*          }}>Add Habit</Text>*/}
+              {/*        </TouchableOpacity>*/}
+              {/*        <View style={{flexDirection: "row", marginTop: -10, marginRight: 10, zIndex: 1}}>*/}
+              {/*          <Image style={{}} source={require('@/assets/images/credit.png')}/>*/}
+              {/*          <Text style={{*/}
+              {/*            margin: 3,*/}
+              {/*            fontFamily: "Poppins",*/}
+              {/*            fontSize: 20*/}
+              {/*          }}>{user?.credits ? user.credits : 0}</Text>*/}
+              {/*        </View>*/}
+              {/*      </View>*/}
+              {/*    </TouchableOpacity>*/}
+              {/*  </Rive>*/}
               {/*</TouchableOpacity>*/}
 
             {/*<Image source={require('@/assets/images/previouscat4.png')} style={styles.catImage} resizeMode="contain" />*/}
