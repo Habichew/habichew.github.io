@@ -3,6 +3,7 @@ import {View,Text,TouchableOpacity,StyleSheet,Modal,TextInput,ScrollView,Image} 
 import { useRouter } from 'expo-router';
 import CustomDropdown from '../../components/ui/select';
 import { useUser } from '../context/UserContext';
+import OnboardingProgress from '@/components/ui/OnboardingProgress';
 
 export default function PickHabit() {
   const router = useRouter();
@@ -12,8 +13,12 @@ export default function PickHabit() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [presets, setPresets] = useState<any[]>([]);
   const { user, addHabit, loadHabits } = useUser();
-
+  const STEP_INDEX = 2;     // Story=0, Info=1, PickHabit=2, PickTask=3
   const userId = user?.id;
+
+  const handleBack = () => {
+    router.push('../onboarding/info');
+  };
 
   useEffect(() => {
     fetch(process.env.EXPO_PUBLIC_BACKEND_URL + '/presets/categories')
@@ -78,6 +83,11 @@ export default function PickHabit() {
 
   return (
     <View style={styles.container}>
+
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.arrowText}>{'<'}</Text>
+      </TouchableOpacity>
+
       <Image source={require('../../assets/images/previouscat2.png')} style={styles.petImage} />
 
       <Text style={styles.title}>Choose a habit to feed your pet</Text>
@@ -142,6 +152,13 @@ export default function PickHabit() {
           </View>
         </View>
       </Modal>
+
+      <OnboardingProgress
+        index={STEP_INDEX}   
+        onSkip={() => router.push('/onboarding/PickTask')}
+        onNext={() => router.push('/onboarding/PickTask')}
+      />
+
     </View>
   );
 }
@@ -260,5 +277,20 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     padding: 10
-  }
+  },
+
+    backButton: {
+    position: 'absolute',
+    top: 28,
+    left: 24,
+    zIndex: 10,
+  },
+
+  arrowText: {
+    color: '#000',
+    fontSize: 24,
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+
 });

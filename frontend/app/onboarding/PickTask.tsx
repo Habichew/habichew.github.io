@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser, Task } from '../context/UserContext';
 import TaskModal from '@/components/ui/TaskModal';
+import OnboardingProgress from '@/components/ui/OnboardingProgress';
 
 export default function PickTasks() {
   const { habit, habitId } = useLocalSearchParams<{ habit: string; habitId: string }>();
@@ -15,7 +16,10 @@ export default function PickTasks() {
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [showInfo, setShowInfo] = useState(true);
   const numericHabitId = Number(habitId);
-
+  const STEP_INDEX = 3;     // Story=0, Info=1, PickHabit=2, PickTask=3
+  const handleBack = () => {
+    router.push('../onboarding/PickHabit');
+  };
   const handleSaveTask = async (task: Task) => {
     try {
       const newTask = { ...task, habitId: numericHabitId };
@@ -65,8 +69,8 @@ export default function PickTasks() {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity style={styles.back} onPress={() => router.replace('/onboarding/PickHabit')}>
-        <View style={styles.roundBtn}><Text style={styles.roundText}>{'<'}</Text></View>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.arrowText}>{'<'}</Text>
       </TouchableOpacity>
 
       <Text style={styles.habitText}>{habit}</Text>
@@ -124,10 +128,6 @@ export default function PickTasks() {
         }}
       />
 
-      <TouchableOpacity style={styles.nextBtn} onPress={() => router.push('/(tabs)/home')}>
-        <View style={styles.roundBtn}><Text style={styles.roundText}>{'>'}</Text></View>
-      </TouchableOpacity>
-
       <TaskModal
         visible={modalVisible}
         onClose={() => {
@@ -138,6 +138,13 @@ export default function PickTasks() {
         task={editingTask}
         defaultHabitId={numericHabitId}
       />
+
+      <OnboardingProgress
+        index={STEP_INDEX}   
+        onSkip={() => router.push('../home')}
+        onNext={() => router.push('../home')}
+      />
+
     </View>
   );
 }
@@ -190,5 +197,19 @@ pencilBtn: {
   borderRadius: 6,
   marginLeft: 'auto',
 },
+  backButton: {
+    position: 'absolute',
+    top: 28,
+    left: 24,
+    zIndex: 10,
+  },
+
+  arrowText: {
+    color: '#000',
+    fontSize: 24,
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+
 
 });

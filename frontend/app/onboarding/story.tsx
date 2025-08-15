@@ -1,11 +1,8 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import React, { useState } from 'react';
-import BackButton from 'components/ui/BackButton';
-
-<View style={{ marginTop: 50, marginLeft: 20 }}>
-  <BackButton />
-</View>
+import ProgressIndicator from '@/components/ui/ProgressIndicator';
+import OnboardingProgress from '@/components/ui/OnboardingProgress';
 
 const storyImages = [
   require('../../assets/story/P1.jpg'),
@@ -23,6 +20,7 @@ const storyImages = [
   require('../../assets/story/P13.jpg'),
   require('../../assets/story/P14.jpg'),
 ];
+
 
 const storyTexts = [
   [
@@ -79,6 +77,7 @@ export default function StoryScreen() {
   const params = useLocalSearchParams();
   const initialIndex = parseInt(params.index as string) || 0;
   const [index, setIndex] = useState(initialIndex);
+    const STEP_INDEX = 0;     // Story=0, Info=1, PickHabit=2, PickTask=3
 
   const handleNext = () => {
     if (index < storyImages.length - 1) {
@@ -98,6 +97,7 @@ export default function StoryScreen() {
 
   return (
   <View style={styles.container}>
+
     <View style={styles.imageSection}>
       <Image source={storyImages[index]} style={styles.image} />
     </View>
@@ -110,16 +110,19 @@ export default function StoryScreen() {
     </View>
 
     <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-      <View style={styles.circleButton}>
         <Text style={styles.arrowText}>{'<'}</Text>
-      </View>
     </TouchableOpacity>
 
-    <TouchableOpacity style={styles.arrowContainer} onPress={handleNext}>
-      <View style={styles.circleButton}>
-        <Text style={styles.arrowText }>{'>'}</Text>
-      </View>
-    </TouchableOpacity>
+    <View style={styles.progressWrap}>
+      <Text style={styles.pageText}> {index + 1} / {storyImages.length}</Text>
+      <ProgressIndicator step={index + 1} total={storyImages.length} showLabel={false} />
+    </View>
+
+    <OnboardingProgress
+      index={STEP_INDEX}  
+      onSkip={() => router.push('/onboarding/info')}
+      onNext={handleNext}
+    />
 
   </View>
 );
@@ -161,31 +164,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
+  
   backButton: {
     position: 'absolute',
     top: 28,
     left: 24,
     zIndex: 10,
-  },
-  arrowContainer: {
-    position: 'absolute',
-    bottom: 36,
-    right: 24,
-    zIndex: 10,
-  },
-
-  circleButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
   },
 
   arrowText: {
@@ -194,5 +178,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     lineHeight: 24,
   },
+
+  bottomNav: {
+  position: 'absolute',
+  left: 24,
+  right: 24,
+  bottom: 84,                
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+},
+  skipText: { fontSize: 16, fontWeight: 'bold', color: '#000' },
+  nextText: { fontSize: 16, fontWeight: 'bold', color: '#000' },
+
+  progressWrap: {
+    position: 'absolute',
+    left: 24,
+    right: 24,
+    bottom: 24,         
+  },
+  pageText: {
+    textAlign: 'center',   
+    fontWeight: 'bold',
+    color: '#999',
+    marginBottom: 6,
+  },
+
 });
 

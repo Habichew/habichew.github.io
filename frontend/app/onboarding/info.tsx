@@ -3,12 +3,15 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'reac
 import { useState } from 'react';
 import CustomDropdown from '@/components/ui/select';
 import CustomInput from '@/components/ui/input';
+import OnboardingProgress from '@/components/ui/OnboardingProgress';
 
 export default function InfoScreen1() {
-    const router = useRouter();
+  const router = useRouter();
   const [pronoun, setPronoun] = useState<string | null>(null);
   const [pace, setPace] = useState<string | null>(null);
   const [name, setName] = useState('');
+   //explicit step index for the 4-step onboarding
+  const STEP_INDEX = 1;     // Story=0, Info=1, PickHabit=2, PickTask=3
 
   // const isFormValid = pronoun && pace && name;
   const isFormValid = pace && name;
@@ -36,10 +39,9 @@ export default function InfoScreen1() {
 
   return (
     <View style={styles.container}>
+
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <View style={styles.circleButton}>
           <Text style={styles.arrowText}>{'<'}</Text>
-        </View>
       </TouchableOpacity>
 
       <Image
@@ -50,14 +52,6 @@ export default function InfoScreen1() {
       <View style={{marginVertical: "auto"}}>
         <Text style={styles.heading}>Let’s get to know you!</Text>
 
-        {/* <CustomDropdown
-        items={pronounOptions}
-        value={pronoun}
-        setValue={setPronoun}
-        placeholder="Select Pronouns"
-        zIndex={4}
-        zIndexInverse={3}
-      /> */}
         <CustomDropdown
             items={paceOptions}
             value={pace}
@@ -80,6 +74,12 @@ export default function InfoScreen1() {
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
+
+      <OnboardingProgress
+            index={STEP_INDEX}   
+            onSkip={() => router.push('/onboarding/PickHabit')}
+            onNext={() => router.push('/onboarding/PickHabit')}
+      />
 
     </View>
   );
@@ -127,19 +127,6 @@ const styles = StyleSheet.create({
   top: 28,
   left: 24,
   zIndex: 10,
-  },
-  circleButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
   },
 
   arrowText: {

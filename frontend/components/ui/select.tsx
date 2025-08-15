@@ -67,13 +67,14 @@ const styles = ScaledSheet.create({
   dropdown: {
     borderRadius: 24,
     borderWidth: 0,              
-    backgroundColor: '#F8F0F0',
+    backgroundColor: '#fff',
     shadowColor: 'transparent',
-      minHeight: 50,
+    minHeight: 50,
+    marginBottom:15,
   },
   dropdownContainer: {
     borderRadius: 16,
-    backgroundColor: '#F8F0F0',
+    backgroundColor: '#fff',
     shadowColor: 'transparent',
       borderWidth: 0
   },
@@ -84,8 +85,9 @@ const styles = ScaledSheet.create({
   },
   placeholder: {
     // textAlign:'center',
-    fontWeight:'normal',
-    color: '#000',
+    fontWeight:'bold',
+    color: '#bbb',
+    fontSize: 16,
   },
   arrow: {
     tintColor: '#DAB7FF',
