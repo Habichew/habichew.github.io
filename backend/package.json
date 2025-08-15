@@ -1,5 +1,5 @@
 {
-  "name": "cs7025-group1",
+  "name": "habichew",
   "version": "1.0.0",
   "description": "A Node.js project for cs7025 group1 using MariaDB, Express, Morgan, Chalk, and EJS",
   "main": "index.js",
@@ -13,6 +13,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "chalk": "^5.3.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "ejs": "^3.1.9",
     "express": "^4.21.2",

@@ -1,13 +1,17 @@
 // backend/config/db.js
-import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import mariadb from 'mariadb';
 
+// ES module workaround for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
 // Load environment variables from the correct path
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 /* Connection pooling is a technique that helps improve the performance of Node.js applications which make frequent database requests.
  * Instead of opening a new connection for every request,
@@ -21,13 +25,9 @@ const pool = mariadb.createPool({
   user: process.env.DB_USER || 'habichew',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'habichew_db',
-  connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 5
+  connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 5,
+  bigIntAsNumber: true,
 });
-
-// ES module workaround for __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 
 // Test the pool connection
 /*(async () => {

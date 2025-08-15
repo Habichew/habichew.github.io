@@ -12,14 +12,13 @@ export async function findPetByUserId(req, res) {
             return res.status(404).send({error: "User does not exist."})
         }
 
-        const user = userResult;
+        const user = userResult[0];
         if (user.petId === null) {
             return res.status(404).send({error: "User does not have pet."});
         }
-
-        const petId = user.petId;
-
-        const petResult = await petService.findPetById(petId);
+        console.log(user.petId, typeof(user.petId));
+        const petResult = await petService.findPetById(user.petId);
+        console.log(petResult);
 
         if (petResult.length === 1) {
             return res.status(200).send(petResult);
@@ -133,9 +132,10 @@ export async function deletePet(req, res) {
         }
 
         const existingPet = await petService.findPetById(user.petId);
+
         // TODO: Update user
         const updatedUserResult = await userService.updateUser(userId, {petId: null});
-        const result = await petService.deletePet(existingPet.id);
+        const result = await petService.deletePet(existingPet[0].id);
 
         return res.status(200).send({
             message: 'Pet deleted successfully',

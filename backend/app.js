@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load environment variables
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, './.env') });
 
 // Import database pool
 import pool from "./config/db.js";
@@ -93,6 +93,9 @@ app.use(cors());
 
 app.set("view engine", "ejs");
 
+app.set('json replacer', (key, value) =>
+    typeof value === 'bigint' ? Number(value) : value
+);
 
 
 app.get("/", (req, res) => {
