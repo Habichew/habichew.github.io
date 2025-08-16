@@ -9,7 +9,7 @@ import {
     ActivityIndicator,
     TouchableWithoutFeedback,
     TouchableOpacity,
-    Dimensions
+    Dimensions, Pressable
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -59,6 +59,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
     const [generatedTasks, setGeneratedTasks] = useState<string[]>([]);
     const [loadingTasks, setLoadingTasks] = useState<boolean>(false);
     const [savingOrCreating, setSavingOrCreating] = useState<boolean>(false);
+    const [editable, setEditable] = useState(false);
     const windowHeight = Dimensions.get('window').height;
 
     const inputRef = useRef(null); // Attach a ref to the TextInput
@@ -190,12 +191,11 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
 
         return (
             // <ReanimatedSwipeable>
-            <View style={styles.task}>
-                <TextInput placeholderTextColor="gray" style={{backgroundColor: 'white', padding: 4, color: 'black'}}
-                           selection={{start: 0, end: 0}}
+            <Pressable style={styles.task} onPress={setEditable(true)}>
+                <TextInput placeholderTextColor="gray" editable={editable} style={{backgroundColor: 'white', padding: 4, color: 'black'}}
                            placeholder={"Task name"} value={item} onChangeText={text => handleChangeTask(text, index)}>
                 </TextInput>
-            </View>
+            </Pressable>
             // </ReanimatedSwipeable>
             // <GestureHandlerRootView>
             //     <ReanimatedSwipeable
@@ -333,7 +333,12 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                         {/*</TouchableOpacity>*/}
                                         <TouchableOpacity
                                             style={{marginLeft: "auto", marginVertical: "auto", width: 30, height: 30}}
-                                            onPress={() => addTaskInput()}>
+                                            onPress={() => setEditable(!editable)}>
+                                            <Ionicons name="pencil-outline" size={24} color="#000"/>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{marginLeft: 30, marginVertical: "auto", width: 30, height: 30}}
+                                            onPress={() => {addTaskInput(); setEditable(true)}}>
                                             <Ionicons name="add" size={24} color="#000"/>
                                         </TouchableOpacity>
                                     </View>
@@ -423,7 +428,7 @@ const styles = ScaledSheet.create({
         marginBottom: 16
     },
     tag: {
-        backgroundColor: '#F8F0F0',
+        backgroundColor: 'white',
         borderRadius: 24,
         paddingHorizontal: 16,
         fontWeight: 'bold',
@@ -479,6 +484,6 @@ const styles = ScaledSheet.create({
         paddingTop: 12,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
-        backgroundColor: '#F8F0F0'
+        backgroundColor: '#e6e6e6'
     }
 });
