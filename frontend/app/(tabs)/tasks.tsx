@@ -1,13 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator} from 'react-native';
+import {Dimensions, View, Text, StyleSheet, Image, Pressable, TouchableOpacity, TextInput, ActivityIndicator, FlatList} from 'react-native';
 import { useUser, Task } from '../context/UserContext';
 import TaskModal from '../../components/ui/TaskModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import {RiveRef} from "rive-react-native";
+import Rive, {Fit, RiveRef} from "rive-react-native";
+import {AndroidHaptics} from 'expo-haptics';
+import Animated, {Easing, SharedValue, useAnimatedStyle, withTiming,} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import SwipeableFlatList, {SwipeableFlatListRef} from 'rn-gesture-swipeable-flatlist';
 
 export default function Tasks() {
+  const screenWidth = Dimensions.get('window').width;
+
   const { user, tasks, loadTasks, updateTask } = useUser();
   const { habitId, habitName } = useLocalSearchParams();
   const numericHabitId = habitId ? parseInt(habitId as string) : undefined;
@@ -23,6 +30,52 @@ export default function Tasks() {
   const [loadingTasks, setLoadingTasks] = useState<boolean>(false);
 
   const riveRef = useRef<RiveRef>(null);
+  const swipeRef = useRef<any>(null);
+
+  let row: Array<any> = [];
+  const flatListRef = useRef<SwipeableFlatListRef<any> | null>(null);
+
+  const closeAllOpenRows = () => {
+    flatListRef.current?.closeAnyOpenRows();
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadTasks();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (numericHabitId && numericHabitId !== lastFilteredHabitId) {
+      setSearchText(habitName as string);
+      setIsHabitFilterLocked(true);
+      setLastFilteredHabitId(numericHabitId);
+    }
+  }, [numericHabitId]);
+
+  function sortTasks(tasks: Task[]) {
+    return tasks.sort((a: Task, b: Task) => {
+      if (!a.completed && b.completed) return -1;
+      else if (a.completed && !b.completed) return 1;
+      else return 0;
+    });
+  }
+
+  useEffect(() => {
+    console.log('maybeeeeee')
+    let filtered = tasks.filter(t => {
+      if (isHabitFilterLocked && numericHabitId) return t.habitId === numericHabitId;
+      return t.title.toLowerCase().includes(searchText.toLowerCase());
+    });
+    filtered = sortTasks(filtered);
+    setFilteredTasks(filtered);
+
+    if (isHabitFilterLocked && numericHabitId && filtered.length === 0) {
+      setShowEmptyPrompt(true);
+    } else {
+      setShowEmptyPrompt(false);
+    }
+  }, [tasks, searchText, numericHabitId, isHabitFilterLocked]);
 
 //When the page regains focus and there is no habitId parameter, clear the filter
   useFocusEffect(
@@ -34,31 +87,6 @@ export default function Tasks() {
       }
     }, [habitId])
   );
-
-  useEffect(() => { loadTasks(); }, []);
-
-  useEffect(() => {
-  if (numericHabitId && numericHabitId !== lastFilteredHabitId) {
-    setSearchText(habitName as string);
-    setIsHabitFilterLocked(true);
-    setLastFilteredHabitId(numericHabitId); 
-  }
-}, [numericHabitId]);
-
-
-  useEffect(() => {
-    const filtered = tasks.filter(t => {
-      if (isHabitFilterLocked && numericHabitId) return t.habitId === numericHabitId;
-      return t.title.toLowerCase().includes(searchText.toLowerCase());
-    });
-    setFilteredTasks(filtered);
-
-    if (isHabitFilterLocked && numericHabitId && filtered.length === 0) {
-      setShowEmptyPrompt(true);
-    } else {
-      setShowEmptyPrompt(false);
-    }
-  }, [tasks, searchText, numericHabitId, isHabitFilterLocked]);
 
   const handleEdit = (task: Task) => {
     setEditingTask(task);
@@ -82,7 +110,9 @@ export default function Tasks() {
       dueAt: task.dueAt ? formatDate(task.dueAt) : undefined,
     };
     await updateTask(updatedTask);
+    //loadTasks();
     console.log("updating input state");
+    setFilteredTasks(sortTasks(tasks));
   };
 
   function handleGenerateTasks() {
@@ -132,6 +162,124 @@ export default function Tasks() {
         });
   }
 
+  const renderTask = ({ item, index }) => {
+    const isCompleted = item.completed === true;
+    const ddl = item.dueAt;
+
+    async function handleSwipe( direction: any) {
+      console.log("vibrate");
+      await Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_Start);
+      if (direction === 'right') {
+        await toggleCompleted(item);
+      }
+    }
+
+
+
+    return (
+          <View style={[styles.taskCard, { backgroundColor: isCompleted ? '#e6e6e6' : '#DAB7FF' }]}>
+            <View style={styles.flexOne}>
+              <Text style={styles.taskTitle}>{item.title}</Text>
+              {item.description ? <Text style={styles.taskDescription}>{item.description}</Text> : null}
+              <View style={styles.metaRow}>
+                { item.dueAt ?
+                    <View style={styles.badge}>
+                      <Ionicons name="calendar-outline" size={16} color="#000" />
+                      <Text style={styles.badgeText}>
+                        {item.dueAt ? new Date(item.dueAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short' }) : ''}
+                      </Text>
+                    </View> : ""
+                }
+                { item.priority ?
+                    <View style={styles.badge}>
+                      <Ionicons name="flag-outline" size={16} color="#000"/>
+                      <Text style={styles.badgeText}>
+                        {item.priority
+                            ? `${item.priority.charAt(0).toUpperCase()}${item.priority.slice(1)} Priority`
+                            : 'No Priority'}
+                      </Text>
+                    </View>
+                    : ""
+                }
+                <TouchableOpacity style={[styles.pencil]} onPress={() => handleEdit(item)}>
+                  <Ionicons name="pencil" size={20} color="#333" />
+                </TouchableOpacity>
+                {/*<Swipeable*/}
+                {/*    friction={2}*/}
+                {/*    overshootFriction={8}*/}
+                {/*    leftThreshold={screenWidth*0.3}*/}
+                {/*    renderLeftActions={!item.completed ? LeftAction : null}*/}
+                {/*    onSwipeableWillOpen={async (direction: any) => {*/}
+                {/*      const i = item;*/}
+                {/*      i.completed = true;*/}
+                {/*      // await updateTask(i);*/}
+                {/*      // await loadTasks();*/}
+                {/*    }}*/}
+                {/*    onSwipeableOpenStartDrag={() => Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_End)}*/}
+                {/*    ref={swipeRef => row[index] = swipeRef}*/}
+                {/*    containerStyle={{ width: "100%", alignSelf: 'center', marginBottom: 12}}*/}
+                {/*>*/}
+                <TouchableOpacity style={[styles.tickBox, isCompleted && styles.tickBoxCompleted]} onPress={() => toggleCompleted(item)}>
+                  <Ionicons name="checkmark" size={16} color={isCompleted ? '#000' : '#999'} />
+                </TouchableOpacity>
+                {/*</Swipeable>*/}
+              </View>
+            </View>
+          </View>
+    );
+  }
+
+  async function handleSwipe( direction: any, swipeable: any) {
+    console.log("vibrate");
+    await Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_Start);
+    if (direction === 'right') {
+      console.log('toggle compe')
+      await toggleCompleted(swipeable);
+    }
+  }
+
+  function LeftActionNew(item: any) {
+      // console.log('showLeftProgress:', prog.value);
+      // console.log('appliedTranslation:', drag.value);
+      // console.log('click', prog.value < 0.5 ? 10 : 0);
+
+    return (
+        <>
+          {!item.completed ? <Animated.View style={styles.leftAction}>
+            <Pressable onPress={() => toggleCompleted(item)}>
+              <Ionicons name="checkmark-done-outline" size={24} color="black"/>
+            </Pressable>
+          </Animated.View> : null}
+        </>
+
+    );
+  }
+
+  function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+    const styleAnimation = useAnimatedStyle(() => {
+      // console.log('showLeftProgress:', prog.value);
+      // console.log('appliedTranslation:', drag.value);
+      // console.log('click', prog.value < 0.5 ? 10 : 0);
+
+      return {
+        transform: [{ translateX: 0 }],
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        backgroundColor: '#1CC282',
+        width: screenWidth - (prog.value < 0.045 ? 20 : 0),
+        marginLeft: 10,
+        borderRadius: 16,
+        paddingLeft: 20
+      };
+    });
+
+    return (
+        <Animated.View style={styleAnimation}>
+          <Ionicons name="checkmark-done-outline" size={24} color="black"/>
+        </Animated.View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -167,47 +315,18 @@ export default function Tasks() {
               </View>
       )}
 
-      <FlatList
+      <SwipeableFlatList
         data={filteredTasks}
-        keyExtractor={(item) => item.userTaskId?.toString() || Math.random().toString()}
+        ref={flatListRef}
+        keyExtractor={(item: any) => item.userTaskId?.toString() || Math.random().toString()}
         contentContainerStyle={{ paddingBottom: 100 }}
-        renderItem={({ item }) => {
-          const isCompleted = item.completed === true;
-          return (
-            <View style={[styles.taskCard, { backgroundColor: isCompleted ? '#e6e6e6' : '#DAB7FF' }]}>
-              <View style={styles.flexOne}>
-                <Text style={styles.taskTitle}>{item.title}</Text>
-                {item.description ? <Text style={styles.taskDescription}>{item.description}</Text> : null}
-                <View style={styles.metaRow}>
-                  { item.dueAt ?
-                  <View style={styles.badge}>
-                    <Ionicons name="calendar-outline" size={16} color="#000" />
-                    <Text style={styles.badgeText}>
-                      {item.dueAt ? new Date(item.dueAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short' }) : ''}
-                    </Text>
-                  </View> : ""
-                  }
-                  { item.priority ?
-                    <View style={styles.badge}>
-                      <Ionicons name="flag-outline" size={16} color="#000"/>
-                      <Text style={styles.badgeText}>
-                        {item.priority
-                            ? `${item.priority.charAt(0).toUpperCase()}${item.priority.slice(1)} Priority`
-                            : 'No Priority'}
-                      </Text>
-                    </View>
-                      : ""
-                  }
-                  <TouchableOpacity style={[styles.pencil]} onPress={() => handleEdit(item)}>
-                    <Ionicons name="pencil" size={20} color="#333" />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.tickBox, isCompleted && styles.tickBoxCompleted]} onPress={() => toggleCompleted(item)}>
-                    <Ionicons name="checkmark" size={16} color={isCompleted ? '#000' : '#999'} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          );
+        renderItem={renderTask}
+        renderLeftActions={LeftActionNew}
+        enableOpenMultipleRows={false}
+        swipeableProps={{
+          friction: 2,
+          overshootFriction: 8,
+          onSwipeableOpen: async (direction, swipeable) => {console.log('swipeeee'); handleSwipe(direction, swipeable)}
         }}
       />
 
@@ -248,4 +367,16 @@ const styles = StyleSheet.create({
   tickBoxCompleted: { backgroundColor: '#fff' },
   generateBtn: { marginTop: 20, backgroundColor: '#DAB7FF', borderRadius: 40, paddingHorizontal: 40, paddingVertical: 12 },
   generateText: { fontWeight: 'bold', fontSize: 16, color: '#000' },
+  leftAction: {
+    transform: [{ translateX: 0 }],
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    backgroundColor: '#1CC282',
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    marginVertical: 6,
+    paddingRight: 40,
+    marginRight: -Dimensions.get('window').width + 70,
+    width: Dimensions.get('window').width
+  }
 });
