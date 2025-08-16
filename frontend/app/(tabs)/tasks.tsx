@@ -177,9 +177,17 @@ export default function Tasks() {
 
 
     return (
-          <View style={[styles.taskCard, { backgroundColor: isCompleted ? '#e6e6e6' : '#DAB7FF' }]}>
+          <Pressable onPress={() => handleEdit(item)} style={[styles.taskCard, { backgroundColor: isCompleted ? '#e6e6e6' : '#DAB7FF' }]}>
             <View style={styles.flexOne}>
-              <Text style={styles.taskTitle}>{item.title}</Text>
+              <TouchableOpacity disabled={!!item.completed}
+                                onPress={() => toggleCompleted(item)}>
+                <Ionicons
+                    name={!item.completed ? "ellipse-outline" : "checkmark-circle-outline"}
+                    size={24} color="black"/>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.flexTwo}>
+              <Text style={[styles.taskTitle, {textDecorationLine: item.completed ? 'line-through' : 'none'}]}>{item.title}</Text>
               {item.description ? <Text style={styles.taskDescription}>{item.description}</Text> : null}
               <View style={styles.metaRow}>
                 { item.dueAt ?
@@ -201,9 +209,6 @@ export default function Tasks() {
                     </View>
                     : ""
                 }
-                <TouchableOpacity style={[styles.pencil]} onPress={() => handleEdit(item)}>
-                  <Ionicons name="pencil" size={20} color="#333" />
-                </TouchableOpacity>
                 {/*<Swipeable*/}
                 {/*    friction={2}*/}
                 {/*    overshootFriction={8}*/}
@@ -219,13 +224,11 @@ export default function Tasks() {
                 {/*    ref={swipeRef => row[index] = swipeRef}*/}
                 {/*    containerStyle={{ width: "100%", alignSelf: 'center', marginBottom: 12}}*/}
                 {/*>*/}
-                <TouchableOpacity style={[styles.tickBox, isCompleted && styles.tickBoxCompleted]} onPress={() => toggleCompleted(item)}>
-                  <Ionicons name="checkmark" size={16} color={isCompleted ? '#000' : '#999'} />
-                </TouchableOpacity>
+
                 {/*</Swipeable>*/}
               </View>
             </View>
-          </View>
+          </Pressable>
     );
   }
 
@@ -349,13 +352,14 @@ export default function Tasks() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  topBar: { marginBottom: 16 },
+  container: { flex: 1, padding: 24, paddingHorizontal: 0, backgroundColor: '#fff' },
+  topBar: { marginBottom: 16, paddingHorizontal: 24 },
   search: { backgroundColor: '#F1F1F1', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 10, fontSize: 14, color: '#000' },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  headerRow: { paddingHorizontal: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   sectionTitle: { fontWeight: 'bold', fontSize: 20 },
-  taskCard: { flexDirection: 'row', padding: 16, borderRadius: 16, marginVertical: 6, alignItems: 'center', justifyContent: 'space-between' },
-  flexOne: { flex: 1 },
+  taskCard: { flexDirection: 'row', padding: 16, borderRadius: 16, marginVertical: 6, marginHorizontal: 20, alignItems: 'center', justifyContent: 'flex-start' },
+  flexOne: { marginVertical: 8, paddingVertical: 8, borderColor: 'black'},
+  flexTwo: {flex: 2, marginLeft: 10, marginVertical: 'auto', paddingVertical: 0, textAlign: 'center', alignSelf: 'center'},
   taskTitle: { fontWeight: 'bold', fontSize: 16, marginBottom: 4, color: '#000' },
   taskDescription: { fontSize: 14, color: '#333', marginBottom: 6 },
   metaRow: { flexDirection: 'row', gap: 12, marginTop: 4 },
@@ -376,7 +380,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 6,
     paddingRight: 40,
-    marginRight: -Dimensions.get('window').width + 70,
-    width: Dimensions.get('window').width
+    marginHorizontal: 20,
+    marginRight: -Dimensions.get('window').width + 80,
+    width: Dimensions.get('window').width - 40
   }
 });

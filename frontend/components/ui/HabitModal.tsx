@@ -101,6 +101,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
         });
         setSavingOrCreating(false);
         setGeneratedTasks([]);
+        setFormData({habitTitle: '', goalDate: '', priority: '', frequency: ''});
         onClose();
     };
 
@@ -167,7 +168,6 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
     }
 
 
-
     const renderTask = (item: any, index: number) => {
         console.log("task index", index, "item", item);
 
@@ -177,7 +177,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                 console.log('appliedTranslation:', drag.value);
 
                 return {
-                    transform: [{ translateX: drag.value + 50 }],
+                    transform: [{translateX: drag.value + 50}],
                 };
             });
 
@@ -190,11 +190,12 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
 
         return (
             // <ReanimatedSwipeable>
-                <View style={styles.task}>
-                    <TextInput placeholderTextColor="gray" style={{backgroundColor: 'white', padding: 4, color: 'black'}}
-                               placeholder={"Task name"} value={item} onChangeText={text => handleChangeTask(text, index)}>
-                    </TextInput>
-                </View>
+            <View style={styles.task}>
+                <TextInput placeholderTextColor="gray" style={{backgroundColor: 'white', padding: 4, color: 'black'}}
+                           selection={{start: 0, end: 0}}
+                           placeholder={"Task name"} value={item} onChangeText={text => handleChangeTask(text, index)}>
+                </TextInput>
+            </View>
             // </ReanimatedSwipeable>
             // <GestureHandlerRootView>
             //     <ReanimatedSwipeable
@@ -235,7 +236,8 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                 <View style={styles.modalHeader}>
                                     <View style={styles.titleRow}>
                                         <TextInput ref={inputRef} autoFocus={true} placeholder="Habit title"
-                                                   placeholderTextColor="#5E5E5E" style={[styles.title,{fontWeight: formData.habitTitle ? 'bold' : 'normal'}]}
+                                                   placeholderTextColor="#5E5E5E"
+                                                   style={[styles.title, {fontWeight: formData.habitTitle ? 'bold' : 'normal'}]}
                                                    value={formData.habitTitle}
                                                    onChangeText={text => setFormData({...formData, habitTitle: text})}/>
                                         {/*<TextInput ref={inputRef} autoFocus={true} placeholder="Habit description"*/}
@@ -280,7 +282,8 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                 }]} onPress={() => setShowDatePicker(true)}>
                                                     <Ionicons name="calendar-outline" size={24} color="#555"
                                                               style={{marginRight: 5}}/>
-                                                    <Text style={{ fontWeight: formData.goalDate ? 'bold' : 'normal'}}>{formData.goalDate ? new Date(formData.goalDate).toLocaleDateString() : 'Due Date'}</Text></TouchableOpacity>
+                                                    <Text
+                                                        style={{fontWeight: formData.goalDate ? 'bold' : 'normal'}}>{formData.goalDate ? new Date(formData.goalDate).toLocaleDateString() : 'Due Date'}</Text></TouchableOpacity>
                                                 {showDatePicker && (
                                                     <DateTimePicker
                                                         value={formData.goalDate ? new Date(formData.goalDate) : new Date()}
@@ -328,8 +331,9 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                         {/*<TouchableOpacity style={{marginLeft: "auto", marginVertical: "auto"}} onPress={() => setGeneratedTasks([])}>*/}
                                         {/*  <Ionicons name="trash-outline" size={24} color="#000"/>*/}
                                         {/*</TouchableOpacity>*/}
-                                        <TouchableOpacity style={{marginLeft: "auto", marginVertical: "auto", width: 30, height: 30}}
-                                                          onPress={() => addTaskInput()}>
+                                        <TouchableOpacity
+                                            style={{marginLeft: "auto", marginVertical: "auto", width: 30, height: 30}}
+                                            onPress={() => addTaskInput()}>
                                             <Ionicons name="add" size={24} color="#000"/>
                                         </TouchableOpacity>
                                     </View>
@@ -339,14 +343,15 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                     <>
                                                         <Text style={{marginHorizontal: "auto", marginVertical: 20}}>No
                                                             tasks created.</Text>
-                                                        <TouchableOpacity disabled={!formData.habitTitle} style={[styles.generateTextBtn, {backgroundColor: !formData.habitTitle ? '#1CC28290' : '#1CC282'}]}
+                                                        <TouchableOpacity disabled={!formData.habitTitle}
+                                                                          style={[styles.generateTextBtn, {backgroundColor: !formData.habitTitle ? '#1CC28290' : '#1CC282'}]}
                                                                           onPress={handleGenerateTasks}><Text
                                                             style={styles.generateText}>Generate
                                                             Tasks</Text></TouchableOpacity>
                                                     </>
                                                 ) :
                                                 (<FlatList data={generatedTasks} keyExtractor={(item, index) => index}
-                                                           onContentSizeChange={() => flatListRef?.current.scrollToEnd({ animated: true })}
+                                                           onContentSizeChange={() => flatListRef?.current.scrollToEnd({animated: true})}
                                                            ref={flatListRef}
                                                            renderItem={({
                                                                             item,
@@ -370,7 +375,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                         <Text
                                             style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>
                                         <Ionicons name="return-down-forward-outline" size={24} color="#555"
-                                                  style={{marginTop: 10, }}/>
+                                                  style={{marginTop: 10,}}/>
                                     </Button>
                                 </View>
                                 {showConfirmDelete && (
@@ -469,5 +474,11 @@ const styles = ScaledSheet.create({
     },
     description: {fontWeight: 'normal', fontSize: "13@ms"},
     modalHeader: {padding: 24, paddingBottom: 12},
-    modalBody: {padding: 24, paddingTop: 12, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor:'#F8F0F0'}
+    modalBody: {
+        padding: 24,
+        paddingTop: 12,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        backgroundColor: '#F8F0F0'
+    }
 });

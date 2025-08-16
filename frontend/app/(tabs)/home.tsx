@@ -9,10 +9,10 @@ import {ScaledSheet} from "react-native-size-matters";
 import {SystemBars} from "react-native-edge-to-edge";
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Animated, {Easing, SharedValue, useAnimatedStyle, withTiming,} from 'react-native-reanimated';
-import ReanimatedSwipeable from "react-native-gesture-handler/src/components/ReanimatedSwipeable";
 import * as Haptics from 'expo-haptics';
 import {AndroidHaptics} from 'expo-haptics';
 import {RefreshControl} from "react-native-gesture-handler";
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 const screenWidth = Dimensions.get('window').width;
 const scale = (value: number) => (screenWidth / 375) * value;
@@ -63,7 +63,6 @@ const Home = () => {
             setRefreshing(false);
             // riveRef.current?.setInputState('State Machine 1', 'HabitTicked', true);
         }
-        ;
     }, [user]);
     useEffect(() => {
         const newHabits = habits.filter(h => h.habitTitle?.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -146,33 +145,6 @@ const Home = () => {
         // console.log('filtered test habits', filteredHabits);
         // console.log('habit', index, 'show archived habits', showArchivedHabits, 'item archived', item.isArchived);
 
-        // function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
-        //     const styleAnimation = useAnimatedStyle(() => {
-        //
-        //         return {
-        //             transform: [{ translateX: 0 }],
-        //             alignItems: 'center',
-        //             justifyContent: 'center',
-        //             width: 90,
-        //             borderRadius: 20,
-        //             backgroundColor: 'black',
-        //             marginRight: 10,
-        //             paddingRight: 10,
-        //             paddingLeft: 40,
-        //             marginLeft: -50,
-        //             marginBottom: 12
-        //         };
-        //     });
-        //
-        //     return (
-        //         <Animated.View style={styleAnimation}>
-        //             <TouchableOpacity>
-        //                 <Ionicons name="pencil-outline" size={20} color="#F8F0F0"/>
-        //             </TouchableOpacity>
-        //         </Animated.View>
-        //     );
-        // }
-
         function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
             const styleAnimation = useAnimatedStyle(() => {
                 // console.log('showLeftProgress:', prog.value);
@@ -216,7 +188,7 @@ const Home = () => {
         return (
             <>
                 {(showArchivedHabits && item.isArchived) || (!showArchivedHabits && ((item.isArchived === 0) || item.isArchived === null)) ?
-                    <ReanimatedSwipeable
+                    <Swipeable
                     friction={2}
                     overshootFriction={8}
                     leftThreshold={screenWidth*0.3}
@@ -238,13 +210,13 @@ const Home = () => {
                                                 marginVertical: 'auto',
                                                 marginRight: 5
                                             }}>{percent + '%'}</Text>
-                                            {percent === 100 &&
-                                                <TouchableOpacity disabled={!!item.isArchived}
-                                                                  onPress={() => handleTickHabit(item)}>
-                                                    <Ionicons
-                                                        name={!item.isArchived ? "ellipse-outline" : "checkmark-circle-outline"}
-                                                        size={28} color="#1CC282"/>
-                                                </TouchableOpacity>}
+                                            {/*{percent === 100 &&*/}
+                                            {/*    <TouchableOpacity disabled={!!item.isArchived}*/}
+                                            {/*                      onPress={() => handleTickHabit(item)}>*/}
+                                            {/*        <Ionicons*/}
+                                            {/*            name={!item.isArchived ? "ellipse-outline" : "checkmark-circle-outline"}*/}
+                                            {/*            size={28} color="#1CC282"/>*/}
+                                            {/*    </TouchableOpacity>}*/}
                                         </View>
                                     ) : null}
                                 </View>
@@ -272,8 +244,7 @@ const Home = () => {
                                 </View>
                             </Pressable>
                         </View>
-
-                    </ReanimatedSwipeable>
+                    </Swipeable>
                     : null}
             </>
 
@@ -321,7 +292,7 @@ const Home = () => {
             {showConfirmDelete && (
                 <View style={styles.confirmOverlay}>
                     <View style={styles.confirmBox}>
-                        <Text style={styles.confirmText}>Areasda you sure you want to delete this
+                        <Text style={styles.confirmText}>Are you sure you want to delete this
                             habit?{'\n'}All related tasks will be deleted.</Text>
                         <View style={styles.confirmButtons}>
                             <TouchableOpacity style={styles.cancelBtn}
@@ -340,51 +311,51 @@ const Home = () => {
             )}
             <SystemBars style={'dark'}/>
               {/*<TouchableOpacity onPress={() => handlePetInteraction()}>*/}
-              {/*  <Rive*/}
-              {/*      artboardName={'Pet'}*/}
-              {/*      resourceName='pet'*/}
-              {/*      fit={Fit.FitWidth}*/}
-              {/*      ref={riveRef}*/}
-              {/*      stateMachineName={"State Machine 1"}*/}
-              {/*      style={styles.pet}*/}
-              {/*  >*/}
-              {/*    <TouchableOpacity onPress={handlePetInteraction} style={{width: "100%", height: "100%", zIndex: 1}} activeOpacity={0.8}>*/}
-              {/*      <View style={{*/}
-              {/*        marginTop: "auto",*/}
-              {/*        flexDirection: "row",*/}
-              {/*        justifyContent: 'space-between',*/}
-              {/*        flexShrink: "auto",*/}
-              {/*        marginHorizontal: 20,*/}
-              {/*        height: "auto"*/}
-              {/*      }}>*/}
-              {/*        <TouchableOpacity activeOpacity={0.8}*/}
-              {/*                          style={{marginBottom: 20, maxWidth: 125, zIndex: 2, flex: 1}}>*/}
-              {/*          <Text onPress={handleAdd} style={{*/}
-              {/*            textAlign: "center",*/}
-              {/*            backgroundColor: '#1CC282',*/}
-              {/*            zIndex: 1,*/}
-              {/*            padding: 10,*/}
-              {/*            borderRadius: 20,*/}
-              {/*            fontSize: 16,*/}
-              {/*            fontWeight: 'bold',*/}
-              {/*            color: '#000',*/}
-              {/*            bottom: 15,*/}
-              {/*            fontFamily: "Poppins",*/}
-              {/*            marginBottom: -15,*/}
-              {/*            width: "100%"*/}
-              {/*          }}>Add Habit</Text>*/}
-              {/*        </TouchableOpacity>*/}
-              {/*        <View style={{flexDirection: "row", marginTop: -10, marginRight: 10, zIndex: 1}}>*/}
-              {/*          <Image style={{}} source={require('@/assets/images/credit.png')}/>*/}
-              {/*          <Text style={{*/}
-              {/*            margin: 3,*/}
-              {/*            fontFamily: "Poppins",*/}
-              {/*            fontSize: 20*/}
-              {/*          }}>{user?.credits ? user.credits : 0}</Text>*/}
-              {/*        </View>*/}
-              {/*      </View>*/}
-              {/*    </TouchableOpacity>*/}
-              {/*  </Rive>*/}
+                <Rive
+                    artboardName={'Pet'}
+                    resourceName='pet'
+                    fit={Fit.Cover}
+                    ref={riveRef}
+                    stateMachineName={"State Machine 1"}
+                    style={styles.pet}
+                >
+                  <TouchableOpacity onPress={handlePetInteraction} style={{width: "100%", height: "100%", zIndex: 1}} activeOpacity={0.8}>
+                    <View style={{
+                      marginTop: "auto",
+                      flexDirection: "row",
+                      justifyContent: 'space-between',
+                      flexShrink: "auto",
+                      marginHorizontal: 20,
+                      height: "auto"
+                    }}>
+                      <TouchableOpacity activeOpacity={0.8}
+                                        style={{marginBottom: 20, maxWidth: 125, zIndex: 2, flex: 1}}>
+                        <Text onPress={handleAdd} style={{
+                          textAlign: "center",
+                          backgroundColor: '#1CC282',
+                          zIndex: 1,
+                          padding: 10,
+                          borderRadius: 20,
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: '#000',
+                          bottom: 15,
+                          fontFamily: "Poppins",
+                          marginBottom: -15,
+                          width: "100%"
+                        }}>Add Habit</Text>
+                      </TouchableOpacity>
+                      <View style={{flexDirection: "row", marginTop: -10, marginRight: 10, zIndex: 1}}>
+                        <Image style={{}} source={require('@/assets/images/credit.png')}/>
+                        <Text style={{
+                          margin: 3,
+                          fontFamily: "Poppins",
+                          fontSize: 20
+                        }}>{user?.credits ? user.credits : 0}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </Rive>
               {/*</TouchableOpacity>*/}
 
             {/*<Image source={require('@/assets/images/previouscat4.png')} style={styles.catImage} resizeMode="contain" />*/}

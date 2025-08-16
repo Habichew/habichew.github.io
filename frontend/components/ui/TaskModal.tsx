@@ -151,7 +151,7 @@ export default function TaskModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="fade">
       <TouchableOpacity activeOpacity={1} style={styles.overlay} onPressOut={() => {
         onClose();
       }}>
