@@ -236,7 +236,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                 <View style={styles.modalHeader}>
                                     <View style={styles.titleRow}>
                                         <TextInput ref={inputRef} autoFocus={true} placeholder="Habit title"
-                                                   placeholderTextColor="#5E5E5E"
+                                                   placeholderTextColor="gray"
                                                    style={[styles.title, {fontWeight: formData.habitTitle ? 'bold' : 'normal'}]}
                                                    value={formData.habitTitle}
                                                    onChangeText={text => setFormData({...formData, habitTitle: text})}/>
@@ -346,13 +346,10 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                         :
                                         (generatedTasks.length === 0 ? (
                                                     <>
-                                                        <Text style={{marginHorizontal: "auto", marginVertical: 20}}>No
-                                                            tasks created.</Text>
+                                                        <Text style={{marginHorizontal: "auto", marginVertical: 20}}>No tasks created.</Text>
                                                         <TouchableOpacity disabled={!formData.habitTitle}
                                                                           style={[styles.generateTextBtn, {backgroundColor: !formData.habitTitle ? '#1CC28290' : '#1CC282'}]}
-                                                                          onPress={handleGenerateTasks}><Text
-                                                            style={styles.generateText}>Generate
-                                                            Tasks</Text></TouchableOpacity>
+                                                                          onPress={handleGenerateTasks}><Text style={styles.generateText}>Generate Tasks</Text></TouchableOpacity>
                                                     </>
                                                 ) :
                                                 (<FlatList data={generatedTasks} keyExtractor={(item, index) => index}
@@ -363,7 +360,7 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                                                             index,
                                                                             separators
                                                                         }) => renderTask(item, index)}
-                                                           style={{maxHeight: windowHeight / 3}}></FlatList>)
+                                                           style={{maxHeight: windowHeight / 3, marginVertical: 30}}></FlatList>)
                                         )
                                     }
                                     {/*<TouchableOpacity style={styles.cancelBtn} onPress={() => {onClose(); setGeneratedTasks([])}}><Text style={styles.cancelText}>Cancel</Text></TouchableOpacity>*/}
@@ -371,16 +368,15 @@ const HabitModal: React.FC<Props> = ({visible, initialData, onClose, onSave, onD
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        borderWidth: 1,
                                         padding: 30,
                                         borderRadius: 24,
                                         backgroundColor: 'transparent',
-                                        marginLeft: 'auto'
+                                        marginLeft: 'auto',
+                                        height: 50
                                     }}>
                                         <Text
                                             style={styles.saveText}>{isEdit ? 'Save' : 'Create'}</Text>
-                                        <Ionicons name="return-down-forward-outline" size={24} color="#555"
-                                                  style={{marginTop: 10,}}/>
+                                        <Ionicons name="return-down-forward-outline" size={24} color="#555"/>
                                     </Button>
                                 </View>
                                 {showConfirmDelete && (
@@ -441,13 +437,14 @@ const styles = ScaledSheet.create({
     cancelBtn: {backgroundColor: '#000', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24},
     cancelText: {fontSize: 20, color: '#dab7ff', fontWeight: 'bold'},
     saveBtn: {backgroundColor: '#1CC282', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24},
-    saveText: {fontSize: 20, color: '#000', fontWeight: 'bold', marginRight: 5, marginVertical: 10},
+    saveText: {fontSize: 20, color: '#000', fontWeight: 'bold', marginRight: 5, marginVertical: 10, paddingVertical: 20},
     generateTextBtn: {
         backgroundColor: '#1CC282',
         paddingHorizontal: 16,
         paddingVertical: 12,
         marginHorizontal: "auto",
-        borderRadius: 24
+        borderRadius: 24,
+        marginBottom: 30
     },
     generateText: {fontSize: 16, color: '#000', fontWeight: 'bold', maxWidth: "75%"},
     deleteIcon: {position: 'absolute', top: 16, right: 16},

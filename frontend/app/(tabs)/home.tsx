@@ -73,6 +73,7 @@ const Home = () => {
     const handleAdd = () => {
         setEditHabit(null);
         setModalVisible(true);
+        Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_Start);
     };
     const handleSave = async (data: any) => {
         if (editHabit) {
@@ -269,7 +270,10 @@ const Home = () => {
     async function handlePetInteraction() {
         if (await riveRef.current?.getBooleanState('HabitTicked') === true) {
             console.log('feed pet');
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             feedPet();
+        } else {
+            Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_Start);
         }
     }
 
@@ -319,42 +323,47 @@ const Home = () => {
                     stateMachineName={"State Machine 1"}
                     style={styles.pet}
                 >
-                  <TouchableOpacity onPress={handlePetInteraction} style={{width: "100%", height: "100%", zIndex: 1}} activeOpacity={0.8}>
-                    <View style={{
-                      marginTop: "auto",
-                      flexDirection: "row",
-                      justifyContent: 'space-between',
-                      flexShrink: "auto",
-                      marginHorizontal: 20,
-                      height: "auto"
-                    }}>
-                      <TouchableOpacity activeOpacity={0.8}
-                                        style={{marginBottom: 20, maxWidth: 125, zIndex: 2, flex: 1}}>
-                        <Text onPress={handleAdd} style={{
-                          textAlign: "center",
-                          backgroundColor: '#1CC282',
-                          zIndex: 1,
-                          padding: 10,
-                          borderRadius: 20,
-                          fontSize: 16,
-                          fontWeight: 'bold',
-                          color: '#000',
-                          bottom: 15,
-                          fontFamily: "Poppins",
-                          marginBottom: -15,
-                          width: "100%"
-                        }}>Add Habit</Text>
-                      </TouchableOpacity>
-                      <View style={{flexDirection: "row", marginTop: -10, marginRight: 10, zIndex: 1}}>
-                        <Image style={{}} source={require('@/assets/images/credit.png')}/>
-                        <Text style={{
-                          margin: 3,
-                          fontFamily: "Poppins",
-                          fontSize: 20
-                        }}>{user?.credits ? user.credits : 0}</Text>
-                      </View>
+                  <Pressable onPress={handlePetInteraction} style={{width: "100%", height: "100%", zIndex: 1, position: 'absolute'}} android_ripple={{color: '#ffffff20', borderless: true, foreground: true, radius: 300}}/>
+                        <View style={{
+                            marginTop: "auto",
+                            flexDirection: "row",
+                            justifyContent: 'space-between',
+                            flexShrink: "auto",
+                            marginHorizontal: 20,
+                            marginVertical: 10,
+                            height: "auto",
+                            zIndex: 10
+                        }}>
+                            <View style={{width: 125, borderRadius: 20, overflow: 'hidden', marginVertical: 7}}>
+                                <Pressable android_ripple={{color: '#ffffff30', borderless: false, foreground: true, radius: 100}} onPress={handleAdd}
+                                           style={{maxWidth: 125, zIndex: 4, flex: 1, backgroundColor: '#1CC282', borderRadius: 20 }}>
+                                    <Text  style={{
+                                        textAlign: "center",
+                                        justifyContent: 'center',
+                                        fontSize: 16,
+                                        fontWeight: 'bold',
+                                        color: '#000',
+                                        fontFamily: "Poppins",
+                                        width: "100%",
+                                        paddingVertical: 8,
+                                    }}>Add Habit</Text>
+                                </Pressable>
+                            </View>
+
+                            <View style={{borderRadius: 20}}>
+                                <Pressable android_ripple={{color: '#00000010', borderless: true, foreground: true, radius: 80}} onPress={() => {router.push('/(tabs)/pet'); Haptics.performAndroidHapticsAsync(AndroidHaptics.Gesture_Start);}}
+                                           style={{padding: 10, borderRadius: 20, flexDirection: "row", zIndex: 3}}>
+                                    <Image style={{marginVertical: 'auto', marginBottom: 4, marginRight: 3}} source={require('@/assets/images/credit.png')}/>
+                                    <Text style={{
+                                        fontFamily: "Poppins",
+                                        fontSize: 20,
+                                        padding: 3,
+                                        marginBottom: -5
+                                    }}>{user?.credits ? user.credits : 0}</Text>
+                                </Pressable>
+                            </View>
+
                     </View>
-                  </TouchableOpacity>
                 </Rive>
               {/*</TouchableOpacity>*/}
 
