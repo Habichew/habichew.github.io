@@ -32,6 +32,7 @@ export async function findUserTaskById(req, res) {
 export async function createTask(req, res) {
     try {
         const {task} = req.body;
+        const {userId} = req.params;
 
         // Check if task was provided in request body
         if (!task) {
@@ -41,6 +42,10 @@ export async function createTask(req, res) {
             return res.status(400).json({ message: "Choose a preset task or input a custom task title!" })
         }
 
+        const existingUserHabit = await habitService.getUserHabit(userId, task.userHabitId);
+        if (!existingUserHabit || existingUserHabit.length === 0) {
+            return res.status(404).send({message: "This habit does not exist."})
+        }
         const newUserTaskId = await taskService.createTask(task);
         const newTask = await taskService.findUserTaskById(newUserTaskId);
         res.status(201).json(newTask);
