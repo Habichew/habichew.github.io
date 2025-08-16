@@ -66,14 +66,14 @@ const styles = ScaledSheet.create({
   },
   dropdown: {
     borderRadius: 24,
-    borderWidth: 0,              
-    backgroundColor: '#F8F0F0',
+    borderWidth: 0,
+    backgroundColor: 'white',
     shadowColor: 'transparent',
       minHeight: 50,
   },
   dropdownContainer: {
     borderRadius: 16,
-    backgroundColor: '#F8F0F0',
+    backgroundColor: 'white',
     shadowColor: 'transparent',
       borderWidth: 0
   },
